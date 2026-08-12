@@ -297,7 +297,7 @@ header{
   .badges .badge:nth-child(1),.badges .badge:nth-child(2){display:none !important}
 }
 
-</style>
+.setup-note{margin:10px 0 0;color:rgba(255,255,255,.68);font-size:13px;line-height:1.45}\n</style>
 
 <style>
 .setup-modal{
@@ -395,8 +395,8 @@ header{
   <div class="setup-card">
     <h2>Connect Spotify</h2>
     <p>To make the custom Next/Previous buttons actually change tracks, this player uses Spotify Web Playback SDK.</p>
-    <p>Add your Spotify Developer Client ID in the HTML, then add this exact Redirect URI to your Spotify app:</p>
-    <code id="redirectUri"></code>
+    <p>Your Spotify Client ID is configured. Add this exact Redirect URI to your Spotify Developer app:</p>
+    <code id="redirectUri"></code><p class="setup-note">Spotify Web Playback requires a Spotify Premium account and the redirect URI must match exactly.</p>
     <button id="setupClose">Close</button>
   </div>
 </div>
@@ -412,7 +412,7 @@ header{
   - real playback position
   Requires a Spotify Premium account and a Spotify Developer Client ID.
 */
-const CLIENT_ID = "YOUR_SPOTIFY_CLIENT_ID";
+const CLIENT_ID = "2241e64a958a4b5caefef645de8019ce";
 const PLAYLIST_ID = "0iT5gTODhpUFGSwqGZUpdG";
 const REDIRECT_URI = window.location.origin + window.location.pathname;
 const SCOPES = [
