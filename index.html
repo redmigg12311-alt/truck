@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>हॉर्न ओके प्लीज़ — Indian Truck Driver Music</title>
+<meta name="description" content="Horn OK Please — Indian truck driver music playlist.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Mukta:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --cream:#fff5df;
+  --gold:#ffc300;
+  --orange:#f2790f;
+  --green:#1e7a46;
+  --glass:rgba(18,22,28,.48);
+  --glass2:rgba(255,255,255,.10);
+  --line:rgba(255,255,255,.22);
+  --shadow:0 24px 70px rgba(0,0,0,.42);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%;height:100%}
+body{
+  font-family:'Mukta',sans-serif;
+  color:var(--cream);
+  background:
+    linear-gradient(180deg,rgba(0,0,0,.10),rgba(0,0,0,.48)),
+    url('https://i.ibb.co/S7t9NmW0/truck.webp') center/cover fixed no-repeat #14213d;
+  overflow:hidden;
+}
+body:after{
+  content:"";
+  position:fixed;inset:0;pointer-events:none;
+  background:
+    radial-gradient(circle at 50% 55%,transparent 25%,rgba(0,0,0,.25) 100%),
+    linear-gradient(90deg,rgba(0,0,0,.12),transparent 35%,transparent 65%,rgba(0,0,0,.14));
+}
+button,a{font:inherit}
+button{cursor:pointer}
+button:focus-visible,a:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+
+header{
+  position:fixed;left:0;right:0;top:0;
+  z-index:30;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 28px;
+}
+.online{display:flex;align-items:center;gap:8px;font-size:15px}
+.dot{width:9px;height:9px;border-radius:50%;background:#35df83;box-shadow:0 0 13px #35df83}
+.spotify-link{
+  color:var(--cream);text-decoration:none;
+  padding:9px 15px;border:1px solid var(--line);border-radius:999px;
+  background:rgba(255,255,255,.08);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  transition:.2s;
+}
+.spotify-link:hover{background:rgba(255,255,255,.16);transform:translateY(-1px)}
+
+.title{
+  position:absolute;z-index:3;left:0;right:0;top:11.5%;
+  text-align:center;padding:0 16px;
+}
+.title h1{
+  font-family:'Yatra One',cursive;
+  font-size:clamp(58px,9vw,128px);
+  line-height:1.02;color:var(--cream);
+  text-shadow:4px 4px 0 #d62828,8px 8px 0 rgba(0,0,0,.30);
+}
+.title p{
+  margin-top:15px;color:var(--gold);
+  font-size:clamp(14px,1.6vw,19px);
+  letter-spacing:.04em;text-shadow:0 2px 7px #000;
+}
+
+/* Rotating Indian-truck roadside slogans */
+.truck-marquee{
+  display:block;width:max-content;max-width:min(980px,calc(100vw - 40px));
+  margin:10px auto 0;padding:7px 14px;overflow:hidden;white-space:nowrap;
+  color:#ffd45a;font-size:13px;font-weight:700;letter-spacing:.08em;
+  text-shadow:0 2px 8px #000;background:rgba(10,14,18,.38);
+  border:1px solid rgba(255,195,0,.28);border-radius:999px;
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+}
+.truck-marquee span{display:inline-block}
+
+/* Main glass player */
+.player{
+  position:absolute;z-index:12;
+  left:50%;bottom:3.2%;
+  transform:translateX(-50%);
+  width:min(650px,calc(100vw - 30px));
+  padding:16px;
+  border:1px solid var(--line);
+  border-radius:28px;
+  background:
+    linear-gradient(135deg,rgba(255,255,255,.16),rgba(255,255,255,.045)),
+    var(--glass);
+  box-shadow:var(--shadow),inset 0 1px rgba(255,255,255,.18);
+  backdrop-filter:blur(24px) saturate(135%);
+  -webkit-backdrop-filter:blur(24px) saturate(135%);
+}
+.player:before{
+  content:"";position:absolute;inset:0;border-radius:28px;pointer-events:none;
+  background:linear-gradient(110deg,rgba(255,255,255,.12),transparent 32%,transparent 70%,rgba(255,184,72,.08));
+}
+.player-top{position:relative;display:flex;align-items:center;gap:16px}
+.cover{
+  width:84px;height:84px;flex:0 0 84px;border-radius:17px;object-fit:cover;
+  background:#202020;
+  box-shadow:0 12px 30px rgba(0,0,0,.38);
+  border:1px solid rgba(255,255,255,.28);
+}
+.info{min-width:0;flex:1}
+.eyebrow{
+  display:flex;align-items:center;gap:7px;
+  font-size:12px;text-transform:uppercase;letter-spacing:.13em;
+  opacity:.68;margin-bottom:5px;
+}
+.live-dot{width:6px;height:6px;background:#35df83;border-radius:50%;box-shadow:0 0 8px #35df83}
+.song{
+  font-size:clamp(18px,2.4vw,25px);font-weight:700;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.artist{font-size:15px;opacity:.72;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.actions{display:flex;gap:8px}
+.icon{
+  width:42px;height:42px;border-radius:50%;
+  display:grid;place-items:center;
+  border:1px solid var(--line);
+  color:var(--cream);background:rgba(255,255,255,.08);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+}
+.icon:hover{background:rgba(255,255,255,.16)}
+.icon.active{border-color:var(--gold);color:var(--gold)}
+
+.progress{position:relative;margin:14px 2px 8px}
+.range{
+  width:100%;height:5px;appearance:none;-webkit-appearance:none;
+  border-radius:99px;background:rgba(255,255,255,.25);outline:none;
+}
+.range::-webkit-slider-thumb{
+  appearance:none;-webkit-appearance:none;width:14px;height:14px;
+  border-radius:50%;background:var(--cream);box-shadow:0 2px 8px #000;
+}
+.range::-moz-range-thumb{
+  width:14px;height:14px;border:0;border-radius:50%;background:var(--cream);
+}
+.times{display:flex;justify-content:space-between;font-size:12px;opacity:.58;margin-top:5px}
+
+.controls{display:flex;align-items:center;justify-content:center;gap:26px;margin-top:8px}
+.control{
+  width:44px;height:44px;border:0;border-radius:50%;
+  color:var(--cream);background:transparent;font-size:22px;
+}
+.control:hover{background:rgba(255,255,255,.09)}
+.play{
+  width:62px;height:62px;border-radius:50%;border:0;
+  background:var(--gold);color:#171717;font-size:23px;
+  box-shadow:0 10px 25px rgba(0,0,0,.28);
+}
+.play:hover{transform:scale(1.04)}
+.bottom-row{display:flex;justify-content:space-between;align-items:center;margin-top:14px}
+.badges{display:flex;gap:8px;flex-wrap:wrap}
+.badge{
+  padding:6px 10px;border-radius:999px;font-size:12px;
+  border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);
+  opacity:.82;
+}
+.playlist-btn{
+  border:1px solid rgba(255,255,255,.25);
+  border-radius:13px;padding:10px 14px;
+  color:var(--cream);background:rgba(255,255,255,.09);
+  display:flex;align-items:center;gap:8px;
+}
+.playlist-btn:hover{background:rgba(255,255,255,.16);border-color:var(--gold)}
+
+.ind{position:absolute;bottom:18px;width:18px;height:12px;border-radius:4px;background:#654d12;z-index:-1}
+.ind.l{left:-28px}.ind.r{right:-28px}
+.player.playing .ind{background:var(--gold);box-shadow:0 0 14px var(--gold);animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:.25}}
+
+@keyframes coverPulse{50%{transform:scale(1.025)}}
+.player.playing .cover{animation:coverPulse 1.8s ease-in-out infinite}
+
+/* Playlist drawer */
+.drawer-backdrop{
+  position:fixed;inset:0;z-index:50;
+  background:rgba(0,0,0,.35);
+  backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);
+  opacity:0;pointer-events:none;transition:.28s;
+}
+.drawer{
+  position:fixed;z-index:60;
+  top:18px;right:18px;bottom:18px;
+  width:min(430px,calc(100vw - 36px));
+  border:1px solid rgba(255,255,255,.25);
+  border-radius:28px;
+  background:
+    linear-gradient(145deg,rgba(255,255,255,.17),rgba(255,255,255,.055)),
+    rgba(14,18,22,.67);
+  backdrop-filter:blur(28px) saturate(130%);
+  -webkit-backdrop-filter:blur(28px) saturate(130%);
+  box-shadow:0 30px 90px rgba(0,0,0,.55);
+  transform:translateX(calc(100% + 40px));transition:.32s ease;
+  overflow:hidden;
+  display:flex;flex-direction:column;
+}
+.drawer.open{transform:translateX(0)}
+.drawer-backdrop.open{opacity:1;pointer-events:auto}
+.drawer-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 20px 15px;
+}
+.drawer-title{font-size:22px;font-weight:700}
+.drawer-sub{font-size:13px;opacity:.58}
+.close{
+  width:42px;height:42px;border-radius:50%;border:1px solid var(--line);
+  color:var(--cream);background:rgba(255,255,255,.08);font-size:22px;
+}
+.playlist-embed{
+  flex:1;min-height:0;padding:0 12px 12px;
+}
+#spotify-playlist{
+  width:100%;height:100%;min-height:430px;border-radius:20px;overflow:hidden;
+}
+.drawer-foot{
+  padding:12px 18px 18px;border-top:1px solid rgba(255,255,255,.10);
+  font-size:12px;opacity:.58;
+}
+
+@media(max-width:720px){
+  body{overflow:auto;min-height:100svh;background-attachment:scroll}
+  .title{top:8%;}.title h1{font-size:clamp(52px,15vw,84px)}
+  .title p{font-size:13px;max-width:calc(100vw - 28px);padding:8px 12px}
+  .truck-marquee{max-width:calc(100vw - 28px);font-size:11px;padding:7px 10px}
+  .player{bottom:16px;border-radius:24px;padding:14px}
+  .cover{width:78px;height:78px;flex-basis:78px;border-radius:14px}
+  .actions{display:none}
+  .controls{gap:12px}
+  .bottom-row{gap:8px}
+  .badges{display:none}
+  header{padding:14px 16px}
+}
+@media(max-width:430px){
+  .title{top:7%}
+  .title h1{font-size:clamp(48px,15vw,70px)}
+  .title p{font-size:12px;line-height:1.25}
+  .truck-marquee{margin-top:7px;font-size:10px}
+  .player{width:calc(100vw - 16px);bottom:10px;padding:12px}
+  .cover{width:68px;height:68px;flex-basis:68px}
+  .song{font-size:17px}
+  .artist{font-size:13px}
+  .control{width:40px;height:40px}
+  .play{width:58px;height:58px}
+  .playlist-btn{padding:9px 11px}
+}
+
+/* === COMPACT YOUTUBE-MUSIC STYLE PLAYER === */
+.player{
+  width:min(760px,calc(100vw - 28px)) !important;
+  bottom:18px !important;
+  padding:10px 12px !important;
+  border-radius:20px !important;
+}
+.player-top{gap:10px !important}
+.cover{width:54px !important;height:54px !important;flex-basis:54px !important;border-radius:12px !important}
+.song{font-size:16px !important}
+.artist{font-size:11px !important}
+.progress{margin:7px 2px 0 !important}
+.controls{margin-top:-1px !important;gap:22px !important}
+.control{width:34px !important;height:34px !important}
+.play{width:44px !important;height:44px !important}
+.bottom-row{margin-top:6px !important}
+.badge{font-size:9px !important;padding:5px 8px !important}
+.playlist-btn{font-size:10px !important;padding:6px 10px !important}
+
+@media(max-width:720px){
+  .player{
+    left:8px !important;right:8px !important;bottom:8px !important;
+    width:auto !important;transform:none !important;
+    padding:8px 9px !important;border-radius:16px !important;
+  }
+  .cover{width:48px !important;height:48px !important;flex-basis:48px !important}
+  .song{font-size:14px !important}.artist{font-size:10px !important}
+  .controls{gap:18px !important}
+  .control{width:32px !important;height:32px !important}
+  .play{width:42px !important;height:42px !important}
+  .badge{font-size:8px !important;padding:4px 7px !important}
+}
+@media(max-width:430px){
+  .player{bottom:6px !important;left:6px !important;right:6px !important}
+  .cover{width:44px !important;height:44px !important;flex-basis:44px !important}
+  .song{font-size:13px !important}
+  .actions .icon{width:30px !important;height:30px !important}
+  .badges .badge:nth-child(1),.badges .badge:nth-child(2){display:none !important}
+}
+
+</style>
+
+<style>
+.setup-modal{
+  position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:20px;
+  background:rgba(0,0,0,.55);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)
+}
+.setup-modal[hidden]{display:none}
+.setup-card{
+  width:min(520px,100%);padding:24px;border-radius:22px;
+  background:rgba(25,25,25,.94);border:1px solid rgba(255,255,255,.2);
+  box-shadow:0 25px 80px rgba(0,0,0,.5)
+}
+.setup-card h2{margin-bottom:8px}.setup-card p{color:#c9c2b8;font-size:13px;line-height:1.5;margin-top:7px}
+.setup-card code{display:block;margin:12px 0;padding:10px;border-radius:10px;background:#111;color:#ffd45a;word-break:break-all;font-size:11px}
+.setup-card button{padding:9px 14px;border:0;border-radius:10px;background:#ffc300;font-weight:800}
+</style>
+</head>
+
+<body>
+<header>
+  <div class="online"><span class="dot"></span><span id="clock"></span></div>
+  <a class="spotify-link" href="https://open.spotify.com/playlist/0iT5gTODhpUFGSwqGZUpdG" target="_blank" rel="noopener">Spotify ↗</a>
+</header>
+
+<section class="title">
+  <h1>हॉर्न ओके<br>प्लीज़</h1>
+  <p id="truckTagline">सफ़र लंबा हो तो गाना ज़ोरदार होना चाहिए • Highway Vibes • Full Volume</p>
+  <div class="truck-marquee" aria-live="polite">
+    <span id="truckMarquee">HORN OK PLEASE • BURI NAZAR WALE TERA MUH KAALA • SAFE DRIVE SAVE LIFE</span>
+  </div>
+</section>
+
+<main class="player" id="player">
+  <div class="ind l"></div><div class="ind r"></div>
+
+  <div class="player-top">
+    <img id="cover" class="cover"
+      src="https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da84bf444fa3e8492052df7b9174"
+      alt="Indian Truck Driver Music playlist cover">
+
+    <div class="info">
+      <div class="eyebrow"><span class="live-dot"></span><span id="status">READY TO PLAY</span></div>
+      <div id="song" class="song">Indian Truck Driver Music</div>
+      <div id="artist" class="artist">Select a song from the playlist</div>
+    </div>
+
+    <div class="actions">
+      <button class="icon" id="shuffle" title="Shuffle" aria-label="Shuffle">⌘</button>
+      <button class="icon" id="openPlaylistTop" title="Playlist" aria-label="Open playlist">☷</button>
+    </div>
+  </div>
+
+  <div class="progress">
+    <input id="seek" class="range" type="range" min="0" max="1000" value="0" step="1" aria-label="Seek">
+    <div class="times"><span id="currentTime">0:00</span><span id="duration">0:00</span></div>
+  </div>
+
+  <div class="controls">
+    <button class="control" id="prev" aria-label="Previous song" title="Previous song">⏮</button>
+    <button class="play" id="play" aria-label="Play or pause" title="Play or pause">▶</button>
+    <button class="control" id="next" aria-label="Next song" title="Next song">⏭</button>
+  </div>
+
+  <div class="bottom-row">
+    <div class="badges">
+      <span class="badge">🛣 Highway Vibes</span>
+      <span class="badge">☕ Dhaba Chai</span>
+      <span class="badge">🚚 Truck Driver Music</span>
+    </div>
+    <button class="playlist-btn" id="openPlaylist">☷ <span>Song List</span></button>
+  </div>
+</main>
+
+<div id="drawerBackdrop" class="drawer-backdrop"></div>
+<aside id="drawer" class="drawer" aria-hidden="true">
+  <div class="drawer-head">
+    <div>
+      <div class="drawer-title">Playlist</div>
+      <div class="drawer-sub">Indian Truck Driver Music · 42 songs</div>
+    </div>
+    <button class="close" id="closePlaylist" aria-label="Close playlist">×</button>
+  </div>
+
+  <div class="playlist-embed">
+    <div id="spotify-playlist"></div>
+  </div>
+
+  <div class="drawer-foot">
+    Select any song above to play it. Playback is powered directly by Spotify.
+  </div>
+</aside>
+
+
+<div id="spotifySetup" class="setup-modal" hidden>
+  <div class="setup-card">
+    <h2>Connect Spotify</h2>
+    <p>To make the custom Next/Previous buttons actually change tracks, this player uses Spotify Web Playback SDK.</p>
+    <p>Add your Spotify Developer Client ID in the HTML, then add this exact Redirect URI to your Spotify app:</p>
+    <code id="redirectUri"></code>
+    <button id="setupClose">Close</button>
+  </div>
+</div>
+
+
+<script src="https://sdk.scdn.co/spotify-player.js"></script>
+<script>
+/*
+  Spotify Web Playback SDK:
+  - real Next/Previous controls
+  - real current track metadata
+  - real album artwork
+  - real playback position
+  Requires a Spotify Premium account and a Spotify Developer Client ID.
+*/
+const CLIENT_ID = "YOUR_SPOTIFY_CLIENT_ID";
+const PLAYLIST_ID = "0iT5gTODhpUFGSwqGZUpdG";
+const REDIRECT_URI = window.location.origin + window.location.pathname;
+const SCOPES = [
+  "streaming",
+  "user-read-email",
+  "user-read-private",
+  "user-read-playback-state",
+  "user-modify-playback-state",
+  "playlist-read-private",
+  "playlist-read-collaborative"
+].join(" ");
+
+let player = null, deviceId = null, token = null, refreshToken = null;
+let expiresAt = 0, currentState = null, tracks = [];
+
+const $ = id => document.getElementById(id);
+
+function fmt(ms){
+  const s=Math.max(0,Math.floor((ms||0)/1000));
+  return `${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}`;
+}
+function clock(){
+  $("clock").textContent=new Date().toLocaleTimeString("en-IN",{hour:"numeric",minute:"2-digit"}).toLowerCase();
+}
+clock(); setInterval(clock,1000);
+
+function openPlaylist(){
+  $("drawer").classList.add("open");
+  $("drawerBackdrop").classList.add("open");
+  $("drawer").setAttribute("aria-hidden","false");
+}
+function closePlaylist(){
+  $("drawer").classList.remove("open");
+  $("drawerBackdrop").classList.remove("open");
+  $("drawer").setAttribute("aria-hidden","true");
+}
+$("openPlaylist").onclick=openPlaylist;
+$("openPlaylistTop").onclick=openPlaylist;
+$("closePlaylist").onclick=closePlaylist;
+$("drawerBackdrop").onclick=closePlaylist;
+
+function showSetup(){
+  $("redirectUri").textContent=REDIRECT_URI;
+  $("spotifySetup").hidden=false;
+}
+$("setupClose").onclick=()=>{$("spotifySetup").hidden=true};
+
+function setPlaying(playing){
+  $("player").classList.toggle("playing",playing);
+  $("play").textContent=playing?"⏸":"▶";
+  $("status").textContent=playing?"NOW PLAYING":"PAUSED";
+}
+
+function showTrack(track){
+  if(!track)return;
+  $("song").textContent=track.name || "Spotify track";
+  $("artist").textContent=(track.artists||[]).map(a=>a.name).join(", ") || "Spotify";
+  const img=track.album?.images?.[0]?.url;
+  if(img){
+    $("cover").src=img;
+    $("cover").onerror=()=>{$("cover").src="https://i.ibb.co/S7t9NmW0/truck.webp"};
+  }
+}
+
+async function refreshAccessToken(){
+  if(!refreshToken) throw new Error("No refresh token");
+  const body=new URLSearchParams({
+    grant_type:"refresh_token",refresh_token:refreshToken,client_id:CLIENT_ID
+  });
+  const r=await fetch("https://accounts.spotify.com/api/token",{
+    method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body
+  });
+  if(!r.ok)throw new Error("Spotify token refresh failed");
+  const d=await r.json();
+  token=d.access_token;
+  if(d.refresh_token)refreshToken=d.refresh_token;
+  expiresAt=Date.now()+((d.expires_in||3600)-60)*1000;
+  localStorage.setItem("spotify_pkce_auth",JSON.stringify({token,refreshToken,expiresAt}));
+}
+
+async function api(url,options={}){
+  if(expiresAt && Date.now()>expiresAt-15000) await refreshAccessToken();
+  const r=await fetch(url,{
+    ...options,
+    headers:{...(options.headers||{}),Authorization:"Bearer "+token}
+  });
+  if(r.status===401){
+    await refreshAccessToken();
+    return api(url,options);
+  }
+  if(!r.ok) throw new Error(`${r.status} ${await r.text()}`);
+  return r.status===204?null:r.json();
+}
+
+async function login(){
+  if(CLIENT_ID==="YOUR_SPOTIFY_CLIENT_ID"){showSetup();return false}
+
+  const verifier=crypto.randomUUID().replaceAll("-","");
+  const digest=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(verifier));
+  const challenge=btoa(String.fromCharCode(...new Uint8Array(digest)))
+    .replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+  const state=crypto.randomUUID();
+
+  sessionStorage.setItem("spotify_verifier",verifier);
+  sessionStorage.setItem("spotify_state",state);
+
+  const q=new URLSearchParams({
+    client_id:CLIENT_ID,response_type:"code",redirect_uri:REDIRECT_URI,
+    scope:SCOPES,code_challenge_method:"S256",code_challenge:challenge,state
+  });
+  location.href="https://accounts.spotify.com/authorize?"+q;
+  return false;
+}
+
+async function callback(){
+  const q=new URLSearchParams(location.search);
+  const code=q.get("code"),state=q.get("state");
+  if(!code)return false;
+
+  if(state!==sessionStorage.getItem("spotify_state"))
+    throw new Error("Invalid Spotify OAuth state");
+
+  const verifier=sessionStorage.getItem("spotify_verifier");
+  const body=new URLSearchParams({
+    client_id:CLIENT_ID,grant_type:"authorization_code",code,
+    redirect_uri:REDIRECT_URI,code_verifier:verifier
+  });
+  const r=await fetch("https://accounts.spotify.com/api/token",{
+    method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body
+  });
+  if(!r.ok)throw new Error("Spotify authorization failed");
+  const d=await r.json();
+
+  token=d.access_token;refreshToken=d.refresh_token;
+  expiresAt=Date.now()+((d.expires_in||3600)-60)*1000;
+  localStorage.setItem("spotify_pkce_auth",JSON.stringify({token,refreshToken,expiresAt}));
+  history.replaceState({},document.title,location.pathname);
+  return true;
+}
+
+async function loadSavedAuth(){
+  const saved=JSON.parse(localStorage.getItem("spotify_pkce_auth")||"null");
+  if(!saved)return false;
+  token=saved.token;refreshToken=saved.refreshToken;expiresAt=saved.expiresAt;
+  if(Date.now()>expiresAt-15000)await refreshAccessToken();
+  return true;
+}
+
+async function loadTracks(){
+  tracks=[];
+  let offset=0;
+  while(true){
+    const data=await api(
+      `https://api.spotify.com/v1/playlists/${PLAYLIST_ID}/items?limit=50&offset=${offset}&market=IN`
+    );
+    for(const item of (data.items||[])){
+      const t=item.item||item.track;
+      if(t?.type==="track" && t.is_playable!==false)tracks.push(t);
+    }
+    if(!data.next || !data.items?.length)break;
+    offset+=data.items.length;
+  }
+
+  const host=$("spotify-playlist");
+  if(!tracks.length){
+    host.innerHTML='<div style="padding:18px;color:#aaa">No tracks returned. If Spotify gives 403, this playlist must be owned by or collaborative with the authorized account under the current Spotify API rules.</div>';
+    return;
+  }
+
+  host.innerHTML=tracks.map((t,i)=>{
+    const img=t.album?.images?.[2]?.url||t.album?.images?.[0]?.url||"https://i.ibb.co/S7t9NmW0/truck.webp";
+    return `<button class="track-row" data-i="${i}" style="width:100%;display:flex;gap:10px;align-items:center;padding:9px;border:0;border-bottom:1px solid rgba(255,255,255,.08);background:transparent;color:#fff;text-align:left">
+      <img src="${img}" style="width:42px;height:42px;object-fit:cover;border-radius:7px">
+      <span style="min-width:0;flex:1"><b style="display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13px">${esc(t.name)}</b>
+      <small style="display:block;color:#aaa;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc((t.artists||[]).map(a=>a.name).join(", "))}</small></span>
+      <small style="color:#999">${fmt(t.duration_ms)}</small>
+    </button>`;
+  }).join("");
+
+  host.querySelectorAll(".track-row").forEach(b=>b.onclick=()=>playTrack(Number(b.dataset.i)));
+}
+function esc(s){
+  return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
+}
+
+async function playTrack(i){
+  if(!tracks[i]||!deviceId)return;
+  try{
+    await api(`https://api.spotify.com/v1/me/player/play?device_id=${encodeURIComponent(deviceId)}`,{
+      method:"PUT",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({uris:[tracks[i].uri]})
+    });
+    closePlaylist();
+  }catch(e){console.error(e);$("status").textContent="PLAYBACK ERROR"}
+}
+
+$("play").onclick=async()=>{
+  if(!player){showSetup();return}
+  await player.activateElement();
+  await player.togglePlay();
+};
+$("next").onclick=async()=>{
+  if(!player){showSetup();return}
+  await player.activateElement();
+  await player.nextTrack();
+};
+$("prev").onclick=async()=>{
+  if(!player){showSetup();return}
+  await player.activateElement();
+  await player.previousTrack();
+};
+$("seek").oninput=async()=>{
+  if(player && currentState && !currentState.disallows?.seeking)
+    await player.seek(Number($("seek").value)/1000*currentState.duration);
+};
+$("shuffle").onclick=async()=>{
+  if(!token)return;
+  const state=!currentState?.shuffle;
+  try{
+    await api(`https://api.spotify.com/v1/me/player/shuffle?state=${state}&device_id=${encodeURIComponent(deviceId)}`,{method:"PUT"});
+    $("shuffle").classList.toggle("active",state);
+  }catch(e){console.error(e)}
+};
+
+window.onSpotifyWebPlaybackSDKReady=async()=>{
+  if(CLIENT_ID==="YOUR_SPOTIFY_CLIENT_ID"){showSetup();return}
+  try{
+    if(!token && !(await loadSavedAuth()))return login();
+
+    player=new Spotify.Player({
+      name:"Horn OK Please",
+      getOAuthToken:cb=>cb(token),
+      volume:0.72
+    });
+
+    player.addListener("ready",async({device_id})=>{
+      deviceId=device_id;$("status").textContent="READY";
+      try{await loadTracks()}catch(e){console.error(e);$("status").textContent=e.message.startsWith("403")?"PLAYLIST ACCESS":"READY"}
+    });
+    player.addListener("not_ready",()=>{$("status").textContent="OFFLINE"});
+    player.addListener("initialization_error",({message})=>console.error(message));
+    player.addListener("authentication_error",({message})=>console.error(message));
+    player.addListener("account_error",({message})=>{$("status").textContent="PREMIUM REQUIRED";console.error(message)});
+    player.addListener("autoplay_failed",()=>{$("status").textContent="CLICK PLAY"});
+    player.addListener("playback_error",({message})=>console.error(message));
+
+    player.addListener("player_state_changed",state=>{
+      if(!state)return;
+      currentState=state;
+      showTrack(state.track_window.current_track);
+      setPlaying(!state.paused);
+      $("currentTime").textContent=fmt(state.position);
+      $("duration").textContent=fmt(state.duration);
+      $("seek").value=state.duration?Math.round(state.position/state.duration*1000):0;
+      $("shuffle").classList.toggle("active",!!state.shuffle);
+    });
+
+    await player.connect();
+  }catch(e){console.error(e);$("status").textContent="SPOTIFY ERROR"}
+};
+
+(async()=>{
+  try{
+    if(CLIENT_ID==="YOUR_SPOTIFY_CLIENT_ID"){showSetup();return}
+    const cb=await callback();
+    if(!cb)await loadSavedAuth();
+    if(token && window.Spotify)window.onSpotifyWebPlaybackSDKReady();
+  }catch(e){console.error(e);showSetup()}
+})();
+</script>
+</body>
+</html>
