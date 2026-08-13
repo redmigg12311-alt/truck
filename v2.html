@@ -627,6 +627,7 @@ a{color:inherit}
 </style>
 </head>
 
+
 <body>
 <header class="topbar">
   <div class="live-clock"><span class="live-dot"></span><span id="clock">--:--</span></div>
@@ -907,6 +908,20 @@ function getPlaylistIds(){
   }
 }
 
+
+function cleanArtistName(name){
+  return String(name || "")
+    .replace(/\s*-\s*Topic\s*$/i, "")
+    .replace(/\s*-\s*Topics\s*$/i, "")
+    .trim() || "YouTube";
+}
+
+function cleanSongTitle(name){
+  return String(name || "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 function buildPlaylistItems(ids){
   const oldById = new Map(
     playlistItems.map(item => [item.id, item])
@@ -1006,7 +1021,7 @@ function updateCurrentTrack(){
   $("cover").onerror = () => $("cover").src = fallbackCover;
 
   $("song").textContent = data.title || item.title || "Indian Truck Driver Music";
-  $("artist").textContent = data.author || item.artist || "YouTube • Highway Vibes";
+  $("artist").textContent = cleanArtistName(data.author || item.artist || "YouTube");
 
   if(playlistItems.length){
     renderPlaylist($("trackSearch").value);
@@ -1024,7 +1039,7 @@ function renderPlaylist(filter = ""){
   const filtered = playlistItems
     .map((item, i) => ({item, i}))
     .filter(({item}) => {
-      const text = `${item.title || ""} ${item.artist || ""} ${item.id}`.toLowerCase();
+      const text = `${item.title || ""} ${cleanArtistName(item.artist)} ${item.id}`.toLowerCase();
       return !q || text.includes(q);
     });
 
@@ -1041,8 +1056,8 @@ function renderPlaylist(filter = ""){
     button.className = "track-item" + (i === currentIndex ? " active" : "");
 
     const title = item.title || `Loading track ${i + 1}…`;
-    const artist = item.artist || "YouTube";
-    const duration = item.duration ? fmt(item.duration) : "—:——";
+    const artist = cleanArtistName(item.artist);
+    const duration = item.duration > 0 ? fmt(item.duration) : "—:——";
 
     button.innerHTML = `
       <img alt="">
@@ -1071,7 +1086,10 @@ function renderPlaylist(filter = ""){
 }
 
 function playPlaylistIndex(i){
-  if(!playerReady || !player) return;
+  if(!playerReady || !player){
+    toast("YouTube playlist is still loading…");
+    return;
+  }
 
   if(!playlistItems.length){
     toast("Playlist is still loading…");
@@ -1086,27 +1104,36 @@ function playPlaylistIndex(i){
   currentIndex = target;
 
   /*
-    The YouTube IFrame Player API keeps the actual playlist
-    inside the player. This loads a real playlist item rather
-    than creating a separate audio source.
+    playVideoAt() changes the item inside the existing YouTube
+    playlist. It does NOT replace the playlist with a single
+    video.
   */
-  player.playVideoAt(target);
+  try{
+    player.playVideoAt(target);
+  }catch(error){
+    console.error("playVideoAt failed:", error);
+    toast("Unable to change the song. Please try again.");
+    return;
+  }
+
+  renderPlaylist($("trackSearch").value);
   closePlaylist();
 }
 
 function nextTrack(){
   if(!playerReady || !player) return;
 
-  /*
-    If shuffle is enabled, use YouTube's own playlist shuffle.
-    Otherwise advance through the real playlist.
-  */
-  if(shuffle){
+  try{
+    /*
+      YouTube controls the actual playlist order.
+      This guarantees we move to the next video in the
+      currently loaded playlist.
+    */
     player.nextVideo();
-    return;
+  }catch(error){
+    console.error("nextVideo failed:", error);
+    toast("Unable to play the next song.");
   }
-
-  player.nextVideo();
 }
 
 function previousTrack(){
@@ -1119,148 +1146,12 @@ function previousTrack(){
     return;
   }
 
-  player.previousVideo();
-}
-
-/* ---------------------------------------------------------
-   Full playlist metadata scanner
-   --------------------------------------------------------- */
-
-function startMetadataScanner(){
-  if(metadataScanRunning || !metadataPlayerReady || !playlistItems.length) return;
-
-  metadataScanRunning = true;
-  metadataScanIndex = 0;
-
-  clearInterval(metadataScanTimer);
-
-  const scanNext = () => {
-    if(!metadataPlayerReady || !metadataPlayer || !playlistItems.length){
-      metadataScanRunning = false;
-      return;
-    }
-
-    if(metadataScanIndex >= playlistItems.length){
-      clearInterval(metadataScanTimer);
-      metadataScanTimer = null;
-      metadataScanRunning = false;
-
-      renderPlaylist($("trackSearch").value);
-      $("playlistMeta").textContent =
-        `${playlistItems.length} songs • YouTube playlist`;
-
-      return;
-    }
-
-    const item = playlistItems[metadataScanIndex];
-
-    try{
-      /*
-        Cue one video in the metadata-only player. This leaves
-        the user's real player completely untouched.
-      */
-      metadataPlayer.cueVideoById(item.id);
-    }catch(error){
-      console.warn("Metadata cue failed:", item.id, error);
-      metadataScanIndex++;
-      return;
-    }
-
-    let attempts = 0;
-
-    const readMetadata = () => {
-      attempts++;
-
-      try{
-        const data = metadataPlayer.getVideoData
-          ? metadataPlayer.getVideoData()
-          : {};
-
-        const duration = metadataPlayer.getDuration
-          ? metadataPlayer.getDuration()
-          : 0;
-
-        if(data.video_id === item.id){
-          if(data.title){
-            item.title = data.title;
-          }
-
-          if(data.author){
-            item.artist = data.author;
-          }
-
-          if(duration > 0){
-            item.duration = duration;
-
-            renderPlaylist($("trackSearch").value);
-
-            metadataScanIndex++;
-            setTimeout(scanNext, 80);
-            return;
-          }
-        }
-      }catch(error){
-        console.warn("Metadata read failed:", error);
-      }
-
-      /*
-        YouTube can expose title/author before duration. Give the
-        player a few seconds to expose duration metadata. If it
-        never does, keep the title/artist and move on.
-      */
-      if(attempts < 25){
-        setTimeout(readMetadata, 160);
-      }else{
-        metadataScanIndex++;
-
-        renderPlaylist($("trackSearch").value);
-        setTimeout(scanNext, 80);
-      }
-    };
-
-    setTimeout(readMetadata, 180);
-  };
-
-  scanNext();
-}
-
-function createMetadataPlayer(){
-  metadataPlayer = new YT.Player("youtubeMetadataPlayer", {
-    width: "200",
-    height: "200",
-    videoId: START_VIDEO_ID,
-
-    playerVars: {
-      autoplay: 0,
-      controls: 0,
-      disablekb: 1,
-      fs: 0,
-      playsinline: 1,
-      rel: 0,
-      enablejsapi: 1,
-      origin: window.location.origin
-    },
-
-    events: {
-      onReady: () => {
-        metadataPlayerReady = true;
-
-        try{
-          metadataPlayer.mute();
-        }catch{}
-
-        startMetadataScanner();
-      },
-
-      onError: event => {
-        console.warn("Metadata player error:", event.data);
-
-        if(metadataScanRunning){
-          metadataScanIndex++;
-        }
-      }
-    }
-  });
+  try{
+    player.previousVideo();
+  }catch(error){
+    console.error("previousVideo failed:", error);
+    toast("Unable to play the previous song.");
+  }
 }
 
 /* ---------------------------------------------------------
@@ -1308,11 +1199,12 @@ function onYouTubeReady(){
     YouTube can populate getPlaylist() asynchronously.
   */
   try{
-    player.cuePlaylist({
+    player.loadPlaylist({
       list: PLAYLIST_ID,
       listType: "playlist",
       index: 0,
-      startSeconds: 0
+      startSeconds: 0,
+      suggestedQuality: "small"
     });
   }catch(error){
     console.error("Playlist load error:", error);
@@ -1361,9 +1253,13 @@ function onYouTubeStateChange(event){
       setStatus("PLAYLIST READY");
 
       /*
-        Keep the playlist synchronized whenever YouTube cues
-        an item, but do not auto-play. The user can start music
-        with the custom Play button.
+        IMPORTANT:
+        Do NOT call cueVideoById() here. That replaces the
+        playlist context with a single video.
+
+        The playlist must remain owned by the main YouTube
+        player so playVideoAt(), nextVideo(), previousVideo()
+        and automatic playlist continuation all keep working.
       */
       syncPlaylistFromPlayer();
 
@@ -1373,11 +1269,6 @@ function onYouTubeStateChange(event){
 
         if(startIndex >= 0){
           currentIndex = startIndex;
-
-          /*
-            Cue the requested starting video without autoplay.
-          */
-          player.cueVideoById(ids[startIndex]);
           renderPlaylist($("trackSearch").value);
           updateCurrentTrack();
         }
