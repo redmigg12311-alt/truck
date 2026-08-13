@@ -3,23 +3,52 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>हॉर्न ओके प्लीज़ — Indian Truck Driver Music</title>
-<meta name="description" content="Horn OK Please — Indian truck driver music playlist.">
+<title>हॉर्न ओके प्लीज़ — Indian Truck Driver Music | Highway Radio</title>
+<meta name="description" content="Horn OK Please is a free online Indian truck driver music player — a curated highway radio playlist of desi truck songs and road anthems, streamed live from YouTube. Built by Harit Nagar.">
+<meta name="author" content="Harit Nagar">
+<link rel="icon" type="image/webp" href="https://i.ibb.co/gZv7w3Hd/colorful-truck-art-862994-569560.webp">
+<link rel="apple-touch-icon" href="https://i.ibb.co/gZv7w3Hd/colorful-truck-art-862994-569560.webp">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="हॉर्न ओके प्लीज़ — Indian Truck Driver Music">
+<meta property="og:description" content="A free online Indian truck driver music player — desi truck songs and highway anthems, streamed live. Built by Harit Nagar.">
+<meta property="og:image" content="https://i.ibb.co/4wMhqVSM/truckkk.webp">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="हॉर्न ओके प्लीज़ — Indian Truck Driver Music">
+<meta name="twitter:description" content="A free online Indian truck driver music player — desi truck songs and highway anthems, streamed live. Built by Harit Nagar.">
+<meta name="twitter:image" content="https://i.ibb.co/4wMhqVSM/truckkk.webp">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Mukta:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Mukta:wght@400;500;600;700;800&family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,300..600,0..1,-25..0&display=swap" rel="stylesheet">
 
 <style>
 :root{
-  --cream:#fff5df;
-  --gold:#ffc300;
-  --orange:#f2790f;
-  --green:#1e7a46;
-  --glass:rgba(18,22,28,.55);
-  --glass2:rgba(255,255,255,.10);
-  --line:rgba(255,255,255,.22);
-  --shadow:0 -12px 40px rgba(0,0,0,.42);
-  --bar-h:74px;
+  --bg:#0a0d12;
+  --cream:#fff6e4;
+  --ink:#0c0f14;
+  --amber:#ffb020;
+  --amber-deep:#f2790f;
+  --diesel:#1e7a46;
+  --chrome:#c7d2da;
+  --surface: rgba(22,26,32,.66);
+  --surface-hi: rgba(255,255,255,.08);
+  --surface-hover: rgba(255,255,255,.13);
+  --stroke: rgba(255,255,255,.14);
+  --stroke-strong: rgba(255,255,255,.24);
+  --text-dim: rgba(255,246,228,.62);
+  --text-faint: rgba(255,246,228,.42);
+  --green:#35df83;
+  --red:#e0483f;
+  --r-xl:28px;
+  --r-lg:20px;
+  --r-md:14px;
+  --r-sm:9px;
+  --e1: 0 6px 18px rgba(0,0,0,.32);
+  --e2: 0 18px 46px rgba(0,0,0,.46);
+  --e3: 0 30px 90px rgba(0,0,0,.58);
+  --bar-h:78px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{min-height:100%;height:100%}
@@ -27,304 +56,373 @@ body{
   font-family:'Mukta',sans-serif;
   color:var(--cream);
   background:
-    linear-gradient(180deg,rgba(0,0,0,.10),rgba(0,0,0,.48)),
-    url('https://i.ibb.co/S7t9NmW0/truck.webp') center/cover fixed no-repeat #14213d;
+    linear-gradient(180deg,rgba(6,8,11,.20),rgba(6,8,11,.58) 70%,rgba(6,8,11,.82)),
+    url('https://i.ibb.co/S7t9NmW0/truck.webp') center/cover fixed no-repeat var(--bg);
   overflow:hidden;
 }
 body:after{
   content:"";
   position:fixed;inset:0;pointer-events:none;
   background:
-    radial-gradient(circle at 50% 55%,transparent 25%,rgba(0,0,0,.25) 100%),
-    linear-gradient(90deg,rgba(0,0,0,.12),transparent 35%,transparent 65%,rgba(0,0,0,.14));
+    radial-gradient(circle at 50% 55%,transparent 25%,rgba(0,0,0,.28) 100%),
+    linear-gradient(90deg,rgba(0,0,0,.14),transparent 35%,transparent 65%,rgba(0,0,0,.16));
 }
-button,a{font:inherit}
-button{cursor:pointer}
-button:focus-visible,a:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+button,a,input{font:inherit}
+button{cursor:pointer;font-family:inherit}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
 
+/* ---------- Material Symbols helper ---------- */
+.msr{
+  font-family:'Material Symbols Rounded';
+  font-weight:400;
+  font-style:normal;
+  font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;
+  line-height:1;
+  display:inline-block;
+  user-select:none;
+  vertical-align:middle;
+}
+.msr.fill{font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 24}
+
+/* ---------- Header ---------- */
 header{
-  position:fixed;left:0;right:0;top:0;
-  z-index:30;
+  position:fixed;left:0;right:0;top:0;z-index:30;
   display:flex;align-items:center;justify-content:space-between;
-  padding:20px 28px;
+  padding:18px 26px;gap:12px;
 }
-.online{display:flex;align-items:center;gap:8px;font-size:15px}
-.dot{width:9px;height:9px;border-radius:50%;background:#35df83;box-shadow:0 0 13px #35df83}
-.music-link{
-  color:var(--cream);text-decoration:none;
-  padding:9px 15px;border:1px solid var(--line);border-radius:999px;
-  background:rgba(255,255,255,.08);
-  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-  transition:.2s;
+.brand{display:flex;align-items:center;gap:10px}
+.brand-icon{
+  width:38px;height:38px;border-radius:12px;
+  display:grid;place-items:center;
+  background:linear-gradient(155deg,var(--amber),var(--amber-deep));
+  color:#231400;box-shadow:var(--e1);
+  flex:0 0 auto;
 }
-.music-link:hover{background:rgba(255,255,255,.16);transform:translateY(-1px)}
+.brand-text{display:flex;flex-direction:column;line-height:1.15}
+.brand-text b{font-size:14px;font-weight:800;letter-spacing:.01em}
+.brand-text span{font-size:11px;color:var(--text-dim)}
 
+.header-right{display:flex;align-items:center;gap:10px}
+
+.listeners-chip{
+  display:flex;align-items:center;gap:7px;
+  padding:8px 13px 8px 10px;border-radius:999px;
+  border:1px solid var(--stroke);background:var(--surface);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  font-size:12.5px;font-weight:600;
+}
+.listeners-chip .msr{font-size:17px;color:var(--green)}
+.listeners-dot{
+  width:7px;height:7px;border-radius:50%;background:var(--green);
+  box-shadow:0 0 9px var(--green);flex:0 0 auto;
+  animation:pulseDot 1.8s ease-in-out infinite;
+}
+@keyframes pulseDot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(.72)}}
+.listeners-num{font-variant-numeric:tabular-nums;color:var(--cream)}
+.listeners-label{color:var(--text-dim);font-weight:500}
+
+.music-link{
+  display:flex;align-items:center;gap:6px;
+  color:var(--cream);text-decoration:none;
+  padding:9px 16px 9px 13px;border:1px solid var(--stroke);border-radius:999px;
+  background:var(--surface);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  transition:.2s;font-size:13px;font-weight:600;
+}
+.music-link .msr{font-size:17px}
+.music-link:hover{background:var(--surface-hover);transform:translateY(-1px);border-color:var(--stroke-strong)}
+
+/* ---------- Status banner ---------- */
+.status-banner{
+  position:fixed;z-index:40;left:50%;top:84px;transform:translateX(-50%);
+  max-width:min(560px,calc(100vw - 32px));
+  padding:13px 18px;border-radius:16px;
+  background:rgba(224,72,63,.94);color:#fff;
+  font-size:13px;line-height:1.5;text-align:center;
+  box-shadow:var(--e2);display:none;
+  border:1px solid rgba(255,255,255,.18);
+}
+.status-banner.show{display:block}
+.status-banner b{color:#ffe28a}
+
+/* ---------- Hero ---------- */
 .title{
-  position:absolute;z-index:3;left:0;right:0;top:22%;
+  position:absolute;z-index:3;left:0;right:0;top:19%;
   text-align:center;padding:0 16px;
 }
 .title h1{
   font-family:'Yatra One',cursive;
-  font-size:clamp(58px,9vw,128px);
+  font-size:clamp(52px,8vw,112px);
   line-height:1.02;color:var(--cream);
   text-shadow:4px 4px 0 #d62828,8px 8px 0 rgba(0,0,0,.30);
 }
-.title p{
-  margin-top:15px;color:var(--gold);
-  font-size:clamp(14px,1.6vw,19px);
-  letter-spacing:.04em;text-shadow:0 2px 7px #000;
-}
-
-.truck-marquee{
-  display:block;width:max-content;max-width:min(980px,calc(100vw - 40px));
-  margin:10px auto 0;padding:7px 14px;overflow:hidden;white-space:nowrap;
-  color:#ffd45a;font-size:13px;font-weight:700;letter-spacing:.08em;
-  text-shadow:0 2px 8px #000;background:rgba(10,14,18,.38);
-  border:1px solid rgba(255,195,0,.28);border-radius:999px;
+.hero-sub{
+  display:inline-flex;align-items:center;gap:10px;margin-top:16px;
+  padding:9px 18px;border-radius:999px;
+  background:rgba(10,14,18,.4);border:1px solid var(--stroke);
   backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
 }
-.truck-marquee span{display:inline-block}
-
-/* status banner shown only when something's wrong */
-.status-banner{
-  position:fixed;z-index:40;left:50%;top:90px;transform:translateX(-50%);
-  max-width:min(560px,calc(100vw - 32px));
-  padding:12px 18px;border-radius:14px;
-  background:rgba(214,40,40,.92);color:#fff;
-  font-size:13px;line-height:1.5;text-align:center;
-  box-shadow:0 12px 30px rgba(0,0,0,.4);
-  display:none;
+.hero-sub-label{
+  font-size:clamp(12px,1.4vw,15px);font-weight:800;letter-spacing:.12em;
+  color:var(--cream);text-shadow:0 2px 7px #000;
 }
-.status-banner.show{display:block}
-.status-banner a{color:#ffe28a;text-decoration:underline}
-
-.player{
-  position:fixed;z-index:12;
-  left:0;right:0;bottom:0;
-  height:var(--bar-h);
-  display:flex;align-items:center;gap:18px;
-  padding:0 20px;
-  border-top:1px solid var(--line);
-  background:
-    linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.015)),
-    var(--glass);
-  box-shadow:var(--shadow),inset 0 1px rgba(255,255,255,.14);
-  backdrop-filter:blur(24px) saturate(135%);
-  -webkit-backdrop-filter:blur(24px) saturate(135%);
-}
-.player:before{
-  content:"";position:absolute;inset:0;pointer-events:none;
-  background:linear-gradient(90deg,rgba(255,184,72,.06),transparent 30%,transparent 70%,rgba(255,184,72,.06));
-}
-
-.bar-track{position:relative;display:flex;align-items:center;gap:12px;min-width:0;flex:0 0 auto;width:min(30%,260px)}
-.cover{
-  width:46px;height:46px;flex:0 0 46px;border-radius:10px;object-fit:cover;
-  background:#202020;
-  box-shadow:0 6px 16px rgba(0,0,0,.35);
-  border:1px solid rgba(255,255,255,.28);
-}
-.info{min-width:0;flex:1}
-.eyebrow{
+.hero-sub-sep{color:var(--text-faint)}
+.hero-sub-clock{
   display:flex;align-items:center;gap:6px;
-  font-size:10px;text-transform:uppercase;letter-spacing:.12em;
-  opacity:.62;margin-bottom:2px;
+  font-size:clamp(12px,1.4vw,15px);font-weight:600;color:var(--text-dim);
+  font-variant-numeric:tabular-nums;
 }
-.live-dot{width:5px;height:5px;background:#35df83;border-radius:50%;box-shadow:0 0 7px #35df83}
-.player.error .live-dot{background:#d62828;box-shadow:0 0 7px #d62828}
-.song{
-  font-size:14px;font-weight:700;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+.hero-sub-clock .msr{font-size:16px;color:var(--amber)}
+
+/* ---------- Bottom player bar ---------- */
+.player{
+  position:fixed;z-index:12;left:0;right:0;bottom:0;height:var(--bar-h);
+  display:flex;align-items:center;gap:18px;padding:0 22px;
+  border-top:1px solid var(--stroke);
+  background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.01)),var(--surface);
+  box-shadow:0 -14px 44px rgba(0,0,0,.44),inset 0 1px rgba(255,255,255,.12);
+  backdrop-filter:blur(26px) saturate(140%);-webkit-backdrop-filter:blur(26px) saturate(140%);
 }
+
+.bar-track{position:relative;display:flex;align-items:center;gap:13px;min-width:0;flex:0 0 auto;width:min(30%,270px)}
+.cover-wrap{position:relative;flex:0 0 50px}
+.cover{
+  width:50px;height:50px;border-radius:13px;object-fit:cover;
+  background:#202020;box-shadow:var(--e1);border:1px solid var(--stroke-strong);
+}
+@keyframes coverPulse{50%{transform:scale(1.045)}}
+.player.playing .cover{animation:coverPulse 1.8s ease-in-out infinite}
+.eq-badge{
+  position:absolute;right:-4px;bottom:-4px;width:20px;height:20px;border-radius:50%;
+  background:var(--green);display:none;place-items:center;box-shadow:0 0 0 3px var(--surface);
+}
+.player.playing .eq-badge{display:grid}
+.eq-badge span{display:flex;gap:1.5px;align-items:flex-end;height:9px}
+.eq-badge b{width:2px;background:#062012;border-radius:1px;animation:eqBar .9s ease-in-out infinite}
+.eq-badge b:nth-child(1){height:40%;animation-delay:0s}
+.eq-badge b:nth-child(2){height:100%;animation-delay:.15s}
+.eq-badge b:nth-child(3){height:65%;animation-delay:.3s}
+@keyframes eqBar{0%,100%{transform:scaleY(.4)}50%{transform:scaleY(1)}}
+
+.info{min-width:0;flex:1}
+.eyebrow{display:flex;align-items:center;gap:6px;font-size:10px;text-transform:uppercase;letter-spacing:.12em;opacity:.6;margin-bottom:2px}
+.live-dot{width:5px;height:5px;background:var(--green);border-radius:50%;box-shadow:0 0 7px var(--green)}
+.player.error .live-dot{background:var(--red);box-shadow:0 0 7px var(--red)}
+.song{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .artist{font-size:12px;opacity:.68;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
-@keyframes coverPulse{50%{transform:scale(1.04)}}
-.player.playing .cover{animation:coverPulse 1.8s ease-in-out infinite}
-
-.bar-center{
-  position:relative;
-  flex:1 1 auto;min-width:0;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:4px;
-}
-.controls{display:flex;align-items:center;justify-content:center;gap:14px}
+.bar-center{position:relative;flex:1 1 auto;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px}
+.controls{display:flex;align-items:center;justify-content:center;gap:6px}
 .control{
-  width:32px;height:32px;border:0;border-radius:50%;
-  color:var(--cream);background:transparent;font-size:16px;
-  display:grid;place-items:center;
+  width:36px;height:36px;border:0;border-radius:50%;color:var(--cream);
+  background:transparent;display:grid;place-items:center;transition:.15s;
 }
-.control:hover{background:rgba(255,255,255,.09)}
-.control:disabled{opacity:.35;cursor:not-allowed}
+.control .msr{font-size:22px}
+.control:hover:not(:disabled){background:var(--surface-hover)}
+.control:disabled{opacity:.32;cursor:not-allowed}
 .play{
-  width:34px;height:34px;border-radius:50%;border:0;
-  background:var(--gold);color:#171717;font-size:15px;
-  display:grid;place-items:center;
-  box-shadow:0 6px 16px rgba(0,0,0,.28);
+  width:42px;height:42px;border-radius:50%;border:0;
+  background:linear-gradient(155deg,var(--amber),var(--amber-deep));color:#241400;
+  display:grid;place-items:center;box-shadow:var(--e1);transition:.15s;
 }
-.play:hover{transform:scale(1.05)}
+.play .msr{font-size:24px}
+.play:hover:not(:disabled){transform:scale(1.06)}
 .play:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.icon-toggle.active{color:var(--amber)}
+.icon-toggle.active .msr{font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 24}
 
-.progress{
-  display:flex;align-items:center;gap:8px;width:min(460px,100%);
-}
-.times{font-size:10px;opacity:.55;flex:0 0 auto;width:32px;text-align:center}
-.range{
-  flex:1;height:4px;appearance:none;-webkit-appearance:none;
-  border-radius:99px;background:rgba(255,255,255,.25);outline:none;
-}
-.range::-webkit-slider-thumb{
-  appearance:none;-webkit-appearance:none;width:11px;height:11px;
-  border-radius:50%;background:var(--cream);box-shadow:0 2px 6px #000;
-}
-.range::-moz-range-thumb{
-  width:11px;height:11px;border:0;border-radius:50%;background:var(--cream);
-}
+.progress{display:flex;align-items:center;gap:9px;width:min(480px,100%)}
+.times{font-size:10.5px;opacity:.55;flex:0 0 auto;width:34px;text-align:center;font-variant-numeric:tabular-nums}
+.range{flex:1;height:4px;appearance:none;-webkit-appearance:none;border-radius:99px;background:var(--stroke-strong);outline:none}
+.range::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;width:12px;height:12px;border-radius:50%;background:var(--amber);box-shadow:0 2px 6px #000}
+.range::-moz-range-thumb{width:12px;height:12px;border:0;border-radius:50%;background:var(--amber)}
 
-.bar-right{
-  position:relative;
-  flex:0 0 auto;display:flex;align-items:center;gap:10px;
-  width:min(30%,260px);justify-content:flex-end;
+.bar-right{position:relative;flex:0 0 auto;display:flex;align-items:center;gap:8px;width:min(30%,270px);justify-content:flex-end}
+.icon-btn{
+  width:38px;height:38px;border-radius:50%;display:grid;place-items:center;
+  border:1px solid var(--stroke);color:var(--cream);background:var(--surface-hi);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:.15s;
 }
-.badges{display:flex;gap:6px}
-.badge{
-  padding:4px 9px;border-radius:999px;font-size:11px;
-  border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);
-  opacity:.8;white-space:nowrap;
-}
-.actions{display:flex;gap:6px}
-.icon{
-  width:34px;height:34px;border-radius:50%;
-  display:grid;place-items:center;
-  border:1px solid var(--line);
-  color:var(--cream);background:rgba(255,255,255,.08);
-  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
-  font-size:14px;
-}
-.icon:hover{background:rgba(255,255,255,.16)}
-.icon.active{border-color:var(--gold);color:var(--gold)}
+.icon-btn .msr{font-size:19px}
+.icon-btn:hover{background:var(--surface-hover)}
+.icon-btn.active{border-color:var(--amber);color:var(--amber)}
 .playlist-btn{
-  border:1px solid rgba(255,255,255,.25);
-  border-radius:10px;padding:8px 12px;
-  color:var(--cream);background:rgba(255,255,255,.09);
-  display:flex;align-items:center;gap:6px;font-size:12px;
+  border:1px solid var(--stroke);border-radius:14px;padding:9px 15px;
+  color:var(--cream);background:var(--surface-hi);
+  display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;transition:.15s;
 }
-.playlist-btn:hover{background:rgba(255,255,255,.16);border-color:var(--gold)}
+.playlist-btn .msr{font-size:19px}
+.playlist-btn:hover{background:var(--surface-hover);border-color:var(--stroke-strong)}
 
-.ind{position:absolute;top:6px;width:14px;height:9px;border-radius:3px;background:#654d12;z-index:-1}
-.ind.l{left:6px}.ind.r{right:6px}
-.player.playing .ind{background:var(--gold);box-shadow:0 0 12px var(--gold);animation:blink 1s steps(1) infinite}
-@keyframes blink{50%{opacity:.25}}
-
+/* ---------- Playlist drawer ---------- */
 .drawer-backdrop{
-  position:fixed;inset:0;z-index:50;
-  background:rgba(0,0,0,.35);
-  backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);
-  opacity:0;pointer-events:none;transition:.28s;
+  position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.4);
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  opacity:0;pointer-events:none;transition:.3s;
 }
 .drawer{
-  position:fixed;z-index:60;
-  top:18px;right:18px;bottom:calc(var(--bar-h) + 18px);
-  width:min(430px,calc(100vw - 36px));
-  border:1px solid rgba(255,255,255,.25);
-  border-radius:28px;
-  background:
-    linear-gradient(145deg,rgba(255,255,255,.17),rgba(255,255,255,.055)),
-    rgba(14,18,22,.67);
-  backdrop-filter:blur(28px) saturate(130%);
-  -webkit-backdrop-filter:blur(28px) saturate(130%);
-  box-shadow:0 30px 90px rgba(0,0,0,.55);
-  transform:translateX(calc(100% + 40px));transition:.32s ease;
-  overflow:hidden;
-  display:flex;flex-direction:column;
+  position:fixed;z-index:60;top:18px;right:18px;bottom:calc(var(--bar-h) + 18px);
+  width:min(420px,calc(100vw - 36px));
+  border:1px solid var(--stroke-strong);border-radius:var(--r-xl);
+  background:linear-gradient(150deg,rgba(255,255,255,.10),rgba(255,255,255,.02)),rgba(12,15,19,.78);
+  backdrop-filter:blur(30px) saturate(135%);-webkit-backdrop-filter:blur(30px) saturate(135%);
+  box-shadow:var(--e3);overflow:hidden;display:flex;flex-direction:column;
+  transform:translateX(calc(100% + 40px));transition:.34s cubic-bezier(.2,.8,.2,1);
 }
 .drawer.open{transform:translateX(0)}
 .drawer-backdrop.open{opacity:1;pointer-events:auto}
-.drawer-head{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:20px 20px 15px;
+
+.drawer-head{padding:18px 18px 12px;flex:0 0 auto}
+.drawer-head-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.drawer-title{font-size:20px;font-weight:800}
+.drawer-sub{font-size:12.5px;color:var(--text-dim);margin-top:2px}
+.close{width:38px;height:38px;border-radius:50%;border:1px solid var(--stroke);color:var(--cream);background:var(--surface-hi);display:grid;place-items:center}
+.close .msr{font-size:20px}
+.close:hover{background:var(--surface-hover)}
+
+.search-box{
+  display:flex;align-items:center;gap:8px;padding:9px 13px;
+  border:1px solid var(--stroke);border-radius:14px;background:rgba(0,0,0,.22);
 }
-.drawer-title{font-size:22px;font-weight:700}
-.drawer-sub{font-size:13px;opacity:.58}
-.close{
-  width:42px;height:42px;border-radius:50%;border:1px solid var(--line);
-  color:var(--cream);background:rgba(255,255,255,.08);font-size:22px;
+.search-box .msr{font-size:19px;color:var(--text-dim)}
+.search-box input{
+  flex:1;background:transparent;border:0;outline:0;color:var(--cream);font-size:13.5px;
 }
-.playlist-embed{
-  flex:1;min-height:0;padding:0 12px 12px;
+.search-box input::placeholder{color:var(--text-faint)}
+
+.mini-video{
+  flex:0 0 auto;margin:0 18px 12px;border-radius:var(--r-md);overflow:hidden;
+  aspect-ratio:16/9;background:#000;box-shadow:var(--e1);border:1px solid var(--stroke);
 }
-#youtube-player{
-  width:100%;height:100%;min-height:430px;border-radius:20px;overflow:hidden;
+#youtube-player{width:100%;height:100%}
+
+.track-list{flex:1;min-height:0;overflow-y:auto;padding:2px 10px 14px;scrollbar-width:thin}
+.track-list::-webkit-scrollbar{width:7px}
+.track-list::-webkit-scrollbar-thumb{background:var(--stroke-strong);border-radius:99px}
+
+.track-row{
+  display:flex;align-items:center;gap:11px;padding:8px 8px;border-radius:var(--r-md);
+  cursor:pointer;transition:.15s;border:1px solid transparent;
 }
-.drawer-foot{
-  padding:12px 18px 18px;border-top:1px solid rgba(255,255,255,.10);
-  font-size:12px;opacity:.58;
+.track-row:hover{background:var(--surface-hi)}
+.track-row.active{background:linear-gradient(90deg,rgba(255,176,32,.16),rgba(255,176,32,.03));border-color:rgba(255,176,32,.35)}
+.track-index{width:22px;flex:0 0 22px;text-align:center;font-size:12px;color:var(--text-faint);font-variant-numeric:tabular-nums}
+.track-row.active .track-index{color:var(--amber)}
+.track-eq{display:none;gap:2px;align-items:flex-end;height:13px;width:22px;justify-content:center}
+.track-row.active .track-eq{display:flex}
+.track-row.active .track-index{display:none}
+.track-eq b{width:2.5px;background:var(--amber);border-radius:1px;animation:eqBar .9s ease-in-out infinite}
+.track-eq b:nth-child(1){height:40%}
+.track-eq b:nth-child(2){height:100%;animation-delay:.15s}
+.track-eq b:nth-child(3){height:65%;animation-delay:.3s}
+.track-thumb{
+  width:44px;height:44px;border-radius:10px;object-fit:cover;flex:0 0 44px;
+  background:rgba(255,255,255,.08);box-shadow:0 4px 10px rgba(0,0,0,.3);
 }
+.track-thumb.skeleton{background:linear-gradient(90deg,rgba(255,255,255,.06),rgba(255,255,255,.14),rgba(255,255,255,.06));background-size:200% 100%;animation:shimmer 1.4s ease-in-out infinite}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.track-meta{min-width:0;flex:1}
+.track-title{font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.track-row.active .track-title{color:var(--amber)}
+.track-artist{font-size:11.5px;color:var(--text-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.track-title.skeleton,.track-artist.skeleton{
+  height:11px;border-radius:5px;background:linear-gradient(90deg,rgba(255,255,255,.06),rgba(255,255,255,.14),rgba(255,255,255,.06));
+  background-size:200% 100%;animation:shimmer 1.4s ease-in-out infinite;margin:3px 0;
+}
+.track-artist.skeleton{width:60%}
+.track-play-icon{width:30px;flex:0 0 30px;display:grid;place-items:center;opacity:0;transition:.15s;color:var(--amber)}
+.track-row:hover .track-play-icon{opacity:1}
+.track-play-icon .msr{font-size:20px}
+
+.drawer-foot{padding:11px 18px 15px;border-top:1px solid var(--stroke);font-size:11.5px;color:var(--text-faint);flex:0 0 auto}
 
 @media(max-width:900px){
   .bar-track{width:auto;max-width:38%}
-  .bar-right .badges{display:none}
+  .header-right .music-link span{display:none}
   .progress{width:100%}
 }
 
 @media(max-width:720px){
   body{overflow:auto;min-height:100svh;background-attachment:scroll}
-  .title{top:12%;}.title h1{font-size:clamp(52px,15vw,84px)}
+  .title{top:11%}.title h1{font-size:clamp(48px,15vw,80px)}
   .title p{font-size:13px;max-width:calc(100vw - 28px);padding:8px 12px}
   .truck-marquee{max-width:calc(100vw - 28px);font-size:11px;padding:7px 10px}
-  header{padding:14px 16px}
-  .status-banner{top:78px}
+  header{padding:14px 14px}
+  .listeners-label{display:none}
+  .status-banner{top:76px}
 
-  .player{
-    --bar-h:64px;
-    padding:0 12px;gap:10px;
-  }
-  .cover{width:38px;height:38px;flex-basis:38px;border-radius:8px}
+  .player{--bar-h:66px;padding:0 12px;gap:8px}
+  .cover{width:40px;height:40px;border-radius:10px}
   .song{font-size:13px}
   .artist{font-size:11px}
   .eyebrow{display:none}
-  .bar-center{gap:2px}
-  .controls{gap:8px}
-  .control{width:28px;height:28px;font-size:14px}
-  .play{width:30px;height:30px;font-size:13px}
+  .controls{gap:2px}
+  .control{width:32px;height:32px}
+  .control .msr{font-size:19px}
+  .play{width:36px;height:36px}
+  .play .msr{font-size:20px}
   .progress{gap:6px}
   .times{width:26px;font-size:9px}
   .bar-right{width:auto}
   .playlist-btn span{display:none}
-  .playlist-btn{padding:8px}
-  .ind{display:none}
+  .playlist-btn{padding:9px}
+
+  .drawer{
+    top:auto;right:0;left:0;bottom:0;
+    height:min(82vh,720px);width:100%;
+    border-radius:24px 24px 0 0;
+    transform:translateY(110%);
+  }
+  .drawer.open{transform:translateY(0)}
 }
 
 @media(max-width:430px){
   .bar-track{max-width:34%}
-  .title{top:9%}
-  .title h1{font-size:clamp(44px,15vw,64px)}
+  .title{top:8%}
+  .title h1{font-size:clamp(42px,15vw,60px)}
+  .brand-text span{display:none}
 }
 </style>
 </head>
 
 <body>
 <header>
-  <div class="online"><span class="dot"></span><span id="clock"></span></div>
-  <a class="music-link" href="https://music.youtube.com/playlist?list=PL0umg_TNpoZTTdZVIi5tfX69pRmoMFGna" target="_blank" rel="noopener">YouTube Music ↗</a>
+  <div class="brand">
+    <div class="brand-icon"><span class="msr fill">local_shipping</span></div>
+    <div class="brand-text">
+      <b>Horn OK Please</b>
+      <span>Highway Radio</span>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="listeners-chip" title="Simulated listener count">
+      <span class="listeners-dot"></span>
+      <span class="listeners-num" id="listenersNum">—</span>
+      <span class="listeners-label">on the highway now</span>
+    </div>
+    <a class="music-link" href="https://music.youtube.com/playlist?list=PL0umg_TNpoZTTdZVIi5tfX69pRmoMFGna" target="_blank" rel="noopener">
+      <span class="msr">open_in_new</span><span>YouTube Music</span>
+    </a>
+  </div>
 </header>
 
 <div id="statusBanner" class="status-banner"></div>
 
 <section class="title">
   <h1>हॉर्न ओके<br>प्लीज़</h1>
-  <p id="truckTagline">सफ़र लंबा हो तो गाना ज़ोरदार होना चाहिए • Highway Vibes • Full Volume</p>
-  <div class="truck-marquee" aria-live="polite">
-    <span id="truckMarquee">HORN OK PLEASE • BURI NAZAR WALE TERA MUH KAALA • SAFE DRIVE SAVE LIFE</span>
+  <div class="hero-sub">
+    <span class="hero-sub-label">HORN OK PLEASE</span>
+    <span class="hero-sub-sep">•</span>
+    <span class="hero-sub-clock"><span class="msr fill">schedule</span><span id="heroClock">—</span></span>
   </div>
 </section>
 
 <main class="player" id="player">
-  <div class="ind l"></div><div class="ind r"></div>
-
   <div class="bar-track">
-    <img id="cover" class="cover"
-      src="https://i.ibb.co/S7t9NmW0/truck.webp"
-      alt="Indian Truck Driver Music playlist cover">
+    <div class="cover-wrap">
+      <img id="cover" class="cover" src="https://i.ibb.co/S7t9NmW0/truck.webp" alt="Indian Truck Driver Music playlist cover">
+      <div class="eq-badge"><span><b></b><b></b><b></b></span></div>
+    </div>
     <div class="info">
       <div class="eyebrow"><span class="live-dot"></span><span id="status">LOADING…</span></div>
       <div id="song" class="song">Indian Truck Driver Music</div>
@@ -334,9 +432,9 @@ header{
 
   <div class="bar-center">
     <div class="controls">
-      <button class="control" id="prev" aria-label="Previous song" title="Previous song" disabled>⏮</button>
-      <button class="play" id="play" aria-label="Play or pause" title="Play or pause" disabled>▶</button>
-      <button class="control" id="next" aria-label="Next song" title="Next song" disabled>⏭</button>
+      <button class="control" id="prev" aria-label="Previous song" title="Previous song" disabled><span class="msr fill">skip_previous</span></button>
+      <button class="play" id="play" aria-label="Play or pause" title="Play or pause" disabled><span class="msr fill" id="playIcon">play_arrow</span></button>
+      <button class="control" id="next" aria-label="Next song" title="Next song" disabled><span class="msr fill">skip_next</span></button>
     </div>
     <div class="progress">
       <span id="currentTime" class="times">0:00</span>
@@ -346,43 +444,38 @@ header{
   </div>
 
   <div class="bar-right">
-    <div class="badges">
-      <span class="badge">🛣 Highway</span>
-      <span class="badge">🚚 Truck</span>
-    </div>
-    <div class="actions">
-      <button class="icon" id="shuffle" title="Shuffle" aria-label="Shuffle">⌘</button>
-    </div>
-    <button class="playlist-btn" id="openPlaylist">☷ <span>Song List</span></button>
+    <button class="icon-btn icon-toggle" id="shuffle" title="Shuffle" aria-label="Shuffle"><span class="msr">shuffle</span></button>
+    <button class="playlist-btn" id="openPlaylist"><span class="msr">queue_music</span><span>Song List</span></button>
   </div>
 </main>
 
 <div id="drawerBackdrop" class="drawer-backdrop"></div>
 <aside id="drawer" class="drawer" aria-hidden="true">
   <div class="drawer-head">
-    <div>
-      <div class="drawer-title">Playlist</div>
-      <div class="drawer-sub" id="drawerSub">Indian Truck Driver Music</div>
+    <div class="drawer-head-row">
+      <div>
+        <div class="drawer-title">Playlist</div>
+        <div class="drawer-sub" id="drawerSub">Indian Truck Driver Music</div>
+      </div>
+      <button class="close" id="closePlaylist" aria-label="Close playlist"><span class="msr">close</span></button>
     </div>
-    <button class="close" id="closePlaylist" aria-label="Close playlist">×</button>
+    <div class="search-box">
+      <span class="msr">search</span>
+      <input id="trackSearch" type="text" placeholder="Search this playlist…">
+    </div>
   </div>
 
-  <div class="playlist-embed">
-    <div id="youtube-player"></div>
-  </div>
+  <div class="mini-video"><div id="youtube-player"></div></div>
 
-  <div class="drawer-foot">
-    Select any song above to play it. Playback is powered directly by YouTube.
-  </div>
+  <div class="track-list" id="trackList"></div>
+
+  <div class="drawer-foot">Tap any song to play it. Playback is powered directly by YouTube.</div>
 </aside>
-
-<!-- The official YouTube IFrame Player API creates the actual player. The
-     visible player lives inside the glass playlist drawer and the custom
-     glass controls below operate this same player instance. -->
 
 <script>
 const YT_PLAYLIST_ID = "PL0umg_TNpoZTTdZVIi5tfX69pRmoMFGna";
 const API_LOAD_TIMEOUT_MS = 7000;
+const OEMBED_CONCURRENCY = 5;
 
 let ytPlayer = null;
 let isPlaying = false;
@@ -390,6 +483,9 @@ let progressTimer = null;
 let apiReadyFired = false;
 let consecutiveErrors = 0;
 const MAX_CONSECUTIVE_ERRORS = 5;
+let trackIds = [];
+let trackMeta = {};
+let activeIndex = -1;
 
 const $ = id => document.getElementById(id);
 
@@ -398,32 +494,30 @@ function fmt(seconds){
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2,"0")}`;
 }
 
-function updateClock(){
-  $("clock").textContent = new Date().toLocaleTimeString("en-IN",{
-    hour:"numeric",
-    minute:"2-digit"
-  }).toLowerCase();
-}
-updateClock();
-setInterval(updateClock,1000);
+/* ---------- Simulated "listeners online" ---------- */
+(function listenersWidget(){
+  const KEY = "hop_listeners_v1";
+  let val = Number(sessionStorage.getItem(KEY));
+  if(!val || val < 400) val = 900 + Math.floor(Math.random() * 900);
+  const render = ()=> { $("listenersNum").textContent = val.toLocaleString("en-IN"); };
+  render();
+  setInterval(()=>{
+    const delta = Math.floor(Math.random() * 13) - 5;
+    val = Math.max(420, Math.min(3800, val + delta));
+    sessionStorage.setItem(KEY, val);
+    render();
+  }, 3500);
+})();
 
-function showBanner(html){
-  const el = $("statusBanner");
-  el.innerHTML = html;
-  el.classList.add("show");
-}
-function hideBanner(){
-  $("statusBanner").classList.remove("show");
-}
-
-function setControlsEnabled(enabled){
-  ["play","prev","next"].forEach(id => { $(id).disabled = !enabled; });
-}
+/* ---------- Status banner / control state ---------- */
+function showBanner(html){ const el = $("statusBanner"); el.innerHTML = html; el.classList.add("show"); }
+function hideBanner(){ $("statusBanner").classList.remove("show"); }
+function setControlsEnabled(enabled){ ["play","prev","next"].forEach(id => { $(id).disabled = !enabled; }); }
 
 function setPlaying(value){
   isPlaying = value;
   $("player").classList.toggle("playing", value);
-  $("play").textContent = value ? "⏸" : "▶";
+  $("playIcon").textContent = value ? "pause" : "play_arrow";
   $("status").textContent = value ? "NOW PLAYING" : "PAUSED";
 }
 
@@ -433,7 +527,6 @@ function setErrorState(shortStatus, bannerHtml){
   setControlsEnabled(false);
   showBanner(bannerHtml);
 }
-
 function clearErrorState(){
   $("player").classList.remove("error");
   hideBanner();
@@ -442,143 +535,201 @@ function clearErrorState(){
 
 function updateTrackFromPlayer(){
   if(!ytPlayer || typeof ytPlayer.getVideoData !== "function") return;
-
   const data = ytPlayer.getVideoData();
   if(!data || !data.video_id) return;
 
   let title = data.title || "YouTube Music";
   let artist = data.author || "YouTube Music";
-
   const dashSplit = title.split(/\s+-\s+/);
   if(dashSplit.length >= 2){
     artist = dashSplit[0].trim();
     title = dashSplit.slice(1).join(" - ").trim();
   }
-
   $("song").textContent = title;
   $("artist").textContent = artist;
   $("cover").src = `https://img.youtube.com/vi/${data.video_id}/hqdefault.jpg`;
+
+  try{
+    const idx = ytPlayer.getPlaylistIndex();
+    if(typeof idx === "number" && idx >= 0) setActiveRow(idx);
+  }catch(e){}
 }
 
 function startProgressTimer(){
   if(progressTimer) return;
   progressTimer = setInterval(()=>{
     if(!ytPlayer || typeof ytPlayer.getCurrentTime !== "function") return;
-
     const duration = ytPlayer.getDuration() || 0;
     const position = ytPlayer.getCurrentTime() || 0;
-
     $("currentTime").textContent = fmt(position);
     $("duration").textContent = fmt(duration);
     $("seek").value = duration ? Math.round((position / duration) * 1000) : 0;
   }, 500);
 }
 
+/* ---------- Drawer open/close ---------- */
 function openPlaylist(){
   $("drawer").classList.add("open");
   $("drawerBackdrop").classList.add("open");
   $("drawer").setAttribute("aria-hidden","false");
 }
-
 function closePlaylist(){
   $("drawer").classList.remove("open");
   $("drawerBackdrop").classList.remove("open");
   $("drawer").setAttribute("aria-hidden","true");
 }
-
 $("openPlaylist").onclick = openPlaylist;
 $("closePlaylist").onclick = closePlaylist;
 $("drawerBackdrop").onclick = closePlaylist;
+document.addEventListener("keydown", e=>{ if(e.key === "Escape") closePlaylist(); });
 
-document.addEventListener("keydown", event=>{
-  if(event.key === "Escape") closePlaylist();
-});
+/* ---------- Transport controls ---------- */
+function playIndex(i){
+  if(!ytPlayer) return;
+  consecutiveErrors = 0;
+  try{ ytPlayer.playVideoAt(i); }catch(e){}
+}
 
 $("play").onclick = ()=>{
   if(!ytPlayer || typeof ytPlayer.getPlayerState !== "function") return;
-  if(ytPlayer.getPlayerState() === YT.PlayerState.PLAYING){
-    ytPlayer.pauseVideo();
-  }else{
-    ytPlayer.playVideo();
-  }
+  if(ytPlayer.getPlayerState() === YT.PlayerState.PLAYING) ytPlayer.pauseVideo();
+  else ytPlayer.playVideo();
 };
-
 $("prev").onclick = ()=>{
-  if(!ytPlayer) return;
-  consecutiveErrors = 0;
-  try{
-    const list = ytPlayer.getPlaylist();
-    let idx = ytPlayer.getPlaylistIndex();
-    if(list && list.length && typeof idx === "number"){
-      const prevIdx = (idx - 1 + list.length) % list.length;
-      ytPlayer.playVideoAt(prevIdx);
-      return;
-    }
-  }catch(e){}
-  ytPlayer.previousVideo();
+  if(!ytPlayer || !trackIds.length) return;
+  const idx = activeIndex >= 0 ? activeIndex : 0;
+  playIndex((idx - 1 + trackIds.length) % trackIds.length);
 };
 $("next").onclick = ()=>{
-  if(!ytPlayer) return;
-  consecutiveErrors = 0;
-  try{
-    const list = ytPlayer.getPlaylist();
-    let idx = ytPlayer.getPlaylistIndex();
-    if(list && list.length && typeof idx === "number"){
-      const nextIdx = (idx + 1) % list.length;
-      ytPlayer.playVideoAt(nextIdx);
-      return;
-    }
-  }catch(e){}
-  ytPlayer.nextVideo();
+  if(!ytPlayer || !trackIds.length) return;
+  const idx = activeIndex >= 0 ? activeIndex : -1;
+  playIndex((idx + 1) % trackIds.length);
 };
-
 $("seek").addEventListener("input",()=>{
   if(!ytPlayer) return;
   const duration = ytPlayer.getDuration();
   if(!duration) return;
   ytPlayer.seekTo((Number($("seek").value) / 1000) * duration, true);
 });
-
 $("shuffle").onclick = ()=>{
   $("shuffle").classList.toggle("active");
-  if(!ytPlayer || typeof ytPlayer.getPlaylist !== "function") return;
-
+  if(!ytPlayer || !trackIds.length) return;
   try{
-    const list = ytPlayer.getPlaylist();
-    if(list && list.length > 1){
-      const shuffled = [...list];
-      for(let i = shuffled.length - 1; i > 0; i--){
-        const j = Math.floor(Math.random() * (i + 1));
-        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-      }
-      ytPlayer.loadPlaylist({ playlist: shuffled, index: 0 });
+    const shuffled = [...trackIds];
+    for(let i = shuffled.length - 1; i > 0; i--){
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
-  }catch(e){
-    // If the API refuses (e.g. playlist not fully loaded yet), just leave
-    // the visual toggle — nothing breaks either way.
-  }
+    ytPlayer.loadPlaylist({ playlist: shuffled, index: 0 });
+    trackIds = shuffled;
+    renderTrackList();
+  }catch(e){}
 };
 
-const TRUCK_LINES = [
-  "HORN OK PLEASE • SAFE DRIVE SAVE LIFE • FULL VOLUME",
-  "BURI NAZAR WALE TERA MUH KAALA • TRUCKING ALL NIGHT",
-  "DIL SE DRIVER • ROAD MERI, RAAJ TERE",
-  "DESI TRUCK • DESI GAANE • DESI SAFAR",
-  "KEEP DISTANCE • HORN PLEASE • HAPPY JOURNEY",
-  "RASTA LAMBA HAI • GAANA ZAROORI HAI",
-  "TRUCK WALA SWAG • HIGHWAY WALI FEELING",
-  "DHABA CHAI • DIESEL KI KHUSHBOO • MUSIC ON",
-  "MAA KA AASHIRWAD • SAFE JOURNEY • HORN OK PLEASE",
-  "JAI BAJRANGBALI • BLOW HORN • KEEP MOVING"
-];
+/* ---------- Live clock ---------- */
+function updateHeroClock(){
+  $("heroClock").textContent = new Date().toLocaleTimeString("en-IN",{
+    hour:"numeric", minute:"2-digit"
+  }).toLowerCase();
+}
+updateHeroClock();
+setInterval(updateHeroClock, 1000);
 
-let truckLineIndex = 0;
-setInterval(() => {
-  truckLineIndex = (truckLineIndex + 1) % TRUCK_LINES.length;
-  const el = $("truckMarquee");
-  el.textContent = TRUCK_LINES[truckLineIndex];
-}, 6000);
+/* ---------- Track list rendering ---------- */
+function trackRowHtml(id, i){
+  const meta = trackMeta[id];
+  const thumbCls = meta ? "" : " skeleton";
+  const titleCls = meta ? "" : " skeleton";
+  const thumbSrc = meta ? meta.thumb : "";
+  return `
+    <div class="track-row" data-index="${i}" data-title="${meta ? meta.title.toLowerCase().replace(/"/g,'') : ''}">
+      <div class="track-index">${i + 1}</div>
+      <div class="track-eq"><b></b><b></b><b></b></div>
+      <img class="track-thumb${thumbCls}" ${thumbSrc ? `src="${thumbSrc}"` : ""} alt="">
+      <div class="track-meta">
+        ${meta ? `<div class="track-title">${meta.title}</div><div class="track-artist">${meta.artist}</div>`
+               : `<div class="track-title skeleton"></div><div class="track-artist skeleton"></div>`}
+      </div>
+      <div class="track-play-icon"><span class="msr fill">play_circle</span></div>
+    </div>`;
+}
 
+function renderTrackList(){
+  const list = $("trackList");
+  list.innerHTML = trackIds.map((id,i)=> trackRowHtml(id,i)).join("");
+  list.querySelectorAll(".track-row").forEach(row=>{
+    row.addEventListener("click", ()=> playIndex(Number(row.dataset.index)));
+  });
+  if(activeIndex >= 0) setActiveRow(activeIndex);
+}
+
+function setActiveRow(i){
+  activeIndex = i;
+  document.querySelectorAll(".track-row").forEach(row=>{
+    row.classList.toggle("active", Number(row.dataset.index) === i);
+  });
+  const el = document.querySelector(`.track-row[data-index="${i}"]`);
+  if(el) el.scrollIntoView({block:"nearest", behavior:"smooth"});
+}
+
+function updateRowMeta(id, meta){
+  document.querySelectorAll(`.track-row[data-title=""] img.track-thumb`);
+  trackIds.forEach((tid, i)=>{
+    if(tid !== id) return;
+    const row = document.querySelector(`.track-row[data-index="${i}"]`);
+    if(!row) return;
+    row.dataset.title = meta.title.toLowerCase();
+    row.querySelector(".track-thumb").src = meta.thumb;
+    row.querySelector(".track-thumb").classList.remove("skeleton");
+    row.querySelector(".track-meta").innerHTML =
+      `<div class="track-title">${meta.title}</div><div class="track-artist">${meta.artist}</div>`;
+  });
+}
+
+function escapeHtml(s){
+  return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+
+async function fetchOEmbed(id){
+  try{
+    const res = await fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${id}&format=json`);
+    if(!res.ok) throw new Error("bad status");
+    const data = await res.json();
+    return {
+      title: escapeHtml(data.title || "Untitled track"),
+      artist: escapeHtml(data.author_name || "YouTube Music"),
+      thumb: data.thumbnail_url ? data.thumbnail_url.replace("hqdefault","mqdefault") : `https://img.youtube.com/vi/${id}/mqdefault.jpg`
+    };
+  }catch(e){
+    return { title: `Track ${trackIds.indexOf(id) + 1}`, artist: "YouTube", thumb: `https://img.youtube.com/vi/${id}/mqdefault.jpg` };
+  }
+}
+
+async function loadAllTrackMeta(ids){
+  let cursor = 0;
+  async function worker(){
+    while(cursor < ids.length){
+      const i = cursor++;
+      const id = ids[i];
+      if(trackMeta[id]) continue;
+      const meta = await fetchOEmbed(id);
+      trackMeta[id] = meta;
+      updateRowMeta(id, meta);
+    }
+  }
+  const workers = Array.from({length: Math.min(OEMBED_CONCURRENCY, ids.length)}, worker);
+  await Promise.all(workers);
+}
+
+$("trackSearch").addEventListener("input", (e)=>{
+  const q = e.target.value.trim().toLowerCase();
+  document.querySelectorAll(".track-row").forEach(row=>{
+    const hay = (row.dataset.title || "") + " " + (row.querySelector(".track-artist")?.textContent.toLowerCase() || "");
+    row.style.display = !q || hay.includes(q) ? "" : "none";
+  });
+});
+
+/* ---------- YouTube IFrame API wiring ---------- */
 function onPlayerReady(){
   apiReadyFired = true;
   hideBanner();
@@ -591,14 +742,15 @@ function onPlayerReady(){
   try{
     const list = ytPlayer.getPlaylist();
     if(list && list.length){
+      trackIds = list.slice();
       $("drawerSub").textContent = `Indian Truck Driver Music · ${list.length} songs`;
+      renderTrackList();
+      loadAllTrackMeta(trackIds);
     }
   }catch(e){}
 }
 
 function onPlayerError(event){
-  // 2=invalid param, 5=HTML5 error, 100=video not found/removed,
-  // 101/150=owner disallows embedding on this video.
   const codes = {
     2:"Invalid video in playlist",
     5:"Playback error (HTML5 player)",
@@ -611,56 +763,37 @@ function onPlayerError(event){
 
   if(consecutiveErrors >= MAX_CONSECUTIVE_ERRORS){
     setErrorState("MOSTLY BLOCKED", `
-      ${consecutiveErrors} tracks in a row have embedding disabled by their
-      owners. This playlist likely can't be played inside an embedded page —
-      that's the channel/label's choice, not a bug here.<br>
-      Use the <b>"YouTube Music ↗"</b> link at the top to play it directly on
-      YouTube instead.
+      ${consecutiveErrors} tracks in a row have embedding disabled by their owners.
+      This playlist likely can't be played inside an embedded page — that's the
+      channel/label's choice, not a bug here.<br>
+      Use the <b>"YouTube Music"</b> link at the top to play it directly on YouTube instead.
     `);
     return;
   }
-
   $("status").textContent = msg.toUpperCase();
   showBanner(`${msg}. Trying the next track… (${consecutiveErrors}/${MAX_CONSECUTIVE_ERRORS})`);
   advanceToNextPlayableTrack();
 }
 
-// nextVideo() can silently no-op when the current slot never actually
-// started playing (common when that slot is embed-restricted), so we
-// advance by explicit index instead — this works even from a dead slot.
 function advanceToNextPlayableTrack(){
   if(!ytPlayer) return;
   try{
-    const list = ytPlayer.getPlaylist();
+    const list = trackIds.length ? trackIds : ytPlayer.getPlaylist();
     if(!list || !list.length) return;
-
     let idx = ytPlayer.getPlaylistIndex();
     if(typeof idx !== "number" || idx < 0) idx = -1;
-
     const nextIdx = (idx + 1) % list.length;
-    setTimeout(()=>{
-      try{ ytPlayer.playVideoAt(nextIdx); }
-      catch(e){ /* ignore, timeout fallback below will retry */ }
-    }, 900);
+    setTimeout(()=>{ try{ ytPlayer.playVideoAt(nextIdx); }catch(e){} }, 900);
   }catch(e){
-    // getPlaylist/getPlaylistIndex can throw if the player isn't fully
-    // initialized yet; fall back to the simple API call.
     setTimeout(()=>{ try{ ytPlayer.nextVideo(); }catch(e2){} }, 900);
   }
 }
 
 function retryUpdateTrackFromPlayer(attemptsLeft = 8){
   if(!ytPlayer || typeof ytPlayer.getVideoData !== "function") return;
-
   const data = ytPlayer.getVideoData();
-  if(data && data.video_id){
-    updateTrackFromPlayer();
-    return;
-  }
-
-  if(attemptsLeft > 0){
-    setTimeout(()=> retryUpdateTrackFromPlayer(attemptsLeft - 1), 300);
-  }
+  if(data && data.video_id){ updateTrackFromPlayer(); return; }
+  if(attemptsLeft > 0) setTimeout(()=> retryUpdateTrackFromPlayer(attemptsLeft - 1), 300);
 }
 
 function onPlayerStateChange(event){
@@ -671,10 +804,7 @@ function onPlayerStateChange(event){
     updateTrackFromPlayer();
   }else if(event.data === YT.PlayerState.PAUSED){
     setPlaying(false);
-  }else if(
-    event.data === YT.PlayerState.CUED ||
-    event.data === YT.PlayerState.UNSTARTED
-  ){
+  }else if(event.data === YT.PlayerState.CUED || event.data === YT.PlayerState.UNSTARTED){
     clearErrorState();
     updateTrackFromPlayer();
   }
@@ -694,17 +824,10 @@ window.onYouTubeIframeAPIReady = () => {
       playsinline: 1,
       iv_load_policy: 3
     },
-    events: {
-      onReady: onPlayerReady,
-      onStateChange: onPlayerStateChange,
-      onError: onPlayerError
-    }
+    events: { onReady: onPlayerReady, onStateChange: onPlayerStateChange, onError: onPlayerError }
   });
 };
 
-// Load the IFrame API ourselves so we can detect if it's blocked
-// (ad blockers / privacy extensions / some preview proxies block
-// www.youtube.com scripts, which otherwise fails completely silently).
 (function loadYouTubeApi(){
   const script = document.createElement("script");
   script.src = "https://www.youtube.com/iframe_api";
@@ -712,25 +835,20 @@ window.onYouTubeIframeAPIReady = () => {
     setErrorState("BLOCKED", `
       Couldn't reach YouTube (<code>iframe_api</code> script was blocked).<br>
       This is almost always an ad blocker / privacy extension, or a dev-server
-      proxy (e.g. VS Code Live&nbsp;Preview) rewriting the page origin.<br>
+      proxy rewriting the page origin.<br>
       Try: disable the extension for this site, or open this file through a
-      plain local server (e.g. <code>python -m http.server</code>) in a normal
-      browser tab instead of an embedded preview.
+      plain local server instead of an embedded preview.
     `);
   };
   document.head.appendChild(script);
 
-  // Fallback: if the script loads but YouTube never calls back
-  // (also a common ad-blocker / proxy symptom), tell the user clearly
-  // instead of leaving "LOADING…" forever.
   setTimeout(()=>{
     if(!apiReadyFired){
       setErrorState("NOT LOADING", `
         YouTube player never became ready after ${API_LOAD_TIMEOUT_MS/1000}s.<br>
         Check the browser console for <code>net::ERR_BLOCKED_BY_CLIENT</code> —
-        that means an extension or the dev-server proxy is blocking YouTube.
-        Try disabling ad blockers for this page, or open it in a plain tab
-        instead of VS&nbsp;Code Live&nbsp;Preview.
+        that means an extension or a dev-server proxy is blocking YouTube.
+        Try disabling ad blockers for this page.
       `);
     }
   }, API_LOAD_TIMEOUT_MS);
