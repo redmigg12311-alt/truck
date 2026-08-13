@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#11151a">
+
+<meta name="description" content="Horn OK Please — a nostalgic Indian truck-driver music player by Harit Mengar. Highway vibes, dhaba chai anthems and desi road-trip songs, wrapped in colorful truck-art style.">
+<meta name="author" content="Harit Mengar">
+<title>हॉर्न ओके प्लीज़ — Indian Truck Driver Music</title>
+
+<link rel="icon" type="image/webp" href="https://i.ibb.co/gZv7w3Hd/colorful-truck-art-862994-569560.webp">
+<link rel="apple-touch-icon" href="https://i.ibb.co/gZv7w3Hd/colorful-truck-art-862994-569560.webp">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="हॉर्न ओके प्लीज़ — Indian Truck Driver Music">
+<meta property="og:description" content="A nostalgic Indian truck-driver music player by Harit Mengar. Highway vibes, dhaba chai anthems and desi road-trip songs.">
+<meta property="og:image" content="https://i.ibb.co/4wMhqVSM/truckkk.webp">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="हॉर्न ओके प्लीज़ — Indian Truck Driver Music">
+<meta name="twitter:description" content="A nostalgic Indian truck-driver music player by Harit Mengar. Highway vibes, dhaba chai anthems and desi road-trip songs.">
+<meta name="twitter:image" content="https://i.ibb.co/4wMhqVSM/truckkk.webp">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL@24,500,0..1&display=block">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Mukta:wght@400;500;600;700&family=Yatra+One&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL@24,500,0..1&display=block" rel="stylesheet">
+
+<style>
+:root{
+  --cream:#fff7e7;
+  --gold:#ffc400;
+  --gold2:#ff9f1c;
+  --green:#35df83;
+  --ink:#11151a;
+  --glass:rgba(16,20,25,.56);
+  --glass-soft:rgba(255,255,255,.075);
+  --line:rgba(255,255,255,.18);
+  --muted:rgba(255,247,231,.62);
+  --shadow:0 24px 80px rgba(0,0,0,.48);
+  --truck-thumb:url("https://i.ibb.co/pjGxYjpV/1-1.webp");
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%}
+body{
+  min-height:100svh;
+  overflow:hidden;
+  color:var(--cream);
+  font-family:Inter,Mukta,sans-serif;
+  background:
+    linear-gradient(180deg,rgba(5,10,14,.10) 0%,rgba(5,8,12,.16) 45%,rgba(5,8,12,.58) 100%),
+    url("https://i.ibb.co/S7t9NmW0/truck.webp") center center/cover no-repeat fixed;
+}
+body::before{
+  content:"";
+  position:fixed;inset:0;pointer-events:none;z-index:-1;
+  background:
+    radial-gradient(circle at 50% 45%,transparent 18%,rgba(0,0,0,.13) 72%,rgba(0,0,0,.32) 100%),
+    linear-gradient(90deg,rgba(0,0,0,.14),transparent 28%,transparent 72%,rgba(0,0,0,.14));
+}
+button,input{font:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible,a:focus-visible{
+  outline:2px solid var(--gold);outline-offset:3px
+}
+a{color:inherit}
+
+/* ---------- material symbols ---------- */
+.material-symbols-rounded{
+  font-family:'Material Symbols Rounded';
+  font-weight:normal;font-style:normal;
+  font-size:20px;line-height:1;letter-spacing:normal;
+  text-transform:none;display:inline-block;white-space:nowrap;
+  word-wrap:normal;direction:ltr;
+  font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+  font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+}
+/* ---------- material symbols ---------- */
+.material-symbols-rounded{
+  font-family:'Material Symbols Rounded';
+  font-weight:normal;
+  font-style:normal;
+  font-size:20px;
+  line-height:1;
+  letter-spacing:normal;
+  text-transform:none;
+  display:inline-block;
+  white-space:nowrap;
+  word-wrap:normal;
+  direction:ltr;
+  font-feature-settings:'liga';
+  -webkit-font-smoothing:antialiased;
+  font-variation-settings:'FILL' 0,'wght' 500,'GRAD' 0,'opsz' 24;
+}
+
+.play .material-symbols-rounded{
+  font-size:19px;
+  font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 24;
+}
+
+.control .material-symbols-rounded{
+  font-size:19px;
+}
+
+.round-btn .material-symbols-rounded{
+  font-size:17px;
+}
+
+.round-btn.active .material-symbols-rounded{
+  font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 24;
+}
+
+.close-btn .material-symbols-rounded{
+  font-size:20px;
+}
+
+.topbar{
+  position:fixed;z-index:20;top:0;left:0;right:0;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 26px;
+}
+.live-clock{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;text-shadow:0 2px 8px #000}
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 12px var(--green)}
+.spotify-link{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:9px 14px;border:1px solid var(--line);border-radius:999px;
+  text-decoration:none;font-size:13px;font-weight:700;
+  background:rgba(255,255,255,.08);
+  backdrop-filter:blur(16px) saturate(130%);
+  -webkit-backdrop-filter:blur(16px) saturate(130%);
+  transition:.2s ease;
+}
+.spotify-link:hover{background:rgba(255,255,255,.15);transform:translateY(-1px)}
+
+.hero{
+  position:relative;z-index:2;
+  height:100svh;display:flex;align-items:flex-start;justify-content:center;
+  text-align:center;padding:11vh 18px 150px;
+  pointer-events:none;
+}
+.hero-inner{max-width:1000px}
+.hero h1{
+  font-family:"Yatra One",cursive;
+  font-size:clamp(58px,9.5vw,132px);
+  line-height:.98;color:var(--cream);
+  text-shadow:4px 4px 0 #d62828,8px 8px 0 rgba(0,0,0,.35);
+}
+.hero-sub{
+  display:inline-flex;align-items:center;justify-content:center;
+  margin-top:18px;max-width:min(860px,calc(100vw - 34px));
+  padding:9px 18px;border-radius:999px;
+  color:#fff9ec;font-size:clamp(13px,1.5vw,18px);font-weight:700;
+  line-height:1.25;text-shadow:0 2px 9px #000;
+  background:rgba(10,14,18,.46);
+  border:1px solid rgba(255,255,255,.22);
+  box-shadow:0 12px 34px rgba(0,0,0,.18);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+}
+.truck-marquee{
+  width:min(940px,calc(100vw - 34px));
+  margin:10px auto 0;overflow:hidden;white-space:nowrap;
+  padding:7px 15px;border-radius:999px;
+  color:#ffd75b;font-size:12px;font-weight:800;letter-spacing:.08em;
+  text-shadow:0 2px 8px #000;
+  background:rgba(9,13,17,.42);
+  border:1px solid rgba(255,195,0,.25);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+}
+.truck-marquee span{display:inline-block;transition:opacity .2s ease}
+
+/* ---------- compact player bar ---------- */
+.player{
+  position:fixed;z-index:30;
+  left:50%;bottom:max(12px,env(safe-area-inset-bottom));
+  transform:translateX(-50%);
+  width:min(600px,calc(100vw - 24px));
+  padding:9px 10px 10px;
+  border:1px solid rgba(255,255,255,.22);
+  border-radius:17px;
+  background:
+    linear-gradient(135deg,rgba(255,255,255,.15),rgba(255,255,255,.035)),
+    var(--glass);
+  box-shadow:var(--shadow),inset 0 1px rgba(255,255,255,.17);
+  backdrop-filter:blur(28px) saturate(140%);
+  -webkit-backdrop-filter:blur(28px) saturate(140%);
+}
+.player::after{
+  content:"";position:absolute;inset:0;border-radius:17px;pointer-events:none;
+  background:linear-gradient(105deg,rgba(255,255,255,.08),transparent 38%,rgba(255,178,61,.06));
+}
+.player-row{
+  position:relative;
+  z-index:1;display:flex;align-items:center;gap:9px;
+}
+.cover{
+  width:44px;height:44px;flex:0 0 44px;object-fit:cover;
+  border-radius:10px;background:#272b2f;
+  border:1px solid rgba(255,255,255,.24);
+  box-shadow:0 6px 16px rgba(0,0,0,.35);
+}
+.player.playing .cover{animation:coverPulse 1.7s ease-in-out infinite}
+@keyframes coverPulse{50%{transform:scale(1.025)}}
+.track-info{min-width:0;flex:1}
+.status{
+  display:flex;align-items:center;gap:6px;
+  color:rgba(255,247,231,.58);font-size:8.5px;font-weight:800;
+  letter-spacing:.13em;text-transform:uppercase;margin-bottom:1px;
+}
+.status i{width:5px;height:5px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green)}
+.status.error i{background:#ff5c5c;box-shadow:0 0 8px #ff5c5c}
+.song{
+  color:#fff9ed;font-size:13.5px;font-weight:800;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.artist{
+  margin-top:1px;color:rgba(255,247,231,.58);
+  font-size:9.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.player-actions{display:flex;align-items:center;gap:3px}
+.round-btn{
+  width:29px;height:29px;border-radius:50%;
+  border:1px solid rgba(255,255,255,.17);
+  color:var(--cream);background:rgba(255,255,255,.07);
+  display:grid;place-items:center;transition:.18s;flex:0 0 auto;
+}
+.round-btn:hover{background:rgba(255,255,255,.15)}
+.round-btn.active{color:var(--gold);border-color:rgba(255,195,0,.55);background:rgba(255,195,0,.08)}
+
+/* volume control, YouTube style: hover/focus reveals the slider */
+.volume-wrap{
+  display:flex;align-items:center;
+  padding:0 2px;border-radius:999px;
+}
+.vol-slider{
+  width:0;opacity:0;height:3px;margin-left:0;
+  appearance:none;-webkit-appearance:none;
+  border-radius:999px;background:rgba(255,255,255,.25);cursor:pointer;
+  transition:width .2s ease,opacity .2s ease,margin-left .2s ease;
+}
+.volume-wrap:hover .vol-slider,
+.volume-wrap:focus-within .vol-slider{
+  width:58px;opacity:1;margin-left:6px;
+}
+.vol-slider::-webkit-slider-thumb{
+  appearance:none;-webkit-appearance:none;width:9px;height:9px;
+  border-radius:50%;background:#fff7e7;box-shadow:0 2px 6px #000;
+}
+.vol-slider::-moz-range-thumb{
+  width:9px;height:9px;border:0;border-radius:50%;background:#fff7e7;
+}
+@media(hover:none){
+  .vol-slider{width:46px;opacity:1;margin-left:6px}
+}
+
+/* ---------- smooth truck progress road ---------- */
+.progress{
+  position:relative;
+  z-index:1;
+  margin:9px 3px 0;
+}
+
+.road-progress{
+  --progress:0%;
+  position:relative;
+  width:100%;
+  height:38px;
+  display:flex;
+  align-items:center;
+  cursor:pointer;
+  touch-action:none;
+}
+
+.road-progress.seeking .truck-runner img{
+  transform:scale(1.06);
+  filter:
+    drop-shadow(0 4px 6px rgba(0,0,0,.75))
+    drop-shadow(0 0 8px rgba(255,195,0,.28));
+}
+
+.road-line{
+  position:absolute;
+  left:0;
+  right:0;
+  top:50%;
+  height:9px;
+  transform:translateY(-50%);
+  border-radius:8px;
+  background:
+    linear-gradient(180deg,#464a4d 0%,#222528 48%,#111315 100%);
+  border:1px solid rgba(255,255,255,.10);
+  box-shadow:
+    inset 0 2px 4px rgba(0,0,0,.55),
+    0 1px 2px rgba(0,0,0,.4);
+}
+
+.road-line::after{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  top:50%;
+  height:2px;
+  transform:translateY(-50%);
+  background:
+    repeating-linear-gradient(
+      to right,
+      #ffe9a8 0 8px,
+      transparent 8px 18px
+    );
+  opacity:.9;
+}
+
+.progress-fill{
+  position:absolute;
+  left:0;
+  top:50%;
+  width:var(--progress);
+  height:5px;
+  transform:translateY(-50%);
+  border-radius:10px;
+  background:linear-gradient(90deg,#ff9f1c,#ffc400);
+  box-shadow:0 0 8px rgba(255,195,0,.35);
+  pointer-events:none;
+  z-index:2;
+}
+
+.road-glow{
+  position:absolute;
+  left:0;
+  top:50%;
+  width:var(--progress);
+  height:14px;
+  transform:translateY(-50%);
+  border-radius:20px;
+  background:rgba(255,195,0,.15);
+  filter:blur(7px);
+  pointer-events:none;
+  z-index:1;
+}
+
+.seek{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  margin:0;
+  opacity:0;
+  pointer-events:none;
+  appearance:none;
+  -webkit-appearance:none;
+  background:transparent;
+  z-index:1;
+}
+
+.road-progress{
+  cursor:pointer;
+  touch-action:none;
+}
+
+.road-progress:focus-visible{
+  outline:2px solid var(--gold);
+  outline-offset:4px;
+  border-radius:8px;
+}
+
+.truck-runner{
+  position:absolute;
+  left:var(--progress);
+  top:50%;
+  width:54px;
+  height:38px;
+  transform:translate3d(-50%,-50%,0);
+  pointer-events:none;
+  z-index:6;
+  will-change:left;
+  transition:none;
+}
+
+.truck-runner img{
+  width:54px;
+  height:38px;
+  display:block;
+  object-fit:contain;
+  user-select:none;
+  pointer-events:none;
+  filter:
+    drop-shadow(0 3px 4px rgba(0,0,0,.7))
+    drop-shadow(0 0 5px rgba(255,195,0,.18));
+  transform-origin:center center;
+  will-change:transform;
+}
+
+.player.playing .truck-runner img{
+  animation:truckBounce .45s ease-in-out infinite alternate;
+}
+
+@keyframes truckBounce{
+  from{transform:translateY(0)}
+  to{transform:translateY(-1px)}
+}
+
+@media(min-width:721px){
+  .truck-runner{
+    width:58px;
+    height:40px;
+  }
+
+  .truck-runner img{
+    width:58px;
+    height:40px;
+  }
+}
+
+@media(max-width:720px){
+  .road-progress{
+    height:34px;
+  }
+
+  .truck-runner{
+    width:46px;
+    height:32px;
+  }
+
+  .truck-runner img{
+    width:46px;
+    height:32px;
+  }
+}
+
+@media(max-width:430px){
+  .road-progress{
+    height:32px;
+  }
+
+  .truck-runner{
+    width:42px;
+    height:29px;
+  }
+
+  .truck-runner img{
+    width:42px;
+    height:29px;
+  }
+}
+
+.time-row{
+  display:flex;justify-content:space-between;margin-top:3px;
+  color:rgba(255,247,231,.48);font-size:8.5px;
+}
+.controls{
+  position:relative;
+  z-index:1;
+  display:flex;align-items:center;justify-content:center;gap:14px;
+  margin-top:2px;
+}
+.control{
+  width:29px;height:29px;border:0;border-radius:50%;
+  display:grid;place-items:center;background:transparent;
+  color:var(--cream);
+}
+.control:hover{background:rgba(255,255,255,.08)}
+.play{
+  width:38px;height:38px;border:0;border-radius:50%;
+  display:grid;place-items:center;
+  background:var(--gold);color:#171717;
+  box-shadow:0 6px 16px rgba(0,0,0,.28);
+  transition:.18s;
+}
+.play:hover{transform:scale(1.05)}
+
+
+.drawer-backdrop{
+  position:fixed;inset:0;z-index:50;
+  background:rgba(0,0,0,.38);
+  opacity:0;pointer-events:none;transition:.25s;
+  backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+}
+.drawer-backdrop.open{opacity:1;pointer-events:auto}
+.drawer{
+  position:fixed;z-index:60;top:14px;right:14px;bottom:14px;
+  width:min(430px,calc(100vw - 28px));
+  display:flex;flex-direction:column;overflow:hidden;
+  border:1px solid rgba(255,255,255,.22);border-radius:24px;
+  background:
+    linear-gradient(145deg,rgba(255,255,255,.14),rgba(255,255,255,.035)),
+    rgba(13,17,21,.78);
+  box-shadow:0 30px 100px rgba(0,0,0,.58);
+  backdrop-filter:blur(30px) saturate(135%);
+  -webkit-backdrop-filter:blur(30px) saturate(135%);
+  transform:translateX(calc(100% + 30px));transition:.3s ease;
+}
+.drawer.open{transform:translateX(0)}
+.drawer-head{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;padding:18px 18px 12px;
+}
+.drawer-title{font-size:19px;font-weight:800}
+.drawer-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.close-btn{
+  width:36px;height:36px;border-radius:50%;
+  border:1px solid var(--line);color:var(--cream);
+  background:rgba(255,255,255,.07);display:grid;place-items:center;
+}
+.search-wrap{padding:0 14px 10px}
+.search{
+  width:100%;height:38px;padding:0 13px;
+  color:var(--cream);border:1px solid rgba(255,255,255,.13);
+  border-radius:12px;outline:none;background:rgba(255,255,255,.06);
+}
+.search::placeholder{color:rgba(255,255,255,.38)}
+.track-list{
+  flex:1;min-height:0;overflow:auto;padding:0 10px 12px;
+  scrollbar-width:thin;
+}
+.track-list::-webkit-scrollbar{width:6px}
+.track-list::-webkit-scrollbar-thumb{background:rgba(255,255,255,.18);border-radius:99px}
+.track-item{
+  width:100%;display:flex;align-items:center;gap:10px;
+  padding:8px;border:1px solid transparent;border-radius:13px;
+  color:var(--cream);text-align:left;background:transparent;
+  transition:.16s;
+}
+.track-item:hover{background:rgba(255,255,255,.07)}
+.track-item.active{background:rgba(255,195,0,.09);border-color:rgba(255,195,0,.28)}
+.track-item img{
+  width:46px;height:46px;flex:0 0 46px;object-fit:cover;border-radius:9px;
+  background:#222;
+}
+.track-copy{min-width:0;flex:1}
+.track-name{
+  display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  font-size:12px;font-weight:800;
+}
+.track-artist{
+  display:block;margin-top:2px;color:rgba(255,247,231,.52);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:10px;
+}
+.track-duration{color:rgba(255,247,231,.42);font-size:9px}
+.drawer-foot{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  padding:10px 15px;border-top:1px solid rgba(255,255,255,.09);
+  color:rgba(255,247,231,.45);font-size:9px;
+}
+.open-spotify{
+  color:var(--cream);text-decoration:none;white-space:nowrap;
+  font-weight:800;
+}
+
+.auth{
+  position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:18px;
+  background:rgba(0,0,0,.58);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+}
+.auth[hidden]{display:none}
+.auth-card{
+  width:min(500px,100%);padding:25px;border-radius:24px;
+  border:1px solid rgba(255,255,255,.2);
+  background:rgba(18,22,27,.9);box-shadow:0 30px 100px rgba(0,0,0,.55);
+}
+.auth-card h2{font-size:23px}
+.auth-card p{margin-top:9px;color:rgba(255,247,231,.64);font-size:13px;line-height:1.5}
+.auth-uri{
+  margin-top:12px;padding:10px;border-radius:10px;
+  background:#0b0e11;color:#ffd45a;font:11px ui-monospace,SFMono-Regular,monospace;
+  word-break:break-all;
+}
+.auth-actions{display:flex;gap:8px;margin-top:15px}
+.primary-btn,.secondary-btn{
+  border:0;border-radius:11px;padding:10px 14px;font-weight:800;cursor:pointer;
+}
+.primary-btn{background:var(--gold);color:#171717}
+.secondary-btn{background:rgba(255,255,255,.08);color:var(--cream);border:1px solid var(--line)}
+
+.toast{
+  position:fixed;z-index:120;left:50%;bottom:120px;
+  transform:translate(-50%,10px);opacity:0;pointer-events:none;
+  max-width:min(520px,calc(100vw - 28px));
+  padding:10px 14px;border-radius:12px;
+  background:rgba(12,16,20,.9);border:1px solid rgba(255,255,255,.15);
+  color:var(--cream);font-size:11px;text-align:center;
+  box-shadow:0 15px 40px rgba(0,0,0,.35);
+  transition:.22s;
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+@media(max-width:720px){
+  body{background-attachment:scroll}
+  .topbar{padding:14px 16px}
+  .hero{padding-top:9vh}
+  .hero h1{font-size:clamp(50px,15vw,86px)}
+  .hero-sub{font-size:12px;margin-top:13px;padding:8px 12px}
+  .truck-marquee{font-size:10px;margin-top:7px}
+  .player{
+    left:8px;right:8px;bottom:max(7px,env(safe-area-inset-bottom));
+    width:auto;transform:none;padding:7px 9px;border-radius:15px;
+  }
+  .cover{width:40px;height:40px;flex-basis:40px;border-radius:9px}
+  .song{font-size:13px}
+  .artist{font-size:9.5px}
+  .round-btn{width:27px;height:27px}
+  .controls{gap:12px}
+  .control{width:27px;height:27px}
+  .play{width:36px;height:36px}
+  .drawer{top:8px;right:8px;bottom:8px;width:calc(100vw - 16px);border-radius:20px}
+}
+@media(max-width:430px){
+  .spotify-link{padding:7px 10px;font-size:11px}
+  .hero{padding-top:7vh}
+  .hero h1{font-size:clamp(47px,15vw,70px)}
+  .hero-sub{max-width:calc(100vw - 24px);font-size:11px}
+  .truck-marquee{width:calc(100vw - 24px);font-size:9px}
+  .cover{width:38px;height:38px;flex-basis:38px}
+  .song{font-size:12.5px}
+  .artist{font-size:9px}
+  .player-actions .round-btn:first-child{display:none}
+  .vol-slider,
+  .volume-wrap:hover .vol-slider,
+  .volume-wrap:focus-within .vol-slider{width:34px;margin-left:5px;opacity:1}
+  .progress{margin-top:6px}
+  .toast{bottom:100px}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{scroll-behavior:auto!important;animation:none!important;transition:none!important}
+}
+</style>
+</head>
+
+<body>
+<header class="topbar">
+  <div class="live-clock"><span class="live-dot"></span><span id="clock">--:--</span></div>
+  <a class="spotify-link" href="https://www.youtube.com/watch?v=5MIGQBpVeqs" target="_blank" rel="noopener noreferrer">YouTube ↗</a>
+</header>
+
+<section class="hero">
+  <div class="hero-inner">
+    <h1>हॉर्न ओके<br>प्लीज़</h1>
+    <!-- <p class="hero-sub" id="heroTagline">सफ़र लंबा हो तो गाना ज़ोरदार होना चाहिए • Highway Vibes • Full Volume</p> -->
+    <!-- <div class="truck-marquee" aria-live="polite"><span id="truckMarquee">HORN OK PLEASE • SAFE DRIVE SAVE LIFE • FULL VOLUME</span></div> -->
+  </div>
+</section>
+
+<section class="player" id="player" aria-label="Music player">
+  <div class="player-row">
+    <img id="cover" class="cover"
+         src="https://i.ibb.co/S7t9NmW0/truck.webp"
+         alt="Currently playing album artwork">
+
+    <div class="track-info">
+      <div class="status" id="status"><i></i><span>YouTube</span></div>
+      <div class="song" id="song">Indian Truck Driver Music</div>
+      <div class="artist" id="artist">YouTube • Highway Vibes</div>
+    </div>
+
+    <div class="player-actions">
+      <button class="round-btn" id="shuffle" aria-label="Shuffle" title="Shuffle">
+        <span class="material-symbols-rounded">shuffle</span>
+      </button>
+
+      <div class="volume-wrap" id="volumeWrap">
+        <button class="round-btn" id="volumeBtn" aria-label="Mute or unmute" title="Volume">
+          <span class="material-symbols-rounded" id="volumeIcon">volume_up</span>
+        </button>
+        <input id="volumeSlider" class="vol-slider" type="range" min="0" max="100" value="80" step="1" aria-label="Volume">
+      </div>
+
+      <button class="round-btn" id="openPlaylistTop" aria-label="Open song list" title="Song list">
+        <span class="material-symbols-rounded">queue_music</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="progress">
+    <div class="road-progress" id="roadProgress">
+      <div class="road-line"></div>
+      <div class="road-glow"></div>
+      <div class="progress-fill" id="progressFill"></div>
+
+      <div class="truck-runner" id="truckRunner">
+        <img
+          src="https://i.ibb.co/pjGxYjpV/1-1.webp"
+          alt=""
+          draggable="false"
+        >
+      </div>
+
+      <input
+        id="seek"
+        class="seek"
+        type="range"
+        min="0"
+        max="1000"
+        value="0"
+        step="1"
+        aria-label="Song progress"
+      >
+    </div>
+
+    <div class="time-row">
+      <span id="currentTime">0:00</span>
+      <span id="duration">0:00</span>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button class="control" id="prev" aria-label="Previous song" title="Previous song">
+      <span class="material-symbols-rounded">skip_previous</span>
+    </button>
+    <button class="play" id="play" aria-label="Play or pause" title="Play or pause">
+      <span class="material-symbols-rounded" id="playIcon">play_arrow</span>
+    </button>
+    <button class="control" id="next" aria-label="Next song" title="Next song">
+      <span class="material-symbols-rounded">skip_next</span>
+    </button>
+  </div>
+
+</section>
+
+
+<!-- Hidden YouTube player. Audio is controlled by the custom UI above. -->
+<div id="youtubePlayer"
+     aria-hidden="true"
+     style="position:fixed;left:-9999px;top:-9999px;width:1px;height:1px;opacity:0;pointer-events:none;">
+</div>
+
+<div class="drawer-backdrop" id="drawerBackdrop"></div>
+<aside class="drawer" id="drawer" aria-hidden="true">
+  <div class="drawer-head">
+    <div>
+      <div class="drawer-title">Song List</div>
+      <div class="drawer-sub" id="playlistMeta">YouTube music source</div>
+    </div>
+    <button class="close-btn" id="closePlaylist" aria-label="Close song list">
+      <span class="material-symbols-rounded">close</span>
+    </button>
+  </div>
+
+  <div class="search-wrap">
+    <input class="search" id="trackSearch" type="search" placeholder="Search song or artist…" autocomplete="off">
+  </div>
+
+  <div class="track-list" id="trackList">
+    <div style="padding:18px;color:rgba(255,255,255,.5);font-size:12px">YouTube music source is loading…</div>
+  </div>
+
+  <div class="drawer-foot">
+    <span>YouTube source</span>
+    <a class="open-spotify" href="https://www.youtube.com/watch?v=5MIGQBpVeqs" target="_blank" rel="noopener noreferrer">Open on YouTube ↗</a>
+  </div>
+</aside>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* =========================================================
+   HORN OK PLEASE — YouTube-powered music player
+   Supplied YouTube source:
+   https://www.youtube.com/embed/5MIGQBpVeqs
+   ========================================================= */
+
+const YOUTUBE_VIDEO_ID = "5MIGQBpVeqs";
+
+const $ = id => document.getElementById(id);
+
+let player = null;
+let playerReady = false;
+let isPlaying = false;
+let isMuted = false;
+let shuffle = false;
+let progressTimer = null;
+let toastTimer = null;
+
+const track = {
+  id: YOUTUBE_VIDEO_ID,
+  title: "Horn OK Please • Highway Music",
+  artist: "YouTube",
+  cover: "https://i.ytimg.com/vi/5MIGQBpVeqs/hqdefault.jpg"
+};
+
+const slogans = [
+  "HORN OK PLEASE • SAFE DRIVE SAVE LIFE • FULL VOLUME",
+  "BURI NAZAR WALE TERA MUH KAALA • TRUCKING ALL NIGHT",
+  "DIL SE DRIVER • ROAD MERI, RAAJ TERE",
+  "DESI TRUCK • DESI GAANE • DESI SAFAR",
+  "KEEP DISTANCE • HORN PLEASE • HAPPY JOURNEY",
+  "RASTA LAMBA HAI • GAANA ZAROORI HAI",
+  "TRUCK WALA SWAG • HIGHWAY WALI FEELING",
+  "DHABA CHAI • DIESEL KI KHUSHBOO • MUSIC ON",
+  "MAA KA AASHIRWAD • SAFE JOURNEY • HORN OK PLEASE",
+  "JAI BAJRANGBALI • BLOW HORN • KEEP MOVING"
+];
+
+const taglines = [
+  "सफ़र लंबा हो तो गाना ज़ोरदार होना चाहिए • Highway Vibes • Full Volume",
+  "रात की सड़क • ढाबे की चाय • और रेडियो पर अपने गाने",
+  "डीज़ल की खुशबू • लंबा रास्ता • देसी म्यूज़िक",
+  "जहाँ रास्ता खत्म नहीं होता, वहाँ गाना भी बंद नहीं होता",
+  "Horn OK Please • Drive Safe • Music Loud"
+];
+
+function fmt(seconds){
+  seconds = Math.max(0, Math.floor(Number(seconds) || 0));
+  return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2,"0")}`;
+}
+
+function toast(message){
+  $("toast").textContent = message;
+  $("toast").classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => $("toast").classList.remove("show"), 3000);
+}
+
+function updateClock(){
+  $("clock").textContent = new Date().toLocaleTimeString("en-IN", {
+    hour:"numeric",
+    minute:"2-digit"
+  }).toLowerCase();
+}
+
+function setStatus(label, error = false){
+  $("status").classList.toggle("error", error);
+  $("status").querySelector("span").textContent = label;
+}
+
+function setPlaying(playing){
+  isPlaying = playing;
+  $("player").classList.toggle("playing", playing);
+  $("playIcon").textContent = playing ? "pause" : "play_arrow";
+  setStatus(playing ? "NOW PLAYING" : "PAUSED");
+}
+
+function updateVolumeIcon(){
+  const icon = $("volumeIcon");
+  const volume = player && playerReady ? player.getVolume() : Number($("volumeSlider").value);
+
+  if(isMuted || volume === 0) icon.textContent = "volume_off";
+  else if(volume < 50) icon.textContent = "volume_down";
+  else icon.textContent = "volume_up";
+}
+
+function setVisualProgress(progress){
+  const clamped = Math.max(0, Math.min(1, Number(progress) || 0));
+  const percent = `${clamped * 100}%`;
+  const road = $("roadProgress");
+  const truck = $("truckRunner");
+
+  road.style.setProperty("--progress", percent);
+  $("progressFill").style.width = percent;
+
+  const roadWidth = road.clientWidth;
+  const truckWidth = truck.offsetWidth;
+
+  if(roadWidth > 0){
+    const half = truckWidth / 2;
+    const center = Math.max(
+      half,
+      Math.min(roadWidth - half, clamped * roadWidth)
+    );
+    truck.style.left = `${center}px`;
+  }
+
+  $("seek").value = Math.round(clamped * 1000);
+}
+
+function openPlaylist(){
+  $("drawer").classList.add("open");
+  $("drawerBackdrop").classList.add("open");
+  $("drawer").setAttribute("aria-hidden","false");
+}
+
+function closePlaylist(){
+  $("drawer").classList.remove("open");
+  $("drawerBackdrop").classList.remove("open");
+  $("drawer").setAttribute("aria-hidden","true");
+}
+
+/* ---------------------------------------------------------
+   YouTube player
+   --------------------------------------------------------- */
+
+function createYouTubePlayer(){
+  player = new YT.Player("youtubePlayer", {
+    videoId: YOUTUBE_VIDEO_ID,
+    width: "1",
+    height: "1",
+    playerVars: {
+      autoplay: 0,
+      controls: 0,
+      disablekb: 1,
+      fs: 0,
+      iv_load_policy: 3,
+      modestbranding: 1,
+      playsinline: 1,
+      rel: 0
+    },
+    events: {
+      onReady: onYouTubeReady,
+      onStateChange: onYouTubeStateChange,
+      onError: onYouTubeError
+    }
+  });
+}
+
+function onYouTubeReady(){
+  playerReady = true;
+  player.setVolume(Number($("volumeSlider").value));
+
+  $("cover").src = track.cover;
+  $("song").textContent = track.title;
+  $("artist").textContent = "YouTube • Highway Vibes";
+  $("playlistMeta").textContent = "YouTube music source";
+  $("trackList").innerHTML = "";
+
+  const item = document.createElement("button");
+  item.type = "button";
+  item.className = "track-item active";
+  item.innerHTML = `
+    <img src="${track.cover}" alt="">
+    <span class="track-copy">
+      <span class="track-name">${track.title}</span>
+      <span class="track-artist">YouTube • Highway Vibes</span>
+    </span>
+    <span class="track-duration" id="ytListDuration">--:--</span>
+  `;
+  item.onclick = () => {
+    player.playVideo();
+    closePlaylist();
+  };
+  $("trackList").appendChild(item);
+
+  setStatus("READY");
+  toast("YouTube music is ready. Press Play.");
+}
+
+function onYouTubeStateChange(event){
+  switch(event.data){
+    case YT.PlayerState.PLAYING:
+      setPlaying(true);
+      startProgressLoop();
+      break;
+
+    case YT.PlayerState.PAUSED:
+      setPlaying(false);
+      stopProgressLoop();
+      break;
+
+    case YT.PlayerState.ENDED:
+      setPlaying(false);
+      setVisualProgress(1);
+      stopProgressLoop();
+      break;
+
+    case YT.PlayerState.BUFFERING:
+      setStatus("BUFFERING");
+      break;
+
+    case YT.PlayerState.CUED:
+      setStatus("READY");
+      break;
+  }
+}
+
+function onYouTubeError(event){
+  setPlaying(false);
+  setStatus("YOUTUBE ERROR", true);
+
+  const messages = {
+    2: "Invalid YouTube video ID.",
+    5: "This video cannot be played in the HTML5 player.",
+    100: "This YouTube video is unavailable or private.",
+    101: "This video does not allow embedded playback.",
+    150: "This video does not allow embedded playback."
+  };
+
+  toast(messages[event.data] || "YouTube could not play this video.");
+}
+
+function startProgressLoop(){
+  stopProgressLoop();
+
+  progressTimer = setInterval(() => {
+    if(!playerReady || !player || !isPlaying) return;
+
+    const current = player.getCurrentTime() || 0;
+    const duration = player.getDuration() || 0;
+
+    if(duration > 0){
+      setVisualProgress(current / duration);
+      $("currentTime").textContent = fmt(current);
+      $("duration").textContent = fmt(duration);
+
+      const listDuration = $("ytListDuration");
+      if(listDuration) listDuration.textContent = fmt(duration);
+    }
+  }, 100);
+}
+
+function stopProgressLoop(){
+  if(progressTimer){
+    clearInterval(progressTimer);
+    progressTimer = null;
+  }
+}
+
+function playPause(){
+  if(!playerReady){
+    toast("YouTube player is still loading…");
+    return;
+  }
+
+  if(isPlaying) player.pauseVideo();
+  else player.playVideo();
+}
+
+function seekFromPointer(event){
+  if(!playerReady) {
+    toast("YouTube player is still loading…");
+    return;
+  }
+
+  const duration = player.getDuration() || 0;
+  if(!duration) return;
+
+  const road = $("roadProgress");
+  const rect = road.getBoundingClientRect();
+
+  const x = Math.max(
+    0,
+    Math.min(rect.width, event.clientX - rect.left)
+  );
+
+  const progress = rect.width ? x / rect.width : 0;
+  player.seekTo(progress * duration, true);
+
+  setVisualProgress(progress);
+  $("currentTime").textContent = fmt(progress * duration);
+}
+
+/* ---------------------------------------------------------
+   UI
+   --------------------------------------------------------- */
+
+$("play").onclick = playPause;
+
+$("next").onclick = () => {
+  if(!playerReady) return;
+
+  /*
+    The supplied URL contains a single video and no YouTube
+    playlist ID, so there is no real "next track" to advance to.
+    Keeping the button useful: restart the current source.
+  */
+  player.seekTo(0, true);
+  player.playVideo();
+  toast("Restarting the YouTube track.");
+};
+
+$("prev").onclick = () => {
+  if(!playerReady) return;
+
+  const current = player.getCurrentTime() || 0;
+
+  if(current > 3){
+    player.seekTo(0, true);
+  }else{
+    player.seekTo(0, true);
+  }
+};
+
+$("shuffle").onclick = () => {
+  shuffle = !shuffle;
+  $("shuffle").classList.toggle("active", shuffle);
+  toast(shuffle ? "Shuffle on" : "Shuffle off");
+};
+
+$("volumeSlider").oninput = event => {
+  const value = Number(event.target.value);
+
+  if(playerReady){
+    player.setVolume(value);
+    player.unMute();
+    isMuted = false;
+  }
+
+  updateVolumeIcon();
+};
+
+$("volumeBtn").onclick = () => {
+  if(!playerReady) return;
+
+  if(isMuted){
+    player.unMute();
+    isMuted = false;
+  }else{
+    player.mute();
+    isMuted = true;
+  }
+
+  updateVolumeIcon();
+};
+
+$("openPlaylistTop").onclick = openPlaylist;
+$("closePlaylist").onclick = closePlaylist;
+$("drawerBackdrop").onclick = closePlaylist;
+
+document.addEventListener("keydown", event => {
+  if(event.key === "Escape") closePlaylist();
+
+  if(event.code === "Space" && document.activeElement.tagName !== "INPUT"){
+    event.preventDefault();
+    playPause();
+  }
+});
+
+const roadProgress = $("roadProgress");
+
+roadProgress.setAttribute("tabindex","0");
+roadProgress.setAttribute("role","slider");
+roadProgress.setAttribute("aria-valuemin","0");
+roadProgress.setAttribute("aria-valuemax","1000");
+
+roadProgress.addEventListener("pointerdown", event => {
+  event.preventDefault();
+  roadProgress.classList.add("seeking");
+  roadProgress.setPointerCapture?.(event.pointerId);
+  seekFromPointer(event);
+});
+
+roadProgress.addEventListener("pointermove", event => {
+  if(roadProgress.classList.contains("seeking")){
+    event.preventDefault();
+    seekFromPointer(event);
+  }
+});
+
+roadProgress.addEventListener("pointerup", event => {
+  roadProgress.classList.remove("seeking");
+  try{
+    roadProgress.releasePointerCapture?.(event.pointerId);
+  }catch{}
+});
+
+roadProgress.addEventListener("pointercancel", () => {
+  roadProgress.classList.remove("seeking");
+});
+
+roadProgress.addEventListener("keydown", event => {
+  if(!playerReady) return;
+
+  const duration = player.getDuration() || 0;
+  if(!duration) return;
+
+  const step = 5;
+  let nextTime = player.getCurrentTime() || 0;
+
+  if(event.key === "ArrowRight") nextTime = Math.min(duration, nextTime + step);
+  else if(event.key === "ArrowLeft") nextTime = Math.max(0, nextTime - step);
+  else if(event.key === "Home") nextTime = 0;
+  else if(event.key === "End") nextTime = duration;
+  else return;
+
+  event.preventDefault();
+  player.seekTo(nextTime, true);
+  setVisualProgress(nextTime / duration);
+  $("currentTime").textContent = fmt(nextTime);
+});
+
+/* ---------------------------------------------------------
+   Clock + decorative text
+   --------------------------------------------------------- */
+
+updateClock();
+setInterval(updateClock, 1000);
+
+let sloganIndex = 0;
+setInterval(() => {
+  sloganIndex = (sloganIndex + 1) % slogans.length;
+  const el = $("truckMarquee");
+  if(!el) return;
+
+  el.style.opacity = "0";
+  setTimeout(() => {
+    el.textContent = slogans[sloganIndex];
+    el.style.opacity = "1";
+  }, 180);
+}, 5500);
+
+let taglineIndex = 0;
+setInterval(() => {
+  taglineIndex = (taglineIndex + 1) % taglines.length;
+  const el = $("heroTagline");
+  if(!el) return;
+
+  el.style.opacity = "0";
+  setTimeout(() => {
+    el.textContent = taglines[taglineIndex];
+    el.style.opacity = "1";
+  }, 180);
+}, 7000);
+
+/* ---------------------------------------------------------
+   YouTube IFrame API loader
+   --------------------------------------------------------- */
+
+window.onYouTubeIframeAPIReady = createYouTubePlayer;
+
+const ytScript = document.createElement("script");
+ytScript.src = "https://www.youtube.com/iframe_api";
+ytScript.async = true;
+document.head.appendChild(ytScript);
+
+/*
+  IMPORTANT:
+  Modern browsers block autoplay with sound until the user
+  interacts with the page. That is normal browser behavior.
+*/
+</script>
+</body>
+</html>
