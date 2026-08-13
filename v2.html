@@ -679,7 +679,7 @@ a{color:inherit}
 
       <div class="truck-runner" id="truckRunner">
         <img
-          src="https://raw.githubusercontent.com/redmigg12311-alt/truck/refs/heads/main/1.avif"
+          src="https://i.ibb.co/pjGxYjpV/1-1.webp"
           alt=""
           draggable="false"
         >
@@ -722,6 +722,11 @@ a{color:inherit}
 <div id="youtubePlayer"
      aria-hidden="true"
      style="position:fixed;left:-9999px;top:-9999px;width:1px;height:1px;opacity:0;pointer-events:none;"></div>
+
+<!-- Metadata-only YouTube player. Kept off-screen and muted. -->
+<div id="youtubeMetadataPlayer"
+     aria-hidden="true"
+     style="position:fixed;left:-10000px;top:-10000px;width:200px;height:200px;opacity:0;pointer-events:none;"></div>
 
 <div class="drawer-backdrop" id="drawerBackdrop"></div>
 <aside class="drawer" id="drawer" aria-hidden="true">
@@ -777,6 +782,11 @@ let playlistItems = [];
 let currentIndex = 0;
 let playlistPollTimer = null;
 let playlistLoadAttempts = 0;
+let metadataPlayer = null;
+let metadataPlayerReady = false;
+let metadataScanRunning = false;
+let metadataScanTimer = null;
+let metadataScanIndex = 0;
 
 const fallbackCover = "https://i.ibb.co/S7t9NmW0/truck.webp";
 
@@ -898,12 +908,20 @@ function getPlaylistIds(){
 }
 
 function buildPlaylistItems(ids){
-  playlistItems = ids.map((videoId, i) => ({
-    id: videoId,
-    title: `Track ${i + 1}`,
-    artist: "YouTube",
-    duration: 0
-  }));
+  const oldById = new Map(
+    playlistItems.map(item => [item.id, item])
+  );
+
+  playlistItems = ids.map((videoId, i) => {
+    const oldItem = oldById.get(videoId);
+
+    return {
+      id: videoId,
+      title: oldItem?.title || "",
+      artist: oldItem?.artist || "",
+      duration: oldItem?.duration || 0
+    };
+  });
 }
 
 function syncPlaylistFromPlayer(){
@@ -925,6 +943,8 @@ function syncPlaylistFromPlayer(){
 
   $("playlistMeta").textContent =
     `${playlistItems.length} songs • YouTube playlist`;
+
+  startMetadataScanner();
 
   return true;
 }
@@ -1004,14 +1024,14 @@ function renderPlaylist(filter = ""){
   const filtered = playlistItems
     .map((item, i) => ({item, i}))
     .filter(({item}) => {
-      const text = `${item.title} ${item.artist} ${item.id}`.toLowerCase();
+      const text = `${item.title || ""} ${item.artist || ""} ${item.id}`.toLowerCase();
       return !q || text.includes(q);
     });
 
   if(!filtered.length){
     list.innerHTML = playlistItems.length
       ? '<div style="padding:18px;color:rgba(255,255,255,.5);font-size:12px">No matching songs.</div>'
-      : '<div style="padding:18px;color:rgba(255,255,255,.5);font-size:12px">Loading YouTube playlist…</div>';
+      : '<div style="padding:18px;color:rgba(255,255,255,.6);font-size:12px">Loading YouTube playlist…</div>';
     return;
   }
 
@@ -1019,6 +1039,10 @@ function renderPlaylist(filter = ""){
     const button = document.createElement("button");
     button.type = "button";
     button.className = "track-item" + (i === currentIndex ? " active" : "");
+
+    const title = item.title || `Loading track ${i + 1}…`;
+    const artist = item.artist || "YouTube";
+    const duration = item.duration ? fmt(item.duration) : "—:——";
 
     button.innerHTML = `
       <img alt="">
@@ -1033,14 +1057,9 @@ function renderPlaylist(filter = ""){
     img.src = thumbnail(item.id);
     img.onerror = () => img.src = fallbackCover;
 
-    button.querySelector(".track-name").textContent =
-      item.title || `Track ${i + 1}`;
-
-    button.querySelector(".track-artist").textContent =
-      item.artist || "YouTube";
-
-    button.querySelector(".track-duration").textContent =
-      item.duration ? fmt(item.duration) : "";
+    button.querySelector(".track-name").textContent = title;
+    button.querySelector(".track-artist").textContent = artist;
+    button.querySelector(".track-duration").textContent = duration;
 
     button.onclick = () => playPlaylistIndex(i);
 
@@ -1104,6 +1123,147 @@ function previousTrack(){
 }
 
 /* ---------------------------------------------------------
+   Full playlist metadata scanner
+   --------------------------------------------------------- */
+
+function startMetadataScanner(){
+  if(metadataScanRunning || !metadataPlayerReady || !playlistItems.length) return;
+
+  metadataScanRunning = true;
+  metadataScanIndex = 0;
+
+  clearInterval(metadataScanTimer);
+
+  const scanNext = () => {
+    if(!metadataPlayerReady || !metadataPlayer || !playlistItems.length){
+      metadataScanRunning = false;
+      return;
+    }
+
+    if(metadataScanIndex >= playlistItems.length){
+      clearInterval(metadataScanTimer);
+      metadataScanTimer = null;
+      metadataScanRunning = false;
+
+      renderPlaylist($("trackSearch").value);
+      $("playlistMeta").textContent =
+        `${playlistItems.length} songs • YouTube playlist`;
+
+      return;
+    }
+
+    const item = playlistItems[metadataScanIndex];
+
+    try{
+      /*
+        Cue one video in the metadata-only player. This leaves
+        the user's real player completely untouched.
+      */
+      metadataPlayer.cueVideoById(item.id);
+    }catch(error){
+      console.warn("Metadata cue failed:", item.id, error);
+      metadataScanIndex++;
+      return;
+    }
+
+    let attempts = 0;
+
+    const readMetadata = () => {
+      attempts++;
+
+      try{
+        const data = metadataPlayer.getVideoData
+          ? metadataPlayer.getVideoData()
+          : {};
+
+        const duration = metadataPlayer.getDuration
+          ? metadataPlayer.getDuration()
+          : 0;
+
+        if(data.video_id === item.id){
+          if(data.title){
+            item.title = data.title;
+          }
+
+          if(data.author){
+            item.artist = data.author;
+          }
+
+          if(duration > 0){
+            item.duration = duration;
+
+            renderPlaylist($("trackSearch").value);
+
+            metadataScanIndex++;
+            setTimeout(scanNext, 80);
+            return;
+          }
+        }
+      }catch(error){
+        console.warn("Metadata read failed:", error);
+      }
+
+      /*
+        YouTube can expose title/author before duration. Give the
+        player a few seconds to expose duration metadata. If it
+        never does, keep the title/artist and move on.
+      */
+      if(attempts < 25){
+        setTimeout(readMetadata, 160);
+      }else{
+        metadataScanIndex++;
+
+        renderPlaylist($("trackSearch").value);
+        setTimeout(scanNext, 80);
+      }
+    };
+
+    setTimeout(readMetadata, 180);
+  };
+
+  scanNext();
+}
+
+function createMetadataPlayer(){
+  metadataPlayer = new YT.Player("youtubeMetadataPlayer", {
+    width: "200",
+    height: "200",
+    videoId: START_VIDEO_ID,
+
+    playerVars: {
+      autoplay: 0,
+      controls: 0,
+      disablekb: 1,
+      fs: 0,
+      playsinline: 1,
+      rel: 0,
+      enablejsapi: 1,
+      origin: window.location.origin
+    },
+
+    events: {
+      onReady: () => {
+        metadataPlayerReady = true;
+
+        try{
+          metadataPlayer.mute();
+        }catch{}
+
+        startMetadataScanner();
+      },
+
+      onError: event => {
+        console.warn("Metadata player error:", event.data);
+
+        if(metadataScanRunning){
+          metadataScanIndex++;
+        }
+      }
+    }
+  });
+}
+
+/* ---------------------------------------------------------
    YouTube player
    --------------------------------------------------------- */
 
@@ -1148,12 +1308,11 @@ function onYouTubeReady(){
     YouTube can populate getPlaylist() asynchronously.
   */
   try{
-    player.loadPlaylist({
+    player.cuePlaylist({
       list: PLAYLIST_ID,
       listType: "playlist",
       index: 0,
-      startSeconds: 0,
-      suggestedQuality: "small"
+      startSeconds: 0
     });
   }catch(error){
     console.error("Playlist load error:", error);
@@ -1493,7 +1652,10 @@ setInterval(() => {
    YouTube IFrame API
    --------------------------------------------------------- */
 
-window.onYouTubeIframeAPIReady = createYouTubePlayer;
+window.onYouTubeIframeAPIReady = () => {
+  createYouTubePlayer();
+  createMetadataPlayer();
+};
 
 const ytScript = document.createElement("script");
 ytScript.src = "https://www.youtube.com/iframe_api";
