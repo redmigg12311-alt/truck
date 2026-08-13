@@ -40,7 +40,7 @@
   --line:rgba(255,255,255,.18);
   --muted:rgba(255,247,231,.62);
   --shadow:0 24px 80px rgba(0,0,0,.48);
-  --truck-thumb:url("https://i.ibb.co/pjGxYjpV/1-1.webp");
+  --truck-thumb:url("https://i.ibb.co/k6XwZM2L/turk.webp");
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{width:100%;height:100%}
@@ -630,7 +630,7 @@ a{color:inherit}
 <body>
 <header class="topbar">
   <div class="live-clock"><span class="live-dot"></span><span id="clock">--:--</span></div>
-  <a class="spotify-link" href="https://www.youtube.com/watch?v=5MIGQBpVeqs" target="_blank" rel="noopener noreferrer">YouTube ↗</a>
+  <a class="spotify-link" href="https://www.youtube.com/playlist?list=PLgObA3pAqvOh87Z03QG8Z4xE-uqlAWSBy" target="_blank" rel="noopener noreferrer">YouTube Playlist ↗</a>
 </header>
 
 <section class="hero">
@@ -649,8 +649,8 @@ a{color:inherit}
 
     <div class="track-info">
       <div class="status" id="status"><i></i><span>YouTube</span></div>
-      <div class="song" id="song">Indian Truck Driver Music</div>
-      <div class="artist" id="artist">YouTube • Highway Vibes</div>
+      <div class="song" id="song">Loading YouTube playlist…</div>
+      <div class="artist" id="artist">76-song playlist</div>
     </div>
 
     <div class="player-actions">
@@ -721,15 +721,14 @@ a{color:inherit}
 <!-- Hidden YouTube player. Audio is controlled by the custom UI above. -->
 <div id="youtubePlayer"
      aria-hidden="true"
-     style="position:fixed;left:-9999px;top:-9999px;width:1px;height:1px;opacity:0;pointer-events:none;">
-</div>
+     style="position:fixed;left:-9999px;top:-9999px;width:1px;height:1px;opacity:0;pointer-events:none;"></div>
 
 <div class="drawer-backdrop" id="drawerBackdrop"></div>
 <aside class="drawer" id="drawer" aria-hidden="true">
   <div class="drawer-head">
     <div>
       <div class="drawer-title">Song List</div>
-      <div class="drawer-sub" id="playlistMeta">YouTube music source</div>
+      <div class="drawer-sub" id="playlistMeta">YouTube playlist • Loading…</div>
     </div>
     <button class="close-btn" id="closePlaylist" aria-label="Close song list">
       <span class="material-symbols-rounded">close</span>
@@ -741,12 +740,12 @@ a{color:inherit}
   </div>
 
   <div class="track-list" id="trackList">
-    <div style="padding:18px;color:rgba(255,255,255,.5);font-size:12px">YouTube music source is loading…</div>
+    <div style="padding:18px;color:rgba(255,255,255,.5);font-size:12px">Loading YouTube playlist…</div>
   </div>
 
   <div class="drawer-foot">
-    <span>YouTube source</span>
-    <a class="open-spotify" href="https://www.youtube.com/watch?v=5MIGQBpVeqs" target="_blank" rel="noopener noreferrer">Open on YouTube ↗</a>
+    <span>YouTube playlist</span>
+    <a class="open-spotify" href="https://www.youtube.com/playlist?list=PLgObA3pAqvOh87Z03QG8Z4xE-uqlAWSBy" target="_blank" rel="noopener noreferrer">Open Playlist ↗</a>
   </div>
 </aside>
 
@@ -754,12 +753,16 @@ a{color:inherit}
 
 <script>
 /* =========================================================
-   HORN OK PLEASE — YouTube-powered music player
-   Supplied YouTube source:
-   https://www.youtube.com/embed/5MIGQBpVeqs
+   HORN OK PLEASE — FULL YOUTUBE PLAYLIST PLAYER
+   Playlist:
+   https://www.youtube.com/playlist?list=PLgObA3pAqvOh87Z03QG8Z4xE-uqlAWSBy
+
+   Starting video:
+   5MIGQBpVeqs
    ========================================================= */
 
-const YOUTUBE_VIDEO_ID = "5MIGQBpVeqs";
+const PLAYLIST_ID = "PLgObA3pAqvOh87Z03QG8Z4xE-uqlAWSBy";
+const START_VIDEO_ID = "5MIGQBpVeqs";
 
 const $ = id => document.getElementById(id);
 
@@ -770,13 +773,10 @@ let isMuted = false;
 let shuffle = false;
 let progressTimer = null;
 let toastTimer = null;
+let playlistItems = [];
+let currentIndex = 0;
 
-const track = {
-  id: YOUTUBE_VIDEO_ID,
-  title: "Horn OK Please • Highway Music",
-  artist: "YouTube",
-  cover: "https://i.ytimg.com/vi/5MIGQBpVeqs/hqdefault.jpg"
-};
+const fallbackCover = "https://i.ibb.co/S7t9NmW0/truck.webp";
 
 const slogans = [
   "HORN OK PLEASE • SAFE DRIVE SAVE LIFE • FULL VOLUME",
@@ -832,7 +832,7 @@ function setPlaying(playing){
 
 function updateVolumeIcon(){
   const icon = $("volumeIcon");
-  const volume = player && playerReady ? player.getVolume() : Number($("volumeSlider").value);
+  const volume = playerReady && player ? player.getVolume() : Number($("volumeSlider").value);
 
   if(isMuted || volume === 0) icon.textContent = "volume_off";
   else if(volume < 50) icon.textContent = "volume_down";
@@ -876,14 +876,184 @@ function closePlaylist(){
 }
 
 /* ---------------------------------------------------------
+   Playlist helpers
+   --------------------------------------------------------- */
+
+function thumbnail(videoId){
+  return `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
+}
+
+function getPlaylistIds(){
+  if(!playerReady || !player) return [];
+  const ids = player.getPlaylist() || [];
+  return Array.isArray(ids) ? ids : [];
+}
+
+function syncPlaylistFromPlayer(){
+  const ids = getPlaylistIds();
+
+  if(!ids.length) return;
+
+  playlistItems = ids.map((videoId, i) => ({
+    id: videoId,
+    title: `Track ${i + 1}`,
+    artist: "YouTube",
+    duration: 0
+  }));
+
+  currentIndex = Math.max(
+    0,
+    Number(player.getPlaylistIndex?.() ?? 0)
+  );
+
+  renderPlaylist($("trackSearch").value);
+  updateCurrentTrack();
+}
+
+function updateCurrentTrack(){
+  if(!playerReady || !player) return;
+
+  const data = player.getVideoData ? player.getVideoData() : {};
+  const videoId = data.video_id || playlistItems[currentIndex]?.id;
+
+  if(videoId){
+    const found = playlistItems.findIndex(item => item.id === videoId);
+    if(found >= 0) currentIndex = found;
+  }
+
+  const item = playlistItems[currentIndex] || {
+    id: videoId || START_VIDEO_ID,
+    title: data.title || "Indian Truck Driver Music",
+    artist: data.author || "YouTube"
+  };
+
+  $("cover").src = thumbnail(item.id);
+  $("cover").onerror = () => $("cover").src = fallbackCover;
+
+  $("song").textContent = data.title || item.title || "Indian Truck Driver Music";
+  $("artist").textContent = data.author || item.artist || "YouTube • Highway Vibes";
+
+  renderPlaylist($("trackSearch").value);
+}
+
+function renderPlaylist(filter = ""){
+  const list = $("trackList");
+  if(!list) return;
+
+  const q = String(filter).toLowerCase().trim();
+
+  list.innerHTML = "";
+
+  const filtered = playlistItems
+    .map((item, i) => ({item, i}))
+    .filter(({item}) => {
+      const text = `${item.title} ${item.artist} ${item.id}`.toLowerCase();
+      return !q || text.includes(q);
+    });
+
+  if(!filtered.length){
+    list.innerHTML =
+      '<div style="padding:18px;color:rgba(255,255,255,.5);font-size:12px">No matching songs.</div>';
+    return;
+  }
+
+  filtered.forEach(({item, i}) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "track-item" + (i === currentIndex ? " active" : "");
+
+    button.innerHTML = `
+      <img alt="">
+      <span class="track-copy">
+        <span class="track-name"></span>
+        <span class="track-artist"></span>
+      </span>
+      <span class="track-duration"></span>
+    `;
+
+    const img = button.querySelector("img");
+    img.src = thumbnail(item.id);
+    img.onerror = () => img.src = fallbackCover;
+
+    button.querySelector(".track-name").textContent =
+      item.title || `Track ${i + 1}`;
+
+    button.querySelector(".track-artist").textContent =
+      item.artist || "YouTube";
+
+    button.querySelector(".track-duration").textContent =
+      item.duration ? fmt(item.duration) : "";
+
+    button.onclick = () => playPlaylistIndex(i);
+
+    list.appendChild(button);
+  });
+
+  $("playlistMeta").textContent =
+    `${playlistItems.length} songs • YouTube playlist`;
+}
+
+function playPlaylistIndex(i){
+  if(!playerReady || !player) return;
+
+  if(!playlistItems.length){
+    toast("Playlist is still loading…");
+    return;
+  }
+
+  const target = Math.max(
+    0,
+    Math.min(playlistItems.length - 1, Number(i))
+  );
+
+  currentIndex = target;
+
+  /*
+    The YouTube IFrame Player API keeps the actual playlist
+    inside the player. This loads a real playlist item rather
+    than creating a separate audio source.
+  */
+  player.playVideoAt(target);
+  closePlaylist();
+}
+
+function nextTrack(){
+  if(!playerReady || !player) return;
+
+  /*
+    If shuffle is enabled, use YouTube's own playlist shuffle.
+    Otherwise advance through the real playlist.
+  */
+  if(shuffle){
+    player.nextVideo();
+    return;
+  }
+
+  player.nextVideo();
+}
+
+function previousTrack(){
+  if(!playerReady || !player) return;
+
+  const current = player.getCurrentTime() || 0;
+
+  if(current > 3){
+    player.seekTo(0, true);
+    return;
+  }
+
+  player.previousVideo();
+}
+
+/* ---------------------------------------------------------
    YouTube player
    --------------------------------------------------------- */
 
 function createYouTubePlayer(){
   player = new YT.Player("youtubePlayer", {
-    videoId: YOUTUBE_VIDEO_ID,
     width: "1",
     height: "1",
+
     playerVars: {
       autoplay: 0,
       controls: 0,
@@ -892,8 +1062,11 @@ function createYouTubePlayer(){
       iv_load_policy: 3,
       modestbranding: 1,
       playsinline: 1,
-      rel: 0
+      rel: 0,
+      listType: "playlist",
+      list: PLAYLIST_ID
     },
+
     events: {
       onReady: onYouTubeReady,
       onStateChange: onYouTubeStateChange,
@@ -904,39 +1077,37 @@ function createYouTubePlayer(){
 
 function onYouTubeReady(){
   playerReady = true;
+
   player.setVolume(Number($("volumeSlider").value));
 
-  $("cover").src = track.cover;
-  $("song").textContent = track.title;
-  $("artist").textContent = "YouTube • Highway Vibes";
-  $("playlistMeta").textContent = "YouTube music source";
-  $("trackList").innerHTML = "";
+  /*
+    Load the complete playlist and start from the exact
+    video supplied by the user.
+  */
+  player.loadPlaylist({
+    list: PLAYLIST_ID,
+    listType: "playlist",
+    index: 0,
+    suggestedQuality: "small"
+  });
 
-  const item = document.createElement("button");
-  item.type = "button";
-  item.className = "track-item active";
-  item.innerHTML = `
-    <img src="${track.cover}" alt="">
-    <span class="track-copy">
-      <span class="track-name">${track.title}</span>
-      <span class="track-artist">YouTube • Highway Vibes</span>
-    </span>
-    <span class="track-duration" id="ytListDuration">--:--</span>
-  `;
-  item.onclick = () => {
-    player.playVideo();
-    closePlaylist();
-  };
-  $("trackList").appendChild(item);
-
-  setStatus("READY");
-  toast("YouTube music is ready. Press Play.");
+  setStatus("LOADING PLAYLIST");
 }
 
 function onYouTubeStateChange(event){
   switch(event.data){
+
+    case YT.PlayerState.UNSTARTED:
+      setStatus("READY");
+      break;
+
     case YT.PlayerState.PLAYING:
       setPlaying(true);
+      currentIndex = Math.max(
+        0,
+        Number(player.getPlaylistIndex?.() ?? currentIndex)
+      );
+      updateCurrentTrack();
       startProgressLoop();
       break;
 
@@ -946,8 +1117,12 @@ function onYouTubeStateChange(event){
       break;
 
     case YT.PlayerState.ENDED:
+      /*
+        Because the player itself owns the playlist, YouTube
+        will continue to the next item automatically when the
+        playlist has another video.
+      */
       setPlaying(false);
-      setVisualProgress(1);
       stopProgressLoop();
       break;
 
@@ -957,6 +1132,24 @@ function onYouTubeStateChange(event){
 
     case YT.PlayerState.CUED:
       setStatus("READY");
+
+      setTimeout(() => {
+        syncPlaylistFromPlayer();
+
+        /*
+          Find the requested starting video and position the
+          player there instead of always starting at song #1.
+        */
+        const ids = getPlaylistIds();
+        const startIndex = ids.indexOf(START_VIDEO_ID);
+
+        if(startIndex >= 0 && startIndex !== currentIndex){
+          player.playVideoAt(startIndex);
+        }else{
+          updateCurrentTrack();
+        }
+      }, 300);
+
       break;
   }
 }
@@ -966,14 +1159,14 @@ function onYouTubeError(event){
   setStatus("YOUTUBE ERROR", true);
 
   const messages = {
-    2: "Invalid YouTube video ID.",
+    2: "Invalid YouTube playlist/video information.",
     5: "This video cannot be played in the HTML5 player.",
     100: "This YouTube video is unavailable or private.",
     101: "This video does not allow embedded playback.",
     150: "This video does not allow embedded playback."
   };
 
-  toast(messages[event.data] || "YouTube could not play this video.");
+  toast(messages[event.data] || "YouTube could not play this track.");
 }
 
 function startProgressLoop(){
@@ -989,9 +1182,13 @@ function startProgressLoop(){
       setVisualProgress(current / duration);
       $("currentTime").textContent = fmt(current);
       $("duration").textContent = fmt(duration);
+    }
 
-      const listDuration = $("ytListDuration");
-      if(listDuration) listDuration.textContent = fmt(duration);
+    const idx = Number(player.getPlaylistIndex?.() ?? currentIndex);
+
+    if(Number.isFinite(idx) && idx >= 0 && idx !== currentIndex){
+      currentIndex = idx;
+      updateCurrentTrack();
     }
   }, 100);
 }
@@ -1004,33 +1201,39 @@ function stopProgressLoop(){
 }
 
 function playPause(){
-  if(!playerReady){
-    toast("YouTube player is still loading…");
+  if(!playerReady || !player){
+    toast("YouTube playlist is still loading…");
     return;
   }
 
-  if(isPlaying) player.pauseVideo();
-  else player.playVideo();
+  if(isPlaying){
+    player.pauseVideo();
+  }else{
+    player.playVideo();
+  }
 }
 
 function seekFromPointer(event){
-  if(!playerReady) {
-    toast("YouTube player is still loading…");
+  if(!playerReady || !player) return;
+
+  const duration = player.getDuration() || 0;
+
+  if(!duration){
+    toast("The selected YouTube track is still loading.");
     return;
   }
 
-  const duration = player.getDuration() || 0;
-  if(!duration) return;
-
   const road = $("roadProgress");
   const rect = road.getBoundingClientRect();
+
+  if(!rect.width) return;
 
   const x = Math.max(
     0,
     Math.min(rect.width, event.clientX - rect.left)
   );
 
-  const progress = rect.width ? x / rect.width : 0;
+  const progress = x / rect.width;
   player.seekTo(progress * duration, true);
 
   setVisualProgress(progress);
@@ -1038,56 +1241,46 @@ function seekFromPointer(event){
 }
 
 /* ---------------------------------------------------------
-   UI
+   Controls
    --------------------------------------------------------- */
 
 $("play").onclick = playPause;
-
-$("next").onclick = () => {
-  if(!playerReady) return;
-
-  /*
-    The supplied URL contains a single video and no YouTube
-    playlist ID, so there is no real "next track" to advance to.
-    Keeping the button useful: restart the current source.
-  */
-  player.seekTo(0, true);
-  player.playVideo();
-  toast("Restarting the YouTube track.");
-};
-
-$("prev").onclick = () => {
-  if(!playerReady) return;
-
-  const current = player.getCurrentTime() || 0;
-
-  if(current > 3){
-    player.seekTo(0, true);
-  }else{
-    player.seekTo(0, true);
-  }
-};
+$("next").onclick = nextTrack;
+$("prev").onclick = previousTrack;
 
 $("shuffle").onclick = () => {
   shuffle = !shuffle;
   $("shuffle").classList.toggle("active", shuffle);
-  toast(shuffle ? "Shuffle on" : "Shuffle off");
+
+  if(playerReady && player){
+    /*
+      YouTube handles the playlist order internally.
+      Calling setShuffle(true/false) makes the next/previous
+      operations follow the shuffled playlist order.
+    */
+    player.setShuffle(shuffle);
+  }
+
+  toast(shuffle ? "Playlist shuffle on" : "Playlist shuffle off");
 };
 
 $("volumeSlider").oninput = event => {
   const value = Number(event.target.value);
 
-  if(playerReady){
+  if(playerReady && player){
     player.setVolume(value);
-    player.unMute();
-    isMuted = false;
+
+    if(value > 0){
+      player.unMute();
+      isMuted = false;
+    }
   }
 
   updateVolumeIcon();
 };
 
 $("volumeBtn").onclick = () => {
-  if(!playerReady) return;
+  if(!playerReady || !player) return;
 
   if(isMuted){
     player.unMute();
@@ -1104,14 +1297,25 @@ $("openPlaylistTop").onclick = openPlaylist;
 $("closePlaylist").onclick = closePlaylist;
 $("drawerBackdrop").onclick = closePlaylist;
 
+$("trackSearch").oninput = event => {
+  renderPlaylist(event.target.value);
+};
+
 document.addEventListener("keydown", event => {
   if(event.key === "Escape") closePlaylist();
 
-  if(event.code === "Space" && document.activeElement.tagName !== "INPUT"){
+  if(
+    event.code === "Space" &&
+    document.activeElement.tagName !== "INPUT"
+  ){
     event.preventDefault();
     playPause();
   }
 });
+
+/* ---------------------------------------------------------
+   Road / truck seeking
+   --------------------------------------------------------- */
 
 const roadProgress = $("roadProgress");
 
@@ -1136,6 +1340,7 @@ roadProgress.addEventListener("pointermove", event => {
 
 roadProgress.addEventListener("pointerup", event => {
   roadProgress.classList.remove("seeking");
+
   try{
     roadProgress.releasePointerCapture?.(event.pointerId);
   }catch{}
@@ -1146,7 +1351,7 @@ roadProgress.addEventListener("pointercancel", () => {
 });
 
 roadProgress.addEventListener("keydown", event => {
-  if(!playerReady) return;
+  if(!playerReady || !player) return;
 
   const duration = player.getDuration() || 0;
   if(!duration) return;
@@ -1154,20 +1359,27 @@ roadProgress.addEventListener("keydown", event => {
   const step = 5;
   let nextTime = player.getCurrentTime() || 0;
 
-  if(event.key === "ArrowRight") nextTime = Math.min(duration, nextTime + step);
-  else if(event.key === "ArrowLeft") nextTime = Math.max(0, nextTime - step);
-  else if(event.key === "Home") nextTime = 0;
-  else if(event.key === "End") nextTime = duration;
-  else return;
+  if(event.key === "ArrowRight"){
+    nextTime = Math.min(duration, nextTime + step);
+  }else if(event.key === "ArrowLeft"){
+    nextTime = Math.max(0, nextTime - step);
+  }else if(event.key === "Home"){
+    nextTime = 0;
+  }else if(event.key === "End"){
+    nextTime = duration;
+  }else{
+    return;
+  }
 
   event.preventDefault();
+
   player.seekTo(nextTime, true);
   setVisualProgress(nextTime / duration);
   $("currentTime").textContent = fmt(nextTime);
 });
 
 /* ---------------------------------------------------------
-   Clock + decorative text
+   Clock + decorative animation
    --------------------------------------------------------- */
 
 updateClock();
@@ -1176,10 +1388,12 @@ setInterval(updateClock, 1000);
 let sloganIndex = 0;
 setInterval(() => {
   sloganIndex = (sloganIndex + 1) % slogans.length;
+
   const el = $("truckMarquee");
   if(!el) return;
 
   el.style.opacity = "0";
+
   setTimeout(() => {
     el.textContent = slogans[sloganIndex];
     el.style.opacity = "1";
@@ -1189,10 +1403,12 @@ setInterval(() => {
 let taglineIndex = 0;
 setInterval(() => {
   taglineIndex = (taglineIndex + 1) % taglines.length;
+
   const el = $("heroTagline");
   if(!el) return;
 
   el.style.opacity = "0";
+
   setTimeout(() => {
     el.textContent = taglines[taglineIndex];
     el.style.opacity = "1";
@@ -1200,7 +1416,7 @@ setInterval(() => {
 }, 7000);
 
 /* ---------------------------------------------------------
-   YouTube IFrame API loader
+   YouTube IFrame API
    --------------------------------------------------------- */
 
 window.onYouTubeIframeAPIReady = createYouTubePlayer;
@@ -1209,12 +1425,6 @@ const ytScript = document.createElement("script");
 ytScript.src = "https://www.youtube.com/iframe_api";
 ytScript.async = true;
 document.head.appendChild(ytScript);
-
-/*
-  IMPORTANT:
-  Modern browsers block autoplay with sound until the user
-  interacts with the page. That is normal browser behavior.
-*/
 </script>
 </body>
 </html>
