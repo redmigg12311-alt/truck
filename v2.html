@@ -78,23 +78,6 @@ a{color:inherit}
   -webkit-font-smoothing: antialiased;
   font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24;
 }
-/* ---------- material symbols ---------- */
-.material-symbols-rounded{
-  font-family:'Material Symbols Rounded';
-  font-weight:normal;
-  font-style:normal;
-  font-size:20px;
-  line-height:1;
-  letter-spacing:normal;
-  text-transform:none;
-  display:inline-block;
-  white-space:nowrap;
-  word-wrap:normal;
-  direction:ltr;
-  font-feature-settings:'liga';
-  -webkit-font-smoothing:antialiased;
-  font-variation-settings:'FILL' 0,'wght' 500,'GRAD' 0,'opsz' 24;
-}
 
 .play .material-symbols-rounded{
   font-size:19px;
@@ -356,11 +339,6 @@ a{color:inherit}
   z-index:1;
 }
 
-.road-progress{
-  cursor:pointer;
-  touch-action:none;
-}
-
 .road-progress:focus-visible{
   outline:2px solid var(--gold);
   outline-offset:4px;
@@ -404,47 +382,20 @@ a{color:inherit}
 }
 
 @media(min-width:721px){
-  .truck-runner{
-    width:58px;
-    height:40px;
-  }
-
-  .truck-runner img{
-    width:58px;
-    height:40px;
-  }
+  .truck-runner{width:58px;height:40px}
+  .truck-runner img{width:58px;height:40px}
 }
 
 @media(max-width:720px){
-  .road-progress{
-    height:34px;
-  }
-
-  .truck-runner{
-    width:46px;
-    height:32px;
-  }
-
-  .truck-runner img{
-    width:46px;
-    height:32px;
-  }
+  .road-progress{height:34px}
+  .truck-runner{width:46px;height:32px}
+  .truck-runner img{width:46px;height:32px}
 }
 
 @media(max-width:430px){
-  .road-progress{
-    height:32px;
-  }
-
-  .truck-runner{
-    width:42px;
-    height:29px;
-  }
-
-  .truck-runner img{
-    width:42px;
-    height:29px;
-  }
+  .road-progress{height:32px}
+  .truck-runner{width:42px;height:29px}
+  .truck-runner img{width:42px;height:29px}
 }
 
 .time-row{
@@ -506,6 +457,42 @@ a{color:inherit}
   background:rgba(255,255,255,.07);display:grid;place-items:center;
   flex:0 0 auto;
 }
+
+.drawer-tabs{
+  display:flex;gap:6px;padding:0 14px 10px;
+}
+.drawer-tab{
+  flex:1;padding:8px 10px;border-radius:10px;
+  border:1px solid rgba(255,255,255,.13);
+  background:rgba(255,255,255,.05);color:rgba(255,247,231,.7);
+  font-size:11.5px;font-weight:800;letter-spacing:.02em;
+  transition:.16s;text-align:center;
+}
+.drawer-tab:hover{background:rgba(255,255,255,.09)}
+.drawer-tab.active{
+  background:rgba(255,195,0,.14);color:var(--gold);
+  border-color:rgba(255,195,0,.4);
+}
+
+.add-link-wrap{
+  display:flex;gap:8px;padding:0 14px 10px;
+}
+.add-link-input{
+  flex:1;min-width:0;height:38px;padding:0 13px;
+  color:var(--cream);border:1px solid rgba(255,255,255,.13);
+  border-radius:12px;outline:none;background:rgba(255,255,255,.06);
+}
+.add-link-input::placeholder{color:rgba(255,255,255,.38)}
+.add-link-btn{
+  width:38px;height:38px;flex:0 0 auto;border-radius:12px;
+  border:1px solid rgba(255,195,0,.4);background:rgba(255,195,0,.14);
+  color:var(--gold);display:grid;place-items:center;transition:.16s;
+}
+.add-link-btn:hover{background:rgba(255,195,0,.22)}
+.add-link-btn:disabled{opacity:.55;cursor:default}
+.add-link-btn.busy .material-symbols-rounded{animation:spin .9s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
 .search-wrap{padding:0 14px 10px}
 .search{
   width:100%;height:38px;padding:0 13px;
@@ -520,10 +507,10 @@ a{color:inherit}
 .track-list::-webkit-scrollbar{width:6px}
 .track-list::-webkit-scrollbar-thumb{background:rgba(255,255,255,.18);border-radius:99px}
 .track-item{
-  width:100%;display:flex;align-items:center;gap:10px;
+  width:100%;display:flex;align-items:center;gap:8px;
   padding:8px;border:1px solid transparent;border-radius:13px;
   color:var(--cream);text-align:left;background:transparent;
-  transition:.16s;
+  transition:.16s;cursor:pointer;
 }
 .track-item:hover{background:rgba(255,255,255,.07)}
 .track-item.active{background:rgba(255,195,0,.09);border-color:rgba(255,195,0,.28)}
@@ -541,6 +528,21 @@ a{color:inherit}
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:10px;
 }
 .track-duration{color:rgba(255,247,231,.42);font-size:9px;flex:0 0 auto}
+.queued-badge{
+  flex:0 0 auto;font-size:8px;font-weight:800;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--gold);
+  background:rgba(255,195,0,.12);border:1px solid rgba(255,195,0,.3);
+  padding:2px 6px;border-radius:999px;
+}
+.track-remove{
+  flex:0 0 auto;width:22px;height:22px;border-radius:50%;
+  border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.05);
+  color:rgba(255,247,231,.62);display:grid;place-items:center;
+  transition:.16s;
+}
+.track-remove:hover{background:rgba(255,92,92,.16);border-color:rgba(255,92,92,.4);color:#ff8a8a}
+.track-remove .material-symbols-rounded{font-size:14px}
+
 .drawer-foot{
   display:flex;align-items:center;justify-content:space-between;gap:8px;
   padding:10px 15px;border-top:1px solid rgba(255,255,255,.09);
@@ -550,30 +552,11 @@ a{color:inherit}
   color:var(--cream);text-decoration:none;white-space:nowrap;
   font-weight:800;
 }
-
-.auth{
-  position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:18px;
-  background:rgba(0,0,0,.58);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+.text-btn{
+  color:var(--cream);background:transparent;border:0;
+  text-decoration:underline;font-weight:800;font-size:9px;
+  cursor:pointer;white-space:nowrap;
 }
-.auth[hidden]{display:none}
-.auth-card{
-  width:min(500px,100%);padding:25px;border-radius:24px;
-  border:1px solid rgba(255,255,255,.2);
-  background:rgba(18,22,27,.9);box-shadow:0 30px 100px rgba(0,0,0,.55);
-}
-.auth-card h2{font-size:23px}
-.auth-card p{margin-top:9px;color:rgba(255,247,231,.64);font-size:13px;line-height:1.5}
-.auth-uri{
-  margin-top:12px;padding:10px;border-radius:10px;
-  background:#0b0e11;color:#ffd45a;font:11px ui-monospace,SFMono-Regular,monospace;
-  word-break:break-all;
-}
-.auth-actions{display:flex;gap:8px;margin-top:15px}
-.primary-btn,.secondary-btn{
-  border:0;border-radius:11px;padding:10px 14px;font-weight:800;cursor:pointer;
-}
-.primary-btn{background:var(--gold);color:#171717}
-.secondary-btn{background:rgba(255,255,255,.08);color:var(--cream);border:1px solid var(--line)}
 
 .toast{
   position:fixed;z-index:120;left:50%;bottom:120px;
@@ -638,6 +621,7 @@ a{color:inherit}
   .volume-wrap:focus-within .vol-slider{width:34px;margin-left:5px;opacity:1}
   .progress{margin-top:6px}
   .toast{bottom:100px}
+  .drawer-tab{font-size:10.5px;padding:7px 8px}
 }
 
 /* ---------- very small / narrow phones ---------- */
@@ -660,9 +644,13 @@ a{color:inherit}
   .time-row{font-size:8px}
   .drawer{top:6px;right:6px;bottom:6px;left:6px;width:auto;border-radius:16px}
   .drawer-title{font-size:16px}
+  .drawer-tabs{gap:4px}
+  .drawer-tab{font-size:9.5px;padding:6px}
+  .add-link-btn{width:34px;height:34px}
   .track-item img{width:40px;height:40px;flex-basis:40px}
   .track-name{font-size:11px}
   .track-artist{font-size:9px}
+  .queued-badge{display:none}
 }
 
 /* ---------- short viewport heights (landscape phones) ---------- */
@@ -704,7 +692,7 @@ a{color:inherit}
     <div class="track-info">
       <div class="status" id="status"><i></i><span>YouTube</span></div>
       <div class="song" id="song">Loading YouTube playlist…</div>
-      <div class="artist" id="artist">76-song playlist</div>
+      <div class="artist" id="artist">Playlist</div>
     </div>
 
     <div class="player-actions">
@@ -777,10 +765,15 @@ a{color:inherit}
      aria-hidden="true"
      style="position:fixed;left:-9999px;top:-9999px;width:1px;height:1px;opacity:0;pointer-events:none;"></div>
 
-<!-- Metadata-only YouTube player. Kept off-screen and muted. -->
+<!-- Metadata-only YouTube player: fetches track titles/artists one video at a time. -->
 <div id="youtubeMetadataPlayer"
      aria-hidden="true"
      style="position:fixed;left:-10000px;top:-10000px;width:200px;height:200px;opacity:0;pointer-events:none;"></div>
+
+<!-- Import-only YouTube player: resolves a pasted playlist link into its video IDs. -->
+<div id="youtubeImportPlayer"
+     aria-hidden="true"
+     style="position:fixed;left:-10001px;top:-10001px;width:200px;height:200px;opacity:0;pointer-events:none;"></div>
 
 <div class="drawer-backdrop" id="drawerBackdrop"></div>
 <aside class="drawer" id="drawer" aria-hidden="true">
@@ -794,7 +787,20 @@ a{color:inherit}
     </button>
   </div>
 
-  <div class="search-wrap">
+  <div class="drawer-tabs" role="tablist">
+    <button type="button" class="drawer-tab active" id="tabQueue" role="tab" aria-selected="true">Song List</button>
+    <button type="button" class="drawer-tab" id="tabHistory" role="tab" aria-selected="false">History</button>
+  </div>
+
+  <div class="add-link-wrap" id="addLinkWrap">
+    <input class="add-link-input" id="addLinkInput" type="text" inputmode="url" autocomplete="off"
+           placeholder="Paste a YouTube song or playlist link…" aria-label="Paste a YouTube song or playlist link">
+    <button class="add-link-btn" id="addLinkBtn" aria-label="Add to queue" title="Add to queue">
+      <span class="material-symbols-rounded" id="addLinkIcon">add</span>
+    </button>
+  </div>
+
+  <div class="search-wrap" id="searchWrap">
     <input class="search" id="trackSearch" type="search" placeholder="Search song or artist…" autocomplete="off">
   </div>
 
@@ -802,9 +808,12 @@ a{color:inherit}
     <div style="padding:18px;color:rgba(255,255,255,.6);font-size:12px">Loading YouTube playlist…</div>
   </div>
 
+  <div class="track-list" id="historyList" hidden></div>
+
   <div class="drawer-foot">
-    <span>YouTube playlist</span>
-    <a class="open-spotify" href="https://www.youtube.com/playlist?list=PLgObA3pAqvOh87Z03QG8Z4xE-uqlAWSBy" target="_blank" rel="noopener noreferrer">Open Playlist ↗</a>
+    <span id="drawerFootLabel">YouTube playlist</span>
+    <button type="button" class="text-btn" id="clearHistoryBtn" hidden>Clear history</button>
+    <a class="open-spotify" id="openPlaylistLink" href="https://www.youtube.com/playlist?list=PLgObA3pAqvOh87Z03QG8Z4xE-uqlAWSBy" target="_blank" rel="noopener noreferrer">Open Playlist ↗</a>
   </div>
 </aside>
 
@@ -812,16 +821,22 @@ a{color:inherit}
 
 <script>
 /* =========================================================
-   HORN OK PLEASE — FULL YOUTUBE PLAYLIST PLAYER
-   Playlist:
-   https://www.youtube.com/playlist?list=PLgObA3pAqvOh87Z03QG8Z4xE-uqlAWSBy
+   HORN OK PLEASE — FULL YOUTUBE QUEUE-BASED PLAYER
 
-   Starting video:
-   5MIGQBpVeqs
+   Base playlist:
+   https://www.youtube.com/playlist?list=PLgObA3pAqvOh87Z03QG8Z4xE-uqlAWSBy
+   Starting video: 5MIGQBpVeqs
+
+   Playback is driven entirely by our own queue (an array of
+   {id, title, artist, duration, source}) rather than YouTube's
+   native playlist object, so songs and playlists a user pastes
+   in can be merged into the same queue as the base playlist.
    ========================================================= */
 
 const PLAYLIST_ID = "PLgObA3pAqvOh87Z03QG8Z4xE-uqlAWSBy";
 const START_VIDEO_ID = "5MIGQBpVeqs";
+const HISTORY_KEY = "hop_history_v1";
+const HISTORY_LIMIT = 60;
 
 const $ = id => document.getElementById(id);
 
@@ -832,15 +847,31 @@ let isMuted = false;
 let shuffle = false;
 let progressTimer = null;
 let toastTimer = null;
-let playlistItems = [];
-let currentIndex = 0;
-let playlistPollTimer = null;
-let playlistLoadAttempts = 0;
+
+// Queue state (ID-based so add/remove never invalidates indices).
+let playlistItems = [];   // [{id, title, artist, duration, source}]
+let playOrder = [];       // array of video IDs, in play sequence
+let playPos = 0;          // position within playOrder
+let currentVideoId = null;
+
+// Metadata (title/artist) scanner.
 let metadataPlayer = null;
 let metadataPlayerReady = false;
 let metadataScanRunning = false;
 let metadataScanTimer = null;
 let metadataScanIndex = 0;
+
+// Playlist-link importer.
+let importPlayer = null;
+let importPlayerReady = false;
+let importQueue = [];
+let importBusy = false;
+let activeImportJob = null;
+
+// Play history.
+let history = [];
+let lastLoggedVideoId = null;
+let activeDrawerTab = "queue";
 
 const fallbackCover = "https://i.ibb.co/S7t9NmW0/truck.webp";
 
@@ -919,10 +950,7 @@ function setVisualProgress(progress){
 
   if(roadWidth > 0){
     const half = truckWidth / 2;
-    const center = Math.max(
-      half,
-      Math.min(roadWidth - half, clamped * roadWidth)
-    );
+    const center = Math.max(half, Math.min(roadWidth - half, clamped * roadWidth));
     truck.style.left = `${center}px`;
   }
 
@@ -942,25 +970,38 @@ function closePlaylist(){
 }
 
 /* ---------------------------------------------------------
-   Playlist helpers
+   Drawer tabs
+   --------------------------------------------------------- */
+
+function setDrawerTab(tab){
+  activeDrawerTab = tab;
+
+  $("tabQueue").classList.toggle("active", tab === "queue");
+  $("tabQueue").setAttribute("aria-selected", tab === "queue" ? "true" : "false");
+  $("tabHistory").classList.toggle("active", tab === "history");
+  $("tabHistory").setAttribute("aria-selected", tab === "history" ? "true" : "false");
+
+  $("addLinkWrap").hidden = tab !== "queue";
+  $("searchWrap").hidden = tab !== "queue";
+  $("trackList").hidden = tab !== "queue";
+  $("historyList").hidden = tab !== "history";
+  $("openPlaylistLink").hidden = tab !== "queue";
+  $("drawerFootLabel").hidden = tab !== "queue";
+  $("clearHistoryBtn").hidden = tab !== "history" || !history.length;
+
+  if(tab === "history") renderHistory();
+}
+
+$("tabQueue").onclick = () => setDrawerTab("queue");
+$("tabHistory").onclick = () => setDrawerTab("history");
+
+/* ---------------------------------------------------------
+   Queue helpers (ID-based)
    --------------------------------------------------------- */
 
 function thumbnail(videoId){
   return `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
 }
-
-function getPlaylistIds(){
-  if(!playerReady || !player) return [];
-
-  try{
-    const ids = player.getPlaylist();
-    return Array.isArray(ids) ? ids.filter(Boolean) : [];
-  }catch(error){
-    console.warn("YouTube getPlaylist() failed:", error);
-    return [];
-  }
-}
-
 
 function cleanArtistName(name){
   return String(name || "")
@@ -970,140 +1011,90 @@ function cleanArtistName(name){
 }
 
 function cleanSongTitle(name){
-  return String(name || "")
-    .replace(/\s+/g, " ")
-    .trim();
+  return String(name || "").replace(/\s+/g, " ").trim();
 }
 
-function buildPlaylistItems(ids){
-  const oldById = new Map(
-    playlistItems.map(item => [item.id, item])
-  );
+function itemById(id){
+  return playlistItems.find(item => item.id === id);
+}
 
-  playlistItems = ids.map((videoId, i) => {
-    const oldItem = oldById.get(videoId);
+function buildSequentialOrder(){
+  return playlistItems.map(item => item.id);
+}
 
-    return {
-      id: videoId,
-      title: oldItem?.title || "",
-      artist: oldItem?.artist || "",
-      duration: oldItem?.duration || 0
-    };
+function shuffleArray(arr){
+  const a = arr.slice();
+  for(let i = a.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function syncPlayPos(){
+  const pos = playOrder.indexOf(currentVideoId);
+  if(pos >= 0) playPos = pos;
+}
+
+function addVideosToQueue(ids){
+  const existingIds = new Set(playlistItems.map(item => item.id));
+  const newIds = [];
+
+  ids.forEach(id => {
+    if(!id || existingIds.has(id)) return;
+    playlistItems.push({ id, title:"", artist:"", duration:0, source:"user" });
+    newIds.push(id);
+    existingIds.add(id);
   });
+
+  if(newIds.length){
+    const insertAt = Math.min(playPos + 1, playOrder.length);
+    playOrder.splice(insertAt, 0, ...newIds);
+
+    renderPlaylist($("trackSearch").value);
+    $("playlistMeta").textContent = `${playlistItems.length} songs • YouTube playlist`;
+    startMetadataScanner();
+  }
+
+  return newIds.length;
 }
 
-function syncPlaylistFromPlayer(){
-  const ids = getPlaylistIds();
+function removeQueueItem(id){
+  const item = itemById(id);
+  if(!item || item.source !== "user") return;
 
-  if(!ids.length) return false;
+  const wasCurrent = id === currentVideoId;
 
-  buildPlaylistItems(ids);
+  playlistItems = playlistItems.filter(i => i.id !== id);
+  playOrder = playOrder.filter(vid => vid !== id);
 
-  try{
-    const apiIndex = player.getPlaylistIndex();
-    if(Number.isFinite(apiIndex) && apiIndex >= 0){
-      currentIndex = apiIndex;
-    }
-  }catch{}
+  if(wasCurrent && playOrder.length){
+    const pos = Math.min(playPos, playOrder.length - 1);
+    loadTrackById(playOrder[pos], { autoplay:true });
+  }else{
+    syncPlayPos();
+  }
 
   renderPlaylist($("trackSearch").value);
-  updateCurrentTrack();
-
-  $("playlistMeta").textContent =
-    `${playlistItems.length} songs • YouTube playlist`;
-
-  startMetadataScanner();
-
-  return true;
+  $("playlistMeta").textContent = `${playlistItems.length} songs • YouTube playlist`;
+  toast("Removed from queue");
 }
 
-function startPlaylistPolling(){
-  clearInterval(playlistPollTimer);
-
-  playlistLoadAttempts = 0;
-
-  const poll = () => {
-    playlistLoadAttempts++;
-
-    if(syncPlaylistFromPlayer()){
-      clearInterval(playlistPollTimer);
-      playlistPollTimer = null;
-      setStatus("PLAYLIST READY");
-      return;
-    }
-
-    /*
-      The IFrame API can take a little time to populate its
-      internal playlist even after onReady fires. Keep checking
-      independently of player state changes.
-    */
-    if(playlistLoadAttempts >= 100){
-      clearInterval(playlistPollTimer);
-      playlistPollTimer = null;
-
-      $("trackList").innerHTML =
-        '<div style="padding:18px;color:rgba(255,255,255,.6);font-size:12px">YouTube playlist could not be loaded. Please refresh the page.</div>';
-
-      setStatus("PLAYLIST ERROR", true);
-      return;
-    }
-  };
-
-  poll();
-  playlistPollTimer = setInterval(poll, 250);
-}
-
-function updateCurrentTrack(){
-  if(!playerReady || !player) return;
-
-  const data = player.getVideoData ? player.getVideoData() : {};
-  const videoId = data.video_id || playlistItems[currentIndex]?.id;
-
-  if(videoId){
-    const found = playlistItems.findIndex(item => item.id === videoId);
-    if(found >= 0) currentIndex = found;
-  }
-
-  const item = playlistItems[currentIndex] || {
-    id: videoId || START_VIDEO_ID,
-    title: data.title || "Indian Truck Driver Music",
-    artist: data.author || "YouTube"
-  };
-
-  // Backfill this item's metadata immediately from the live player,
-  // so the currently playing track never shows a placeholder name.
-  if(item && videoId && item.id === videoId){
-    const liveTitle = cleanSongTitle(data.title);
-    const liveArtist = data.author;
-    if(liveTitle && !item.title) item.title = liveTitle;
-    if(liveArtist && !item.artist) item.artist = cleanArtistName(liveArtist);
-  }
-
-  $("cover").src = thumbnail(item.id);
-  $("cover").onerror = () => $("cover").src = fallbackCover;
-
-  $("song").textContent = data.title || item.title || "Indian Truck Driver Music";
-  $("artist").textContent = cleanArtistName(data.author || item.artist || "YouTube");
-
-  if(playlistItems.length){
-    renderPlaylist($("trackSearch").value);
-  }
-}
+/* ---------------------------------------------------------
+   Rendering
+   --------------------------------------------------------- */
 
 function renderPlaylist(filter = ""){
   const list = $("trackList");
   if(!list) return;
 
   const q = String(filter).toLowerCase().trim();
-
   list.innerHTML = "";
 
-  const filtered = playlistItems
-    .map((item, i) => ({item, i}))
-    .filter(({item}) => {
-      const text = `${item.title || ""} ${cleanArtistName(item.artist)} ${item.id}`.toLowerCase();
-      return !q || text.includes(q);
-    });
+  const filtered = playlistItems.filter(item => {
+    const text = `${item.title || ""} ${cleanArtistName(item.artist)} ${item.id}`.toLowerCase();
+    return !q || text.includes(q);
+  });
 
   if(!filtered.length){
     list.innerHTML = playlistItems.length
@@ -1112,16 +1103,90 @@ function renderPlaylist(filter = ""){
     return;
   }
 
-  filtered.forEach(({item, i}) => {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "track-item" + (i === currentIndex ? " active" : "");
+  filtered.forEach(item => {
+    const row = document.createElement("div");
+    row.className = "track-item" + (item.id === currentVideoId ? " active" : "");
+    row.setAttribute("role","button");
+    row.tabIndex = 0;
 
-    const title = item.title || `Loading track ${i + 1}…`;
+    const title = item.title || "Loading…";
     const artist = cleanArtistName(item.artist);
     const duration = item.duration > 0 ? fmt(item.duration) : "—:——";
 
-    button.innerHTML = `
+    row.innerHTML = `
+      <img alt="">
+      <span class="track-copy">
+        <span class="track-name"></span>
+        <span class="track-artist"></span>
+      </span>
+      ${item.source === "user" ? '<span class="queued-badge">Added</span>' : ""}
+      <span class="track-duration"></span>
+      ${item.source === "user" ? '<button type="button" class="track-remove" aria-label="Remove from queue"><span class="material-symbols-rounded">close</span></button>' : ""}
+    `;
+
+    const img = row.querySelector("img");
+    img.src = thumbnail(item.id);
+    img.onerror = () => img.src = fallbackCover;
+
+    row.querySelector(".track-name").textContent = title;
+    row.querySelector(".track-artist").textContent = artist;
+    row.querySelector(".track-duration").textContent = duration;
+
+    row.addEventListener("click", () => playTrackById(item.id));
+    row.addEventListener("keydown", event => {
+      if(event.key === "Enter" || event.key === " "){
+        event.preventDefault();
+        playTrackById(item.id);
+      }
+    });
+
+    const removeBtn = row.querySelector(".track-remove");
+    if(removeBtn){
+      removeBtn.addEventListener("click", event => {
+        event.stopPropagation();
+        removeQueueItem(item.id);
+      });
+    }
+
+    list.appendChild(row);
+  });
+
+  $("playlistMeta").textContent = `${playlistItems.length} songs • YouTube playlist`;
+}
+
+function relTime(ts){
+  const diff = Date.now() - ts;
+  const mins = Math.round(diff / 60000);
+  if(mins < 1) return "just now";
+  if(mins < 60) return `${mins}m ago`;
+  const hrs = Math.round(mins / 60);
+  if(hrs < 24) return `${hrs}h ago`;
+  const days = Math.round(hrs / 24);
+  if(days < 7) return `${days}d ago`;
+  return new Date(ts).toLocaleDateString();
+}
+
+function renderHistory(){
+  const list = $("historyList");
+  if(!list) return;
+
+  list.innerHTML = "";
+
+  if(!history.length){
+    list.innerHTML = '<div style="padding:18px;color:rgba(255,255,255,.5);font-size:12px">No songs played yet.</div>';
+    $("clearHistoryBtn").hidden = true;
+    return;
+  }
+
+  $("clearHistoryBtn").hidden = false;
+
+  history.forEach(entry => {
+    const row = document.createElement("div");
+    row.className = "track-item";
+    row.setAttribute("role","button");
+    row.tabIndex = 0;
+
+    row.innerHTML = `
       <img alt="">
       <span class="track-copy">
         <span class="track-name"></span>
@@ -1130,72 +1195,143 @@ function renderPlaylist(filter = ""){
       <span class="track-duration"></span>
     `;
 
-    const img = button.querySelector("img");
-    img.src = thumbnail(item.id);
+    const img = row.querySelector("img");
+    img.src = thumbnail(entry.id);
     img.onerror = () => img.src = fallbackCover;
 
-    button.querySelector(".track-name").textContent = title;
-    button.querySelector(".track-artist").textContent = artist;
-    button.querySelector(".track-duration").textContent = duration;
+    row.querySelector(".track-name").textContent = entry.title;
+    row.querySelector(".track-artist").textContent = entry.artist;
+    row.querySelector(".track-duration").textContent = relTime(entry.playedAt);
 
-    button.onclick = () => playPlaylistIndex(i);
+    row.addEventListener("click", () => playFromHistory(entry));
+    row.addEventListener("keydown", event => {
+      if(event.key === "Enter" || event.key === " "){
+        event.preventDefault();
+        playFromHistory(entry);
+      }
+    });
 
-    list.appendChild(button);
+    list.appendChild(row);
   });
-
-  $("playlistMeta").textContent =
-    `${playlistItems.length} songs • YouTube playlist`;
 }
 
-function playPlaylistIndex(i){
-  if(!playerReady || !player){
-    toast("YouTube playlist is still loading…");
+/* ---------------------------------------------------------
+   History persistence
+   --------------------------------------------------------- */
+
+function loadHistory(){
+  try{
+    const raw = localStorage.getItem(HISTORY_KEY);
+    const parsed = raw ? JSON.parse(raw) : [];
+    history = Array.isArray(parsed) ? parsed : [];
+  }catch{
+    history = [];
+  }
+}
+
+function saveHistory(){
+  try{
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(history.slice(0, HISTORY_LIMIT)));
+  }catch{
+    // Storage unavailable (private browsing, or an embedded preview
+    // sandbox) — history still works for the current session, it just
+    // won't be remembered on next visit. Works normally once hosted.
+  }
+}
+
+function logHistoryFromPlayer(){
+  if(!playerReady || !player) return;
+
+  const data = player.getVideoData ? player.getVideoData() : {};
+  const videoId = data.video_id;
+  if(!videoId || videoId === lastLoggedVideoId) return;
+
+  lastLoggedVideoId = videoId;
+
+  const item = itemById(videoId);
+  const title = cleanSongTitle(data.title) || item?.title || "Unknown track";
+  const artist = cleanArtistName(data.author || item?.artist);
+
+  history = history.filter(entry => entry.id !== videoId);
+  history.unshift({ id: videoId, title, artist, playedAt: Date.now() });
+  history = history.slice(0, HISTORY_LIMIT);
+
+  saveHistory();
+
+  if(activeDrawerTab === "history" && $("drawer").classList.contains("open")){
+    renderHistory();
+  }
+}
+
+function playFromHistory(entry){
+  let item = itemById(entry.id);
+
+  if(!item){
+    addVideosToQueue([entry.id]);
+    item = itemById(entry.id);
+    if(item){
+      item.title = entry.title;
+      item.artist = entry.artist;
+    }
+  }
+
+  if(item){
+    loadTrackById(item.id, { autoplay:true });
+    closePlaylist();
+  }
+}
+
+$("clearHistoryBtn").onclick = () => {
+  history = [];
+  saveHistory();
+  renderHistory();
+  toast("History cleared");
+};
+
+/* ---------------------------------------------------------
+   Playback (queue-driven)
+   --------------------------------------------------------- */
+
+function loadTrackById(id, { autoplay = true } = {}){
+  if(!playerReady || !player) return;
+
+  const item = itemById(id);
+  if(!item) return;
+
+  currentVideoId = id;
+  syncPlayPos();
+
+  try{
+    if(autoplay) player.loadVideoById(item.id);
+    else player.cueVideoById(item.id);
+  }catch(error){
+    console.error("Failed to load video", id, error);
+    toast("Unable to play that song.");
     return;
   }
 
-  if(!playlistItems.length){
+  $("cover").src = thumbnail(item.id);
+  $("cover").onerror = () => $("cover").src = fallbackCover;
+  $("song").textContent = item.title || "Loading…";
+  $("artist").textContent = cleanArtistName(item.artist);
+
+  renderPlaylist($("trackSearch").value);
+}
+
+function playTrackById(id){
+  if(!playerReady || !player || !playlistItems.length){
     toast("Playlist is still loading…");
     return;
   }
 
-  const target = Math.max(
-    0,
-    Math.min(playlistItems.length - 1, Number(i))
-  );
-
-  currentIndex = target;
-
-  /*
-    playVideoAt() changes the item inside the existing YouTube
-    playlist. It does NOT replace the playlist with a single
-    video.
-  */
-  try{
-    player.playVideoAt(target);
-  }catch(error){
-    console.error("playVideoAt failed:", error);
-    toast("Unable to change the song. Please try again.");
-    return;
-  }
-
-  renderPlaylist($("trackSearch").value);
+  loadTrackById(id, { autoplay:true });
   closePlaylist();
 }
 
 function nextTrack(){
-  if(!playerReady || !player) return;
-
-  try{
-    /*
-      YouTube controls the actual playlist order.
-      This guarantees we move to the next video in the
-      currently loaded playlist.
-    */
-    player.nextVideo();
-  }catch(error){
-    console.error("nextVideo failed:", error);
-    toast("Unable to play the next song.");
-  }
+  if(!playOrder.length) return;
+  const pos = (playPos + 1) % playOrder.length;
+  loadTrackById(playOrder[pos], { autoplay:true });
 }
 
 function previousTrack(){
@@ -1208,16 +1344,65 @@ function previousTrack(){
     return;
   }
 
-  try{
-    player.previousVideo();
-  }catch(error){
-    console.error("previousVideo failed:", error);
-    toast("Unable to play the previous song.");
+  if(!playOrder.length) return;
+  const pos = (playPos - 1 + playOrder.length) % playOrder.length;
+  loadTrackById(playOrder[pos], { autoplay:true });
+}
+
+function applyShuffle(enable){
+  shuffle = enable;
+  $("shuffle").classList.toggle("active", shuffle);
+
+  playOrder = shuffle ? shuffleArray(buildSequentialOrder()) : buildSequentialOrder();
+
+  if(currentVideoId){
+    const pos = playOrder.indexOf(currentVideoId);
+    if(pos > 0){
+      playOrder.splice(pos, 1);
+      playOrder.unshift(currentVideoId);
+    }
   }
+
+  playPos = 0;
+  toast(shuffle ? "Shuffle on" : "Shuffle off");
+}
+
+function updateCurrentTrack(){
+  if(!playerReady || !player) return;
+
+  const data = player.getVideoData ? player.getVideoData() : {};
+  const videoId = data.video_id || currentVideoId;
+  if(!videoId) return;
+
+  currentVideoId = videoId;
+  syncPlayPos();
+
+  let item = itemById(videoId);
+
+  // Safety net: register anything unexpectedly playing so the UI
+  // and queue stay consistent.
+  if(!item){
+    playlistItems.push({ id: videoId, title:"", artist:"", duration:0, source:"user" });
+    item = playlistItems[playlistItems.length - 1];
+    if(!playOrder.includes(videoId)) playOrder.push(videoId);
+    syncPlayPos();
+  }
+
+  const liveTitle = cleanSongTitle(data.title);
+  const liveArtist = data.author;
+  if(liveTitle && !item.title) item.title = liveTitle;
+  if(liveArtist && !item.artist) item.artist = cleanArtistName(liveArtist);
+
+  $("cover").src = thumbnail(item.id);
+  $("cover").onerror = () => $("cover").src = fallbackCover;
+  $("song").textContent = data.title || item.title || "Indian Truck Driver Music";
+  $("artist").textContent = cleanArtistName(data.author || item.artist || "YouTube");
+
+  if(playlistItems.length) renderPlaylist($("trackSearch").value);
 }
 
 /* ---------------------------------------------------------
-   YouTube player
+   Main YouTube player
    --------------------------------------------------------- */
 
 function createYouTubePlayer(){
@@ -1235,9 +1420,7 @@ function createYouTubePlayer(){
       playsinline: 1,
       rel: 0,
       enablejsapi: 1,
-      origin: window.location.origin,
-      listType: "playlist",
-      list: PLAYLIST_ID
+      origin: window.location.origin
     },
 
     events: {
@@ -1250,45 +1433,50 @@ function createYouTubePlayer(){
 
 function onYouTubeReady(){
   playerReady = true;
-
   player.setVolume(Number($("volumeSlider").value));
-
   setStatus("LOADING PLAYLIST");
+  bootstrapOriginalPlaylist();
+}
 
-  /*
-    Explicitly load the real YouTube playlist. We do NOT depend
-    on a PLAYING/CUED event to discover the playlist because
-    YouTube can populate getPlaylist() asynchronously.
-  */
+async function bootstrapOriginalPlaylist(){
   try{
-    player.loadPlaylist({
-      list: PLAYLIST_ID,
-      listType: "playlist",
-      index: 0,
-      startSeconds: 0,
-      suggestedQuality: "small"
-    });
-  }catch(error){
-    console.error("Playlist load error:", error);
-  }
+    const ids = await resolvePlaylistIds(PLAYLIST_ID);
 
-  startPlaylistPolling();
+    if(!ids.length){
+      setStatus("PLAYLIST ERROR", true);
+      $("trackList").innerHTML =
+        '<div style="padding:18px;color:rgba(255,255,255,.6);font-size:12px">YouTube playlist could not be loaded. Please refresh the page.</div>';
+      return;
+    }
+
+    playlistItems = ids.map(id => ({ id, title:"", artist:"", duration:0, source:"native" }));
+    playOrder = buildSequentialOrder();
+
+    const startId = ids.includes(START_VIDEO_ID) ? START_VIDEO_ID : ids[0];
+    loadTrackById(startId, { autoplay:false });
+
+    $("playlistMeta").textContent = `${playlistItems.length} songs • YouTube playlist`;
+    setStatus("PLAYLIST READY");
+
+    startMetadataScanner();
+  }catch(error){
+    console.error("Playlist bootstrap failed:", error);
+    setStatus("PLAYLIST ERROR", true);
+    $("trackList").innerHTML =
+      '<div style="padding:18px;color:rgba(255,255,255,.6);font-size:12px">YouTube playlist could not be loaded. Please refresh the page.</div>';
+  }
 }
 
 function onYouTubeStateChange(event){
   switch(event.data){
-
     case YT.PlayerState.UNSTARTED:
       setStatus("READY");
       break;
 
     case YT.PlayerState.PLAYING:
       setPlaying(true);
-      currentIndex = Math.max(
-        0,
-        Number(player.getPlaylistIndex?.() ?? currentIndex)
-      );
       updateCurrentTrack();
+      logHistoryFromPlayer();
       startProgressLoop();
       break;
 
@@ -1298,13 +1486,10 @@ function onYouTubeStateChange(event){
       break;
 
     case YT.PlayerState.ENDED:
-      /*
-        Because the player itself owns the playlist, YouTube
-        will continue to the next item automatically when the
-        playlist has another video.
-      */
+      // We own the queue, so we decide what plays next.
       setPlaying(false);
       stopProgressLoop();
+      nextTrack();
       break;
 
     case YT.PlayerState.BUFFERING:
@@ -1313,29 +1498,6 @@ function onYouTubeStateChange(event){
 
     case YT.PlayerState.CUED:
       setStatus("PLAYLIST READY");
-
-      /*
-        IMPORTANT:
-        Do NOT call cueVideoById() here. That replaces the
-        playlist context with a single video.
-
-        The playlist must remain owned by the main YouTube
-        player so playVideoAt(), nextVideo(), previousVideo()
-        and automatic playlist continuation all keep working.
-      */
-      syncPlaylistFromPlayer();
-
-      {
-        const ids = getPlaylistIds();
-        const startIndex = ids.indexOf(START_VIDEO_ID);
-
-        if(startIndex >= 0){
-          currentIndex = startIndex;
-          renderPlaylist($("trackSearch").value);
-          updateCurrentTrack();
-        }
-      }
-
       break;
   }
 }
@@ -1353,6 +1515,12 @@ function onYouTubeError(event){
   };
 
   toast(messages[event.data] || "YouTube could not play this track.");
+
+  // Don't get stuck on a broken video — skip ahead automatically
+  // if there's more than one track in the queue.
+  if(playOrder.length > 1){
+    setTimeout(nextTrack, 800);
+  }
 }
 
 function startProgressLoop(){
@@ -1368,13 +1536,6 @@ function startProgressLoop(){
       setVisualProgress(current / duration);
       $("currentTime").textContent = fmt(current);
       $("duration").textContent = fmt(duration);
-    }
-
-    const idx = Number(player.getPlaylistIndex?.() ?? currentIndex);
-
-    if(Number.isFinite(idx) && idx >= 0 && idx !== currentIndex){
-      currentIndex = idx;
-      updateCurrentTrack();
     }
   }, 100);
 }
@@ -1414,12 +1575,9 @@ function seekFromPointer(event){
 
   if(!rect.width) return;
 
-  const x = Math.max(
-    0,
-    Math.min(rect.width, event.clientX - rect.left)
-  );
-
+  const x = Math.max(0, Math.min(rect.width, event.clientX - rect.left));
   const progress = x / rect.width;
+
   player.seekTo(progress * duration, true);
 
   setVisualProgress(progress);
@@ -1427,36 +1585,22 @@ function seekFromPointer(event){
 }
 
 /* ---------------------------------------------------------
-   Metadata scanner
-   ---------------------------------------------------------
-   getPlaylist() only ever returns an array of video IDs — it
-   never gives titles, channel names or durations for tracks
-   other than the one currently loaded. To show real names in
-   the Song List drawer we spin up a second, muted, invisible
-   YouTube player and step it through every video ID one at a
-   time via cueVideoById(), reading getVideoData()/getDuration()
-   after each one cues. This never touches playback of the main
-   player.
+   Metadata scanner — fetches real titles/artists/durations
+   one video at a time via a second, muted, invisible player.
+   getPlaylist() only ever returns bare video IDs, so this is
+   the only way to get real names without a YouTube Data API
+   key.
    --------------------------------------------------------- */
 
 function createMetadataPlayer(){
   metadataPlayer = new YT.Player("youtubeMetadataPlayer", {
     width: "1",
     height: "1",
-
     playerVars: {
-      autoplay: 0,
-      controls: 0,
-      disablekb: 1,
-      fs: 0,
-      iv_load_policy: 3,
-      modestbranding: 1,
-      playsinline: 1,
-      rel: 0,
-      enablejsapi: 1,
+      autoplay: 0, controls: 0, disablekb: 1, fs: 0, iv_load_policy: 3,
+      modestbranding: 1, playsinline: 1, rel: 0, enablejsapi: 1,
       origin: window.location.origin
     },
-
     events: {
       onReady: onMetadataReady,
       onStateChange: onMetadataStateChange,
@@ -1467,22 +1611,14 @@ function createMetadataPlayer(){
 
 function onMetadataReady(){
   metadataPlayerReady = true;
-
-  try{
-    metadataPlayer.mute();
-  }catch{}
-
-  // In case the main playlist already synced before this player
-  // finished initialising, kick the scanner off now too.
+  try{ metadataPlayer.mute(); }catch{}
   if(playlistItems.length) startMetadataScanner();
 }
 
 function startMetadataScanner(){
   if(metadataScanRunning) return;
-
   metadataScanRunning = true;
   metadataScanIndex = 0;
-
   scanNextMetadata();
 }
 
@@ -1494,8 +1630,6 @@ function scanNextMetadata(){
     return;
   }
 
-  // Skip anything we've already got a title for (e.g. backfilled
-  // from the currently-playing main player).
   while(
     metadataScanIndex < playlistItems.length &&
     playlistItems[metadataScanIndex].title
@@ -1521,21 +1655,13 @@ function scanNextMetadata(){
 }
 
 function onMetadataStateChange(event){
-  if(
-    event.data !== YT.PlayerState.CUED &&
-    event.data !== YT.PlayerState.UNSTARTED
-  ){
-    return;
-  }
+  if(event.data !== YT.PlayerState.CUED && event.data !== YT.PlayerState.UNSTARTED) return;
 
   const item = playlistItems[metadataScanIndex];
   if(!item) return;
 
   const data = metadataPlayer.getVideoData ? metadataPlayer.getVideoData() : {};
 
-  // Only accept the metadata if it actually matches the video we
-  // asked for — cueVideoById() fires state changes asynchronously
-  // and we don't want a stale response landing on the wrong item.
   if(data && data.video_id === item.id){
     item.title = cleanSongTitle(data.title) || `Track ${metadataScanIndex + 1}`;
     item.artist = cleanArtistName(data.author);
@@ -1543,9 +1669,7 @@ function onMetadataStateChange(event){
 
     renderPlaylist($("trackSearch").value);
 
-    if(metadataScanIndex === currentIndex){
-      updateCurrentTrack();
-    }
+    if(item.id === currentVideoId) updateCurrentTrack();
 
     metadataScanIndex++;
     metadataScanTimer = setTimeout(scanNextMetadata, 90);
@@ -1566,6 +1690,177 @@ function onMetadataError(){
 }
 
 /* ---------------------------------------------------------
+   Playlist-link importer — resolves a pasted playlist ID into
+   its list of video IDs using a third, muted, invisible player.
+   --------------------------------------------------------- */
+
+function createImportPlayer(){
+  importPlayer = new YT.Player("youtubeImportPlayer", {
+    width: "1",
+    height: "1",
+    playerVars: {
+      autoplay: 0, controls: 0, disablekb: 1, fs: 0, iv_load_policy: 3,
+      modestbranding: 1, playsinline: 1, rel: 0, enablejsapi: 1,
+      origin: window.location.origin
+    },
+    events: {
+      onReady: () => {
+        importPlayerReady = true;
+        try{ importPlayer.mute(); }catch{}
+        processImportQueue();
+      },
+      onError: onImportError
+    }
+  });
+}
+
+function resolvePlaylistIds(playlistId){
+  return new Promise(resolve => {
+    importQueue.push({ playlistId, resolve });
+    processImportQueue();
+  });
+}
+
+function processImportQueue(){
+  if(importBusy || !importPlayerReady || !importPlayer) return;
+
+  const job = importQueue.shift();
+  if(!job) return;
+
+  importBusy = true;
+  activeImportJob = job;
+
+  try{
+    importPlayer.loadPlaylist({ list: job.playlistId, listType:"playlist", index:0 });
+  }catch(error){
+    console.error("Playlist import failed:", error);
+    importBusy = false;
+    activeImportJob = null;
+    job.resolve([]);
+    processImportQueue();
+    return;
+  }
+
+  let attempts = 0;
+
+  job.pollTimer = setInterval(() => {
+    attempts++;
+
+    let ids = [];
+    try{ ids = importPlayer.getPlaylist() || []; }catch{}
+
+    if(ids.length){
+      clearInterval(job.pollTimer);
+      importBusy = false;
+      activeImportJob = null;
+      job.resolve(ids.filter(Boolean));
+      processImportQueue();
+    }else if(attempts >= 60){
+      clearInterval(job.pollTimer);
+      importBusy = false;
+      activeImportJob = null;
+      job.resolve([]);
+      processImportQueue();
+    }
+  }, 250);
+}
+
+function onImportError(){
+  if(!activeImportJob) return;
+
+  clearInterval(activeImportJob.pollTimer);
+  importBusy = false;
+  activeImportJob.resolve([]);
+  activeImportJob = null;
+  processImportQueue();
+}
+
+/* ---------------------------------------------------------
+   Parsing pasted YouTube links
+   --------------------------------------------------------- */
+
+function parseYouTubeInput(raw){
+  const text = String(raw || "").trim();
+  if(!text) return null;
+
+  if(/^[a-zA-Z0-9_-]{11}$/.test(text)) return { type:"video", id:text };
+  if(/^(PL|UU|OL|RD|LL|FL)[a-zA-Z0-9_-]{10,}$/.test(text)) return { type:"playlist", id:text };
+
+  let url;
+  try{ url = new URL(text); }catch{ return null; }
+
+  const host = url.hostname.replace(/^www\./,"").replace(/^m\./,"");
+  if(!/(^|\.)youtube\.com$/.test(host) && host !== "youtu.be") return null;
+
+  const listId = url.searchParams.get("list");
+  const videoId = url.searchParams.get("v");
+  const pathParts = url.pathname.split("/").filter(Boolean);
+
+  if(host === "youtu.be"){
+    const shortId = pathParts[0];
+    if(shortId && shortId.length === 11) return { type:"video", id:shortId };
+  }
+
+  if(pathParts[0] === "playlist" && listId) return { type:"playlist", id:listId };
+  if(pathParts[0] === "shorts" && pathParts[1]) return { type:"video", id:pathParts[1] };
+
+  if(videoId && /^[a-zA-Z0-9_-]{11}$/.test(videoId)) return { type:"video", id:videoId };
+  if(listId) return { type:"playlist", id:listId };
+
+  return null;
+}
+
+function setAddLinkBusy(busy){
+  $("addLinkBtn").disabled = busy;
+  $("addLinkBtn").classList.toggle("busy", busy);
+  $("addLinkIcon").textContent = busy ? "sync" : "add";
+}
+
+async function handleAddLink(){
+  const raw = $("addLinkInput").value;
+  const parsed = parseYouTubeInput(raw);
+
+  if(!parsed){
+    toast("Paste a valid YouTube song or playlist link.");
+    return;
+  }
+
+  $("addLinkInput").value = "";
+  setAddLinkBusy(true);
+
+  if(parsed.type === "video"){
+    const added = addVideosToQueue([parsed.id]);
+    toast(added ? "Added to queue" : "That song is already in the queue");
+    setAddLinkBusy(false);
+    return;
+  }
+
+  try{
+    const ids = await resolvePlaylistIds(parsed.id);
+
+    if(!ids.length){
+      toast("Couldn't read that playlist. It may be private.");
+    }else{
+      const added = addVideosToQueue(ids);
+      toast(added ? `Added ${added} song${added === 1 ? "" : "s"} to queue` : "Those songs are already in the queue");
+    }
+  }catch(error){
+    console.error(error);
+    toast("Couldn't load that playlist.");
+  }finally{
+    setAddLinkBusy(false);
+  }
+}
+
+$("addLinkBtn").onclick = handleAddLink;
+$("addLinkInput").addEventListener("keydown", event => {
+  if(event.key === "Enter"){
+    event.preventDefault();
+    handleAddLink();
+  }
+});
+
+/* ---------------------------------------------------------
    Controls
    --------------------------------------------------------- */
 
@@ -1573,21 +1868,7 @@ $("play").onclick = playPause;
 $("next").onclick = nextTrack;
 $("prev").onclick = previousTrack;
 
-$("shuffle").onclick = () => {
-  shuffle = !shuffle;
-  $("shuffle").classList.toggle("active", shuffle);
-
-  if(playerReady && player){
-    /*
-      YouTube handles the playlist order internally.
-      Calling setShuffle(true/false) makes the next/previous
-      operations follow the shuffled playlist order.
-    */
-    player.setShuffle(shuffle);
-  }
-
-  toast(shuffle ? "Playlist shuffle on" : "Playlist shuffle off");
-};
+$("shuffle").onclick = () => applyShuffle(!shuffle);
 
 $("volumeSlider").oninput = event => {
   const value = Number(event.target.value);
@@ -1665,10 +1946,7 @@ roadProgress.addEventListener("pointermove", event => {
 
 roadProgress.addEventListener("pointerup", event => {
   roadProgress.classList.remove("seeking");
-
-  try{
-    roadProgress.releasePointerCapture?.(event.pointerId);
-  }catch{}
+  try{ roadProgress.releasePointerCapture?.(event.pointerId); }catch{}
 });
 
 roadProgress.addEventListener("pointercancel", () => {
@@ -1684,17 +1962,11 @@ roadProgress.addEventListener("keydown", event => {
   const step = 5;
   let nextTime = player.getCurrentTime() || 0;
 
-  if(event.key === "ArrowRight"){
-    nextTime = Math.min(duration, nextTime + step);
-  }else if(event.key === "ArrowLeft"){
-    nextTime = Math.max(0, nextTime - step);
-  }else if(event.key === "Home"){
-    nextTime = 0;
-  }else if(event.key === "End"){
-    nextTime = duration;
-  }else{
-    return;
-  }
+  if(event.key === "ArrowRight") nextTime = Math.min(duration, nextTime + step);
+  else if(event.key === "ArrowLeft") nextTime = Math.max(0, nextTime - step);
+  else if(event.key === "Home") nextTime = 0;
+  else if(event.key === "End") nextTime = duration;
+  else return;
 
   event.preventDefault();
 
@@ -1704,9 +1976,7 @@ roadProgress.addEventListener("keydown", event => {
 });
 
 /* ---------------------------------------------------------
-   Handle viewport resizes (orientation change, drawer open,
-   window resize on desktop) so the truck runner marker and
-   progress bar stay aligned to the correct pixel position.
+   Handle viewport resizes so the truck marker stays aligned.
    --------------------------------------------------------- */
 
 window.addEventListener("resize", () => {
@@ -1715,9 +1985,7 @@ window.addEventListener("resize", () => {
   const duration = player.getDuration() || 0;
   const current = player.getCurrentTime() || 0;
 
-  if(duration > 0){
-    setVisualProgress(current / duration);
-  }
+  if(duration > 0) setVisualProgress(current / duration);
 });
 
 /* ---------------------------------------------------------
@@ -1730,12 +1998,9 @@ setInterval(updateClock, 1000);
 let sloganIndex = 0;
 setInterval(() => {
   sloganIndex = (sloganIndex + 1) % slogans.length;
-
   const el = $("truckMarquee");
   if(!el) return;
-
   el.style.opacity = "0";
-
   setTimeout(() => {
     el.textContent = slogans[sloganIndex];
     el.style.opacity = "1";
@@ -1745,17 +2010,21 @@ setInterval(() => {
 let taglineIndex = 0;
 setInterval(() => {
   taglineIndex = (taglineIndex + 1) % taglines.length;
-
   const el = $("heroTagline");
   if(!el) return;
-
   el.style.opacity = "0";
-
   setTimeout(() => {
     el.textContent = taglines[taglineIndex];
     el.style.opacity = "1";
   }, 180);
 }, 7000);
+
+/* ---------------------------------------------------------
+   Init
+   --------------------------------------------------------- */
+
+loadHistory();
+setDrawerTab("queue");
 
 /* ---------------------------------------------------------
    YouTube IFrame API
@@ -1764,6 +2033,7 @@ setInterval(() => {
 window.onYouTubeIframeAPIReady = () => {
   createYouTubePlayer();
   createMetadataPlayer();
+  createImportPlayer();
 };
 
 const ytScript = document.createElement("script");
