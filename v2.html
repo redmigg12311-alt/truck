@@ -132,6 +132,7 @@ a{color:inherit}
   backdrop-filter:blur(16px) saturate(130%);
   -webkit-backdrop-filter:blur(16px) saturate(130%);
   transition:.2s ease;
+  white-space:nowrap;
 }
 .spotify-link:hover{background:rgba(255,255,255,.15);transform:translateY(-1px)}
 
@@ -503,6 +504,7 @@ a{color:inherit}
   width:36px;height:36px;border-radius:50%;
   border:1px solid var(--line);color:var(--cream);
   background:rgba(255,255,255,.07);display:grid;place-items:center;
+  flex:0 0 auto;
 }
 .search-wrap{padding:0 14px 10px}
 .search{
@@ -538,7 +540,7 @@ a{color:inherit}
   display:block;margin-top:2px;color:rgba(255,247,231,.52);
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:10px;
 }
-.track-duration{color:rgba(255,247,231,.42);font-size:9px}
+.track-duration{color:rgba(255,247,231,.42);font-size:9px;flex:0 0 auto}
 .drawer-foot{
   display:flex;align-items:center;justify-content:space-between;gap:8px;
   padding:10px 15px;border-top:1px solid rgba(255,255,255,.09);
@@ -585,6 +587,20 @@ a{color:inherit}
 }
 .toast.show{opacity:1;transform:translate(-50%,0)}
 
+/* ---------- large / ultra-wide desktop ---------- */
+@media(min-width:1440px){
+  .hero{padding-top:12vh}
+  .player{width:min(660px,calc(100vw - 24px))}
+}
+@media(min-width:1920px){
+  .hero-inner{max-width:1120px}
+}
+
+/* ---------- laptop / small desktop ---------- */
+@media(max-width:1024px){
+  .hero{padding-top:9vh}
+}
+
 @media(max-width:720px){
   body{background-attachment:scroll}
   .topbar{padding:14px 16px}
@@ -605,6 +621,8 @@ a{color:inherit}
   .play{width:36px;height:36px}
   .drawer{top:8px;right:8px;bottom:8px;width:calc(100vw - 16px);border-radius:20px}
 }
+
+/* ---------- small phones ---------- */
 @media(max-width:430px){
   .spotify-link{padding:7px 10px;font-size:11px}
   .hero{padding-top:7vh}
@@ -621,6 +639,41 @@ a{color:inherit}
   .progress{margin-top:6px}
   .toast{bottom:100px}
 }
+
+/* ---------- very small / narrow phones ---------- */
+@media(max-width:360px){
+  .topbar{padding:12px 12px}
+  .live-clock{font-size:12px}
+  .spotify-link{padding:6px 9px;font-size:10px;gap:5px}
+  .hero{padding:6vh 12px 150px}
+  .hero h1{font-size:clamp(40px,16vw,58px)}
+  .player{left:6px;right:6px;padding:6px 8px;border-radius:13px}
+  .cover{width:34px;height:34px;flex-basis:34px;border-radius:8px}
+  .song{font-size:11.5px}
+  .artist{font-size:8.5px}
+  .status{font-size:7.5px}
+  .round-btn{width:25px;height:25px}
+  .round-btn .material-symbols-rounded{font-size:15px}
+  .controls{gap:8px}
+  .control{width:25px;height:25px}
+  .play{width:33px;height:33px}
+  .time-row{font-size:8px}
+  .drawer{top:6px;right:6px;bottom:6px;left:6px;width:auto;border-radius:16px}
+  .drawer-title{font-size:16px}
+  .track-item img{width:40px;height:40px;flex-basis:40px}
+  .track-name{font-size:11px}
+  .track-artist{font-size:9px}
+}
+
+/* ---------- short viewport heights (landscape phones) ---------- */
+@media(max-height:480px) and (max-width:900px){
+  .hero{height:auto;min-height:100svh;padding:8vh 18px 130px;align-items:center}
+  .hero h1{font-size:clamp(34px,8vw,56px)}
+  .hero-sub{margin-top:10px}
+  .player{bottom:6px}
+  .drawer{top:6px;bottom:6px}
+}
+
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{scroll-behavior:auto!important;animation:none!important;transition:none!important}
 }
@@ -1017,6 +1070,15 @@ function updateCurrentTrack(){
     artist: data.author || "YouTube"
   };
 
+  // Backfill this item's metadata immediately from the live player,
+  // so the currently playing track never shows a placeholder name.
+  if(item && videoId && item.id === videoId){
+    const liveTitle = cleanSongTitle(data.title);
+    const liveArtist = data.author;
+    if(liveTitle && !item.title) item.title = liveTitle;
+    if(liveArtist && !item.artist) item.artist = cleanArtistName(liveArtist);
+  }
+
   $("cover").src = thumbnail(item.id);
   $("cover").onerror = () => $("cover").src = fallbackCover;
 
@@ -1365,6 +1427,145 @@ function seekFromPointer(event){
 }
 
 /* ---------------------------------------------------------
+   Metadata scanner
+   ---------------------------------------------------------
+   getPlaylist() only ever returns an array of video IDs — it
+   never gives titles, channel names or durations for tracks
+   other than the one currently loaded. To show real names in
+   the Song List drawer we spin up a second, muted, invisible
+   YouTube player and step it through every video ID one at a
+   time via cueVideoById(), reading getVideoData()/getDuration()
+   after each one cues. This never touches playback of the main
+   player.
+   --------------------------------------------------------- */
+
+function createMetadataPlayer(){
+  metadataPlayer = new YT.Player("youtubeMetadataPlayer", {
+    width: "1",
+    height: "1",
+
+    playerVars: {
+      autoplay: 0,
+      controls: 0,
+      disablekb: 1,
+      fs: 0,
+      iv_load_policy: 3,
+      modestbranding: 1,
+      playsinline: 1,
+      rel: 0,
+      enablejsapi: 1,
+      origin: window.location.origin
+    },
+
+    events: {
+      onReady: onMetadataReady,
+      onStateChange: onMetadataStateChange,
+      onError: onMetadataError
+    }
+  });
+}
+
+function onMetadataReady(){
+  metadataPlayerReady = true;
+
+  try{
+    metadataPlayer.mute();
+  }catch{}
+
+  // In case the main playlist already synced before this player
+  // finished initialising, kick the scanner off now too.
+  if(playlistItems.length) startMetadataScanner();
+}
+
+function startMetadataScanner(){
+  if(metadataScanRunning) return;
+
+  metadataScanRunning = true;
+  metadataScanIndex = 0;
+
+  scanNextMetadata();
+}
+
+function scanNextMetadata(){
+  clearTimeout(metadataScanTimer);
+
+  if(!metadataPlayerReady || !metadataPlayer){
+    metadataScanTimer = setTimeout(scanNextMetadata, 300);
+    return;
+  }
+
+  // Skip anything we've already got a title for (e.g. backfilled
+  // from the currently-playing main player).
+  while(
+    metadataScanIndex < playlistItems.length &&
+    playlistItems[metadataScanIndex].title
+  ){
+    metadataScanIndex++;
+  }
+
+  if(metadataScanIndex >= playlistItems.length){
+    metadataScanRunning = false;
+    return;
+  }
+
+  const item = playlistItems[metadataScanIndex];
+
+  try{
+    metadataPlayer.mute();
+    metadataPlayer.cueVideoById(item.id);
+  }catch(error){
+    console.warn("Metadata cue failed for", item.id, error);
+    metadataScanIndex++;
+    metadataScanTimer = setTimeout(scanNextMetadata, 60);
+  }
+}
+
+function onMetadataStateChange(event){
+  if(
+    event.data !== YT.PlayerState.CUED &&
+    event.data !== YT.PlayerState.UNSTARTED
+  ){
+    return;
+  }
+
+  const item = playlistItems[metadataScanIndex];
+  if(!item) return;
+
+  const data = metadataPlayer.getVideoData ? metadataPlayer.getVideoData() : {};
+
+  // Only accept the metadata if it actually matches the video we
+  // asked for — cueVideoById() fires state changes asynchronously
+  // and we don't want a stale response landing on the wrong item.
+  if(data && data.video_id === item.id){
+    item.title = cleanSongTitle(data.title) || `Track ${metadataScanIndex + 1}`;
+    item.artist = cleanArtistName(data.author);
+    item.duration = metadataPlayer.getDuration ? (metadataPlayer.getDuration() || 0) : 0;
+
+    renderPlaylist($("trackSearch").value);
+
+    if(metadataScanIndex === currentIndex){
+      updateCurrentTrack();
+    }
+
+    metadataScanIndex++;
+    metadataScanTimer = setTimeout(scanNextMetadata, 90);
+  }
+}
+
+function onMetadataError(){
+  const item = playlistItems[metadataScanIndex];
+
+  if(item){
+    item.title = item.title || "Unavailable video";
+    item.artist = item.artist || "YouTube";
+    renderPlaylist($("trackSearch").value);
+  }
+
+  metadataScanIndex++;
+  metadataScanTimer = setTimeout(scanNextMetadata, 90);
+}
+
+/* ---------------------------------------------------------
    Controls
    --------------------------------------------------------- */
 
@@ -1500,6 +1701,23 @@ roadProgress.addEventListener("keydown", event => {
   player.seekTo(nextTime, true);
   setVisualProgress(nextTime / duration);
   $("currentTime").textContent = fmt(nextTime);
+});
+
+/* ---------------------------------------------------------
+   Handle viewport resizes (orientation change, drawer open,
+   window resize on desktop) so the truck runner marker and
+   progress bar stay aligned to the correct pixel position.
+   --------------------------------------------------------- */
+
+window.addEventListener("resize", () => {
+  if(!playerReady || !player) return;
+
+  const duration = player.getDuration() || 0;
+  const current = player.getCurrentTime() || 0;
+
+  if(duration > 0){
+    setVisualProgress(current / duration);
+  }
 });
 
 /* ---------------------------------------------------------
