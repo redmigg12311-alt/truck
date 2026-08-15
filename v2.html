@@ -105,20 +105,8 @@ a{color:inherit}
   display:flex;align-items:center;justify-content:space-between;
   padding:18px 26px;
 }
-.topbar-left{display:flex;align-items:center;gap:10px;min-width:0}
 .live-clock{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;text-shadow:0 2px 8px #000}
 .live-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 12px var(--green)}
-.odometer{
-  display:inline-flex;align-items:center;gap:6px;
-  padding:7px 12px;border-radius:999px;
-  font-size:12px;font-weight:800;letter-spacing:.02em;
-  color:#ffd75b;text-shadow:0 2px 8px #000;
-  background:rgba(9,13,17,.30);
-  border:1px solid rgba(255,195,0,.28);
-  backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);
-  white-space:nowrap;
-}
-.odometer .material-symbols-rounded{font-size:15px}
 .spotify-link{
   display:inline-flex;align-items:center;gap:8px;
   padding:9px 14px;border:1px solid var(--line);border-radius:999px;
@@ -141,9 +129,9 @@ a{color:inherit}
 .hero-inner{max-width:1000px}
 .hero h1{
   font-family:"Yatra One",cursive;
-  font-size:clamp(38px,6.5vw,86px);
+  font-size:clamp(58px,9.5vw,132px);
   line-height:.98;color:var(--cream);
-  text-shadow:3px 3px 0 #d62828,6px 6px 0 rgba(0,0,0,.35);
+  text-shadow:4px 4px 0 #d62828,8px 8px 0 rgba(0,0,0,.35);
 }
 .hero-sub{
   display:inline-flex;align-items:center;justify-content:center;
@@ -173,52 +161,52 @@ a{color:inherit}
   position:fixed;z-index:30;
   left:50%;bottom:max(12px,env(safe-area-inset-bottom));
   transform:translateX(-50%);
-  width:min(440px,calc(100vw - 24px));
-  padding:7px 8px 8px;
+  width:min(600px,calc(100vw - 24px));
+  padding:9px 10px 10px;
   border:1px solid rgba(255,255,255,.28);
-  border-radius:14px;
+  border-radius:17px;
   background:
     linear-gradient(135deg,rgba(255,255,255,.14),rgba(255,255,255,.02)),
     var(--glass);
-  box-shadow:0 14px 40px rgba(0,0,0,.32),inset 0 1px rgba(255,255,255,.2);
+  box-shadow:0 18px 54px rgba(0,0,0,.32),inset 0 1px rgba(255,255,255,.2);
   backdrop-filter:blur(3px) saturate(100%);
   -webkit-backdrop-filter:blur(3px) saturate(100%);
 }
 .player::after{
-  content:"";position:absolute;inset:0;border-radius:14px;pointer-events:none;
+  content:"";position:absolute;inset:0;border-radius:17px;pointer-events:none;
   background:linear-gradient(105deg,rgba(255,255,255,.08),transparent 38%,rgba(255,178,61,.06));
 }
 .player-row{
   position:relative;
-  z-index:1;display:flex;align-items:center;gap:7px;
+  z-index:1;display:flex;align-items:center;gap:9px;
 }
 .cover{
-  width:34px;height:34px;flex:0 0 34px;object-fit:cover;
-  border-radius:8px;background:#272b2f;
+  width:44px;height:44px;flex:0 0 44px;object-fit:cover;
+  border-radius:10px;background:#272b2f;
   border:1px solid rgba(255,255,255,.24);
-  box-shadow:0 5px 12px rgba(0,0,0,.35);
+  box-shadow:0 6px 16px rgba(0,0,0,.35);
 }
 .player.playing .cover{animation:coverPulse 1.7s ease-in-out infinite}
 @keyframes coverPulse{50%{transform:scale(1.025)}}
 .track-info{min-width:0;flex:1}
 .status{
-  display:flex;align-items:center;gap:5px;
-  color:rgba(255,247,231,.58);font-size:7.5px;font-weight:800;
-  letter-spacing:.12em;text-transform:uppercase;margin-bottom:1px;
+  display:flex;align-items:center;gap:6px;
+  color:rgba(255,247,231,.58);font-size:8.5px;font-weight:800;
+  letter-spacing:.13em;text-transform:uppercase;margin-bottom:1px;
 }
 .status i{width:5px;height:5px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green)}
 .status.error i{background:#ff5c5c;box-shadow:0 0 8px #ff5c5c}
 .song{
-  color:#fff9ed;font-size:12px;font-weight:800;
+  color:#fff9ed;font-size:13.5px;font-weight:800;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 .artist{
   margin-top:1px;color:rgba(255,247,231,.58);
-  font-size:8.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  font-size:9.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
-.player-actions{display:flex;align-items:center;gap:2px}
+.player-actions{display:flex;align-items:center;gap:3px}
 .round-btn{
-  width:24px;height:24px;border-radius:50%;
+  width:29px;height:29px;border-radius:50%;
   border:1px solid rgba(255,255,255,.17);
   color:var(--cream);background:rgba(255,255,255,.07);
   display:grid;place-items:center;transition:.18s;flex:0 0 auto;
@@ -228,7 +216,7 @@ a{color:inherit}
 
 .horn-hang{
   position:fixed;z-index:31;
-  left:50%;bottom:168px;
+  left:50%;bottom:200px;
   transform:translateX(-50%);
   transform-origin:50% 0%;
   display:flex;flex-direction:column;align-items:center;
@@ -245,19 +233,19 @@ a{color:inherit}
 
 .horn-fab{
   position:relative;
-  width:46px;height:46px;border-radius:50%;
+  width:56px;height:56px;border-radius:50%;
   display:grid;place-items:center;
   color:var(--cream);
   border:2px solid rgba(255,255,255,.55);
   background:
     radial-gradient(circle at 32% 26%,rgba(255,255,255,.4),transparent 46%),
     linear-gradient(140deg,#ff6b6b 0%,#ffcc33 55%,#ff9f1c 100%);
-  box-shadow:0 11px 24px rgba(0,0,0,.38),inset 0 1px rgba(255,255,255,.4);
+  box-shadow:0 14px 30px rgba(0,0,0,.38),inset 0 1px rgba(255,255,255,.4);
   transition:transform .18s;
 }
 .horn-fab:hover{transform:scale(1.07)}
 .horn-fab svg{
-  width:20px;height:27px;display:block;position:relative;z-index:1;
+  width:24px;height:33px;display:block;position:relative;z-index:1;
   filter:drop-shadow(0 2px 3px rgba(0,0,0,.28));
 }
 .horn-fab.honking{animation:hornSquish .4s ease}
@@ -339,7 +327,7 @@ a{color:inherit}
   --progress:0%;
   position:relative;
   width:100%;
-  height:30px;
+  height:38px;
   display:flex;
   align-items:center;
   cursor:pointer;
@@ -438,8 +426,8 @@ a{color:inherit}
   position:absolute;
   left:var(--progress);
   top:50%;
-  width:42px;
-  height:30px;
+  width:54px;
+  height:38px;
   transform:translate3d(-50%,-50%,0);
   pointer-events:none;
   z-index:6;
@@ -448,8 +436,8 @@ a{color:inherit}
 }
 
 .truck-runner img{
-  width:42px;
-  height:30px;
+  width:54px;
+  height:38px;
   display:block;
   object-fit:contain;
   user-select:none;
@@ -471,43 +459,43 @@ a{color:inherit}
 }
 
 @media(min-width:721px){
-  .truck-runner{width:46px;height:33px}
-  .truck-runner img{width:46px;height:33px}
+  .truck-runner{width:58px;height:40px}
+  .truck-runner img{width:58px;height:40px}
 }
 
 @media(max-width:720px){
-  .road-progress{height:27px}
-  .truck-runner{width:38px;height:26px}
-  .truck-runner img{width:38px;height:26px}
+  .road-progress{height:34px}
+  .truck-runner{width:46px;height:32px}
+  .truck-runner img{width:46px;height:32px}
 }
 
 @media(max-width:430px){
-  .road-progress{height:25px}
-  .truck-runner{width:34px;height:23px}
-  .truck-runner img{width:34px;height:23px}
+  .road-progress{height:32px}
+  .truck-runner{width:42px;height:29px}
+  .truck-runner img{width:42px;height:29px}
 }
 
 .time-row{
   display:flex;justify-content:space-between;margin-top:3px;
-  color:rgba(255,247,231,.48);font-size:7.5px;
+  color:rgba(255,247,231,.48);font-size:8.5px;
 }
 .controls{
   position:relative;
   z-index:1;
-  display:flex;align-items:center;justify-content:center;gap:11px;
+  display:flex;align-items:center;justify-content:center;gap:14px;
   margin-top:2px;
 }
 .control{
-  width:24px;height:24px;border:0;border-radius:50%;
+  width:29px;height:29px;border:0;border-radius:50%;
   display:grid;place-items:center;background:transparent;
   color:var(--cream);
 }
 .control:hover{background:rgba(255,255,255,.08)}
 .play{
-  width:32px;height:32px;border:0;border-radius:50%;
+  width:38px;height:38px;border:0;border-radius:50%;
   display:grid;place-items:center;
   background:var(--gold);color:#171717;
-  box-shadow:0 5px 13px rgba(0,0,0,.28);
+  box-shadow:0 6px 16px rgba(0,0,0,.28);
   transition:.18s;
 }
 .play:hover{transform:scale(1.05)}
@@ -680,38 +668,36 @@ a{color:inherit}
   body{background-attachment:scroll}
   .topbar{padding:14px 16px}
   .hero{padding-top:9vh}
-  .hero h1{font-size:clamp(36px,11vw,60px)}
+  .hero h1{font-size:clamp(50px,15vw,86px)}
   .hero-sub{font-size:12px;margin-top:13px;padding:8px 12px}
   .truck-marquee{font-size:10px;margin-top:7px}
   .player{
     left:8px;right:8px;bottom:max(7px,env(safe-area-inset-bottom));
-    width:auto;transform:none;padding:6px 8px;border-radius:13px;
+    width:auto;transform:none;padding:7px 9px;border-radius:15px;
   }
-  .cover{width:32px;height:32px;flex-basis:32px;border-radius:8px}
-  .song{font-size:11.5px}
-  .artist{font-size:8.5px}
-  .round-btn{width:22px;height:22px}
-  .controls{gap:9px}
-  .control{width:22px;height:22px}
-  .play{width:30px;height:30px}
+  .cover{width:40px;height:40px;flex-basis:40px;border-radius:9px}
+  .song{font-size:13px}
+  .artist{font-size:9.5px}
+  .round-btn{width:27px;height:27px}
+  .controls{gap:12px}
+  .control{width:27px;height:27px}
+  .play{width:36px;height:36px}
   .drawer{top:8px;right:8px;bottom:8px;width:calc(100vw - 16px);border-radius:20px}
-  .horn-fab{width:40px;height:40px}
-  .horn-hang{bottom:128px}
-  .horn-fab svg{width:17px;height:23px}
+  .horn-fab{width:46px;height:46px}
+  .horn-hang{bottom:170px}
+  .horn-fab svg{width:19px;height:26px}
 }
 
 /* ---------- small phones ---------- */
 @media(max-width:430px){
   .spotify-link{padding:7px 10px;font-size:11px}
-  .odometer{padding:6px 9px;font-size:10.5px;gap:5px}
-  .odometer .material-symbols-rounded{font-size:13px}
   .hero{padding-top:7vh}
-  .hero h1{font-size:clamp(33px,11vw,50px)}
+  .hero h1{font-size:clamp(47px,15vw,70px)}
   .hero-sub{max-width:calc(100vw - 24px);font-size:11px}
   .truck-marquee{width:calc(100vw - 24px);font-size:9px}
-  .cover{width:30px;height:30px;flex-basis:30px}
-  .song{font-size:11px}
-  .artist{font-size:8px}
+  .cover{width:38px;height:38px;flex-basis:38px}
+  .song{font-size:12.5px}
+  .artist{font-size:9px}
   .player-actions #shuffle{display:none}
   .vol-slider,
   .volume-wrap:hover .vol-slider,
@@ -719,32 +705,29 @@ a{color:inherit}
   .progress{margin-top:6px}
   .toast{bottom:100px}
   .drawer-tab{font-size:10.5px;padding:7px 8px}
-  .horn-fab{width:36px;height:36px}
-  .horn-hang{bottom:118px}
-  .horn-fab svg{width:15px;height:21px}
+  .horn-fab{width:42px;height:42px}
+  .horn-hang{bottom:160px}
+  .horn-fab svg{width:18px;height:24px}
 }
 
 /* ---------- very small / narrow phones ---------- */
 @media(max-width:360px){
   .topbar{padding:12px 12px}
-  .topbar-left{gap:6px}
   .live-clock{font-size:12px}
-  .odometer span:last-child{display:none} /* keep just the truck icon on very narrow phones */
-  .odometer{padding:6px 8px}
   .spotify-link{padding:6px 9px;font-size:10px;gap:5px}
   .hero{padding:6vh 12px 150px}
-  .hero h1{font-size:clamp(30px,13vw,44px)}
-  .player{left:6px;right:6px;padding:5px 7px;border-radius:12px}
-  .cover{width:28px;height:28px;flex-basis:28px;border-radius:7px}
-  .song{font-size:10.5px}
-  .artist{font-size:7.5px}
-  .status{font-size:6.5px}
-  .round-btn{width:21px;height:21px}
-  .round-btn .material-symbols-rounded{font-size:13px}
-  .controls{gap:6px}
-  .control{width:21px;height:21px}
-  .play{width:28px;height:28px}
-  .time-row{font-size:7px}
+  .hero h1{font-size:clamp(40px,16vw,58px)}
+  .player{left:6px;right:6px;padding:6px 8px;border-radius:13px}
+  .cover{width:34px;height:34px;flex-basis:34px;border-radius:8px}
+  .song{font-size:11.5px}
+  .artist{font-size:8.5px}
+  .status{font-size:7.5px}
+  .round-btn{width:25px;height:25px}
+  .round-btn .material-symbols-rounded{font-size:15px}
+  .controls{gap:8px}
+  .control{width:25px;height:25px}
+  .play{width:33px;height:33px}
+  .time-row{font-size:8px}
   .drawer{top:6px;right:6px;bottom:6px;left:6px;width:auto;border-radius:16px}
   .drawer-title{font-size:16px}
   .drawer-tabs{gap:4px}
@@ -754,19 +737,19 @@ a{color:inherit}
   .track-name{font-size:11px}
   .track-artist{font-size:9px}
   .queued-badge{display:none}
-  .horn-fab{width:32px;height:32px}
-  .horn-hang{bottom:108px}
-  .horn-fab svg{width:13px;height:18px}
+  .horn-fab{width:38px;height:38px}
+  .horn-hang{bottom:150px}
+  .horn-fab svg{width:16px;height:22px}
 }
 
 /* ---------- short viewport heights (landscape phones) ---------- */
 @media(max-height:480px) and (max-width:900px){
   .hero{height:auto;min-height:100svh;padding:8vh 18px 130px;align-items:center}
-  .hero h1{font-size:clamp(26px,6vw,40px)}
+  .hero h1{font-size:clamp(34px,8vw,56px)}
   .hero-sub{margin-top:10px}
   .player{bottom:6px}
   .drawer{top:6px;bottom:6px}
-  .horn-hang{bottom:128px}
+  .horn-hang{bottom:150px}
 }
 
 @media(prefers-reduced-motion:reduce){
@@ -778,13 +761,7 @@ a{color:inherit}
 
 <body>
 <header class="topbar">
-  <div class="topbar-left">
-    <div class="live-clock"><span class="live-dot"></span><span id="clock">--:--</span></div>
-    <div class="odometer" id="odometer" title="आज तक का सफर — हर मिनट गाना बजने पर 1 km जुड़ता है">
-      <span class="material-symbols-rounded" aria-hidden="true">local_shipping</span>
-      <span id="odometerValue">0.0 km</span>
-    </div>
-  </div>
+  <div class="live-clock"><span class="live-dot"></span><span id="clock">--:--</span></div>
   <a class="spotify-link" href="https://www.youtube.com/playlist?list=PLgObA3pAqvOh87Z03QG8Z4xE-uqlAWSBy" target="_blank" rel="noopener noreferrer">
     YouTube Playlist
     <span class="material-symbols-rounded link-icon" aria-hidden="true">north_east</span>
@@ -950,7 +927,6 @@ a{color:inherit}
   <div class="drawer-foot">
     <span id="drawerFootLabel">YouTube playlist</span>
     <button type="button" class="text-btn" id="clearHistoryBtn" hidden>Clear history</button>
-    <button type="button" class="text-btn" id="convoyShareBtn" title="अपनी क्यू का लिंक शेयर करो">Share convoy</button>
     <a class="open-spotify" id="openPlaylistLink" href="https://www.youtube.com/playlist?list=PLgObA3pAqvOh87Z03QG8Z4xE-uqlAWSBy" target="_blank" rel="noopener noreferrer">
       Open Playlist
       <span class="material-symbols-rounded link-icon" aria-hidden="true">north_east</span>
@@ -981,8 +957,6 @@ const PLAYLIST_ID = "PLgObA3pAqvOh87Z03QG8Z4xE-uqlAWSBy";
 const START_VIDEO_ID = "5MIGQBpVeqs";
 const HISTORY_KEY = "hop_history_v1";
 const HISTORY_LIMIT = 60;
-const ODOMETER_KEY = "hop_odometer_km_v1";
-const KM_PER_SECOND = 1 / 60; // 1 "km" per minute of music — a highway-cruise conceit
 
 const $ = id => document.getElementById(id);
 
@@ -1018,15 +992,6 @@ let activeImportJob = null;
 let history = [];
 let lastLoggedVideoId = null;
 let activeDrawerTab = "queue";
-
-// Route odometer — total "km" travelled, driven by minutes of music played.
-let odometerKm = 0;
-let odometerSaveTick = 0;
-
-// Convoy link — a shareable URL that hands a friend the same queue.
-// (parseConvoyParams is defined later in this file but hoisted, so it's
-// safe to call here.)
-let pendingConvoy = parseConvoyParams();
 
 const fallbackCover = "https://i.ibb.co/S7t9NmW0/truck.webp";
 
@@ -1088,58 +1053,9 @@ function updateClock(){
   }).toLowerCase();
 }
 
-/* ---------------------------------------------------------
-   Route / odometer — every minute of music played adds a
-   "km" to a running trip counter, persisted across visits.
-   --------------------------------------------------------- */
-
-function loadOdometer(){
-  odometerKm = parseFloat(localStorage.getItem(ODOMETER_KEY)) || 0;
-  updateOdometerDisplay();
-}
-
-function saveOdometer(){
-  try{ localStorage.setItem(ODOMETER_KEY, String(odometerKm)); }catch{}
-}
-
-function updateOdometerDisplay(){
-  const el = $("odometerValue");
-  if(!el) return;
-  el.textContent = `${odometerKm.toFixed(1)} km`;
-}
-
-function tickOdometer(seconds){
-  odometerKm += seconds * KM_PER_SECOND;
-  updateOdometerDisplay();
-
-  odometerSaveTick += seconds;
-  if(odometerSaveTick >= 2){
-    odometerSaveTick = 0;
-    saveOdometer();
-  }
-}
-
-/* CB-radio style status lines. Each real player state maps to a small
-   pool of trucker-slang phrases; setStatus() below picks one at random
-   whenever the state changes, so the status pill talks like a CB radio
-   instead of a plain "Loading…" label. */
-const cbStatusPhrases = {
-  "NOW PLAYING":     ["ON AIR 🎙️", "10-4, बज रहा है", "गाना चालू है", "फुल वॉल्यूम पे", "रोजर दैट"],
-  "PAUSED":          ["स्टैंडबाय", "ब्रेक पे हैं", "होल्ड कर भाई", "10-10, रुका हुआ"],
-  "LOADING PLAYLIST":["चैनल स्कैन हो रहा है…", "कनेक्ट हो रहे हैं…", "बेस टू ट्रक, कनेक्ट कर रहे…"],
-  "PLAYLIST READY":  ["चैनल क्लियर, चलते हैं", "10-4, तैयार है", "रोड क्लियर है"],
-  "PLAYLIST ERROR":  ["ब्रेक ब्रेक, सिग्नल गुम", "10-33, गड़बड़ हो गई"],
-  "READY":           ["स्टैंडिंग बाय", "तैयार है भाई"],
-  "BUFFERING":       ["सिग्नल कमज़ोर…", "लाइन पे रुको…", "थोड़ा होल्ड करो…"],
-  "YOUTUBE ERROR":   ["ब्रेक ब्रेक, चैनल कट गया", "10-33, प्रॉब्लम है"]
-};
-
 function setStatus(label, error = false){
   $("status").classList.toggle("error", error);
-  const phrases = cbStatusPhrases[label];
-  const text = phrases ? phrases[Math.floor(Math.random() * phrases.length)] : label;
-  $("status").querySelector("span").textContent = text;
-  $("status").title = label; // keep the real state available on hover/inspection
+  $("status").querySelector("span").textContent = label;
 }
 
 function setPlaying(playing){
@@ -1210,7 +1126,6 @@ function setDrawerTab(tab){
   $("openPlaylistLink").hidden = tab !== "queue";
   $("drawerFootLabel").hidden = tab !== "queue";
   $("clearHistoryBtn").hidden = tab !== "history" || !history.length;
-  $("convoyShareBtn").hidden = tab !== "queue";
 
   if(tab === "history") renderHistory();
 }
@@ -1302,104 +1217,6 @@ function removeQueueItem(id){
   $("playlistMeta").textContent = `${playlistItems.length} songs • YouTube playlist`;
   toast("Removed from queue", "playlist_remove");
 }
-
-/* ---------------------------------------------------------
-   Convoy link — share the current queue (and where you are
-   in it) as a URL a friend can open to join the same ride.
-   --------------------------------------------------------- */
-
-const CONVOY_PARAM = "convoy";
-const CONVOY_VIDEO_PARAM = "v";
-const CONVOY_TIME_PARAM = "t";
-const CONVOY_MAX_SONGS = 40;
-
-function parseConvoyParams(){
-  const params = new URLSearchParams(window.location.search);
-  const raw = params.get(CONVOY_PARAM);
-  if(!raw) return null;
-
-  const ids = raw.split(",").map(s => s.trim()).filter(Boolean).slice(0, CONVOY_MAX_SONGS);
-  if(!ids.length) return null;
-
-  return {
-    ids,
-    videoId: params.get(CONVOY_VIDEO_PARAM) || null,
-    time: Math.max(0, Number(params.get(CONVOY_TIME_PARAM)) || 0)
-  };
-}
-
-function buildConvoyLink(){
-  const ids = playOrder.slice(0, CONVOY_MAX_SONGS);
-  const url = new URL(window.location.href);
-  url.search = "";
-  url.searchParams.set(CONVOY_PARAM, ids.join(","));
-
-  if(currentVideoId) url.searchParams.set(CONVOY_VIDEO_PARAM, currentVideoId);
-
-  const current = (playerReady && player && typeof player.getCurrentTime === "function")
-    ? Math.floor(player.getCurrentTime() || 0)
-    : 0;
-  if(current > 0) url.searchParams.set(CONVOY_TIME_PARAM, String(current));
-
-  return url.toString();
-}
-
-async function shareConvoyLink(){
-  if(!playOrder.length){
-    toast("Playlist is still loading…", "hourglass_top");
-    return;
-  }
-
-  const link = buildConvoyLink();
-
-  try{
-    if(navigator.share){
-      await navigator.share({ title:"हॉर्न ओके प्लीज़ — मेरे कॉन्वॉय में शामिल हो", url: link });
-      return;
-    }
-
-    await navigator.clipboard.writeText(link);
-    toast("कॉन्वॉय लिंक कॉपी हो गया! दोस्त को भेजो 🚛", "link");
-  }catch(error){
-    if(error?.name === "AbortError") return;
-    console.error("Convoy share failed:", error);
-    toast("लिंक कॉपी नहीं हो पाया — इसे एड्रेस बार से कॉपी करो।", "error");
-  }
-}
-
-function applyConvoyJoin(convoy){
-  if(!convoy || !convoy.ids.length) return;
-
-  const added = addVideosToQueue(convoy.ids);
-  const targetId = (convoy.videoId && itemById(convoy.videoId)) ? convoy.videoId : convoy.ids[0];
-
-  if(targetId && itemById(targetId)){
-    loadTrackById(targetId, { autoplay:false });
-
-    if(convoy.time > 0){
-      setTimeout(() => {
-        if(!playerReady || !player) return;
-        try{
-          player.seekTo(convoy.time, true);
-          const duration = player.getDuration() || 0;
-          if(duration > 0) setVisualProgress(convoy.time / duration);
-          $("currentTime").textContent = fmt(convoy.time);
-        }catch(error){
-          console.error("Convoy seek failed:", error);
-        }
-      }, 1200);
-    }
-  }
-
-  toast(added ? `कॉन्वॉय जॉइन किया! ${added} गाने जुड़े 🚛` : "कॉन्वॉय जॉइन किया 🚛", "group");
-
-  // Drop the query params so a refresh doesn't re-import the same queue.
-  const cleanUrl = new URL(window.location.href);
-  cleanUrl.search = "";
-  window.history.replaceState({}, "", cleanUrl.toString());
-}
-
-$("convoyShareBtn").onclick = shareConvoyLink;
 
 /* ---------------------------------------------------------
    Rendering
@@ -1780,11 +1597,6 @@ async function bootstrapOriginalPlaylist(){
     setStatus("PLAYLIST READY");
 
     startMetadataScanner();
-
-    if(pendingConvoy){
-      applyConvoyJoin(pendingConvoy);
-      pendingConvoy = null;
-    }
   }catch(error){
     console.error("Playlist bootstrap failed:", error);
     setStatus("PLAYLIST ERROR", true);
@@ -1863,8 +1675,6 @@ function startProgressLoop(){
       $("currentTime").textContent = fmt(current);
       $("duration").textContent = fmt(duration);
     }
-
-    tickOdometer(0.1);
   }, 100);
 }
 
@@ -2374,9 +2184,6 @@ window.addEventListener("resize", () => {
   if(duration > 0) setVisualProgress(current / duration);
 });
 
-window.addEventListener("pagehide", saveOdometer);
-window.addEventListener("beforeunload", saveOdometer);
-
 /* ---------------------------------------------------------
    Clock + decorative animation
    --------------------------------------------------------- */
@@ -2413,7 +2220,6 @@ setInterval(() => {
    --------------------------------------------------------- */
 
 loadHistory();
-loadOdometer();
 setDrawerTab("queue");
 
 /* ---------------------------------------------------------
