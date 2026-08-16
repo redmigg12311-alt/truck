@@ -282,11 +282,14 @@ a{color:inherit}
   filter:drop-shadow(0 2px 3px rgba(0,0,0,.28));
 }
 .horn-fab.honking{animation:hornSquish .4s ease}
+.horn-fab.holding{
+  transform:scale(.93);
+  box-shadow:0 6px 14px rgba(0,0,0,.4),inset 0 1px rgba(255,255,255,.5),0 0 0 6px rgba(255,195,0,.16);
+}
 
 .horn-fab::before{
   content:"";position:absolute;inset:-7px;border-radius:50%;
   border:2px dashed rgba(255,214,102,.55);
-  animation:hornRing 8s linear infinite;
   pointer-events:none;
 }
 .horn-fab::after{
@@ -298,7 +301,6 @@ a{color:inherit}
   animation:hornTwinkle 2.6s ease-in-out infinite;
   pointer-events:none;
 }
-@keyframes hornRing{to{transform:rotate(360deg)}}
 @keyframes hornTwinkle{
   0%,100%{opacity:.9}
   50%{opacity:.2}
@@ -617,22 +619,15 @@ a{color:inherit}
 .convoy-cta:active{transform:translateY(0)}
 .convoy-cta .material-symbols-rounded{font-size:18px}
 .convoy-cta.live{
-  color:#181818;
-  background:linear-gradient(135deg,#ffd75b,#ff9f1c);
-  box-shadow:0 8px 22px rgba(255,159,28,.32),inset 0 1px rgba(255,255,255,.35);
+  color:#fff5f5;
+  background:linear-gradient(135deg,#ff6b6b,#e63946);
+  box-shadow:0 8px 22px rgba(230,57,70,.32),inset 0 1px rgba(255,255,255,.25);
 }
-.convoy-cta.connecting{opacity:.75;pointer-events:none}
-.convoy-cta.connecting .material-symbols-rounded{animation:spin .9s linear infinite}
+.convoy-cta.connecting{opacity:.7;pointer-events:none}
 .convoy-riders{
   margin:-2px 14px 10px;text-align:center;
   font-size:10.5px;font-weight:700;color:rgba(255,247,231,.55);
 }
-.convoy-leave{
-  display:block;margin:-6px auto 10px;
-  font-size:10px;font-weight:700;color:rgba(255,120,120,.75);
-  text-decoration:underline;text-underline-offset:2px;
-}
-.convoy-leave:hover{color:#ff7878}
 
 .add-link-wrap{
   display:flex;gap:8px;padding:0 14px 10px;
@@ -650,8 +645,8 @@ a{color:inherit}
 }
 .add-link-btn:hover{background:rgba(255,195,0,.22)}
 .add-link-btn:disabled{opacity:.55;cursor:default}
-.add-link-btn.busy .material-symbols-rounded{animation:spin .9s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
+.add-link-btn.busy .material-symbols-rounded{animation:busyPulse .8s ease-in-out infinite}
+@keyframes busyPulse{50%{opacity:.3}}
 
 .search-wrap{padding:0 14px 10px}
 .search{
@@ -1036,7 +1031,6 @@ a{color:inherit}
     <span id="convoyBtnLabel">Start Live Convoy</span>
   </button>
   <div class="convoy-riders" id="convoyRiders" hidden></div>
-  <button type="button" class="convoy-leave" id="convoyLeaveBtn" hidden>Leave convoy</button>
 
   <div class="add-link-wrap" id="addLinkWrap">
     <input class="add-link-input" id="addLinkInput" type="text" inputmode="url" autocomplete="off"
@@ -1649,8 +1643,8 @@ function convoyUpdateRidersUI(){
   }
 
   $("convoyBtn").classList.toggle("live", active);
-  $("convoyBtnIcon").textContent = active ? "ios_share" : "group";
-  $("convoyBtnLabel").textContent = active ? "Copy Convoy Link" : "Start Live Convoy";
+  $("convoyBtnIcon").textContent = active ? "logout" : "group";
+  $("convoyBtnLabel").textContent = active ? "Leave Convoy" : "Start Live Convoy";
 
   $("convoyFab").classList.toggle("live", active);
   $("convoyFabBadge").textContent = String(convoyRiderCount);
@@ -1658,7 +1652,6 @@ function convoyUpdateRidersUI(){
 
   const showRiders = active && activeDrawerTab === "queue";
   $("convoyRiders").hidden = !showRiders;
-  $("convoyLeaveBtn").hidden = !showRiders;
 
   if(showRiders){
     $("convoyRiders").textContent = convoyIsHost
@@ -1836,9 +1829,16 @@ function leaveLiveConvoy(){
   toast("कॉन्वॉय छोड़ दिया", "logout");
 }
 
-$("convoyBtn").onclick = startOrShareLiveConvoy;
+function convoyBtnClick(){
+  if(convoyIsHost || convoyHostConnection){
+    leaveLiveConvoy();
+  }else{
+    startOrShareLiveConvoy();
+  }
+}
+
+$("convoyBtn").onclick = convoyBtnClick;
 $("convoyFab").onclick = startOrShareLiveConvoy;
-$("convoyLeaveBtn").onclick = leaveLiveConvoy;
 
 /* ---------------------------------------------------------
    Rendering
@@ -2712,6 +2712,7 @@ function honk(index, rate){
   }catch{}
 }
 
+// Quick one-shot honk — used by the "h" keyboard shortcut.
 function playHorn(){
   const index = pickHornIndex(lastHornIndex);
   lastHornIndex = index;
@@ -2737,7 +2738,80 @@ function playHorn(){
   toast(hornToasts[Math.floor(Math.random() * hornToasts.length)], "campaign");
 }
 
-$("hornBtn").onclick = playHorn;
+/* Press-and-hold horn — the actual button. The sound loops for as
+   long as it's held and stops the instant it's released, with
+   robust cleanup so it can never get stuck "on" (pointer leaving
+   the button, a cancelled touch, or the tab losing focus all stop it). */
+
+let hornHoldAudio = null;
+let hornHolding = false;
+
+function startHornHold(){
+  if(hornHolding) return;
+  hornHolding = true;
+
+  const index = pickHornIndex(lastHornIndex);
+  lastHornIndex = index;
+
+  try{
+    hornHoldAudio = new Audio(HORN_SOURCES[index]);
+    hornHoldAudio.loop = true;
+    hornHoldAudio.volume = 0.9;
+    hornHoldAudio.playbackRate = 0.97 + Math.random() * 0.06;
+    hornHoldAudio.play().catch(() => {});
+  }catch{
+    hornHoldAudio = null;
+  }
+
+  const btn = $("hornBtn");
+  btn.classList.remove("honking");
+  void btn.offsetWidth;
+  btn.classList.add("honking", "holding");
+
+  const flash = $("hornFlash");
+  flash.classList.remove("show");
+  void flash.offsetWidth;
+  flash.classList.add("show");
+
+  toast(hornToasts[Math.floor(Math.random() * hornToasts.length)], "campaign");
+}
+
+function stopHornHold(){
+  if(!hornHolding) return;
+  hornHolding = false;
+
+  if(hornHoldAudio){
+    try{
+      hornHoldAudio.pause();
+      hornHoldAudio.currentTime = 0;
+    }catch{}
+    hornHoldAudio = null;
+  }
+
+  $("hornBtn").classList.remove("holding");
+}
+
+const hornBtn = $("hornBtn");
+hornBtn.style.touchAction = "none";
+hornBtn.style.webkitUserSelect = "none";
+hornBtn.style.userSelect = "none";
+
+hornBtn.addEventListener("pointerdown", event => {
+  event.preventDefault();
+  try{ hornBtn.setPointerCapture(event.pointerId); }catch{}
+  startHornHold();
+});
+
+hornBtn.addEventListener("pointerup", stopHornHold);
+hornBtn.addEventListener("pointercancel", stopHornHold);
+hornBtn.addEventListener("pointerleave", stopHornHold);
+hornBtn.addEventListener("contextmenu", event => event.preventDefault());
+
+// Safety nets: never leave the horn stuck "on" if the tab loses
+// focus, the app backgrounds, or the page is about to unload.
+window.addEventListener("blur", stopHornHold);
+document.addEventListener("visibilitychange", () => { if(document.hidden) stopHornHold(); });
+window.addEventListener("pagehide", stopHornHold);
 
 /* ---------------------------------------------------------
    Controls
