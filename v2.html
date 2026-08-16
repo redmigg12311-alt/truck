@@ -119,6 +119,22 @@ a{color:inherit}
   white-space:nowrap;
 }
 .odometer .material-symbols-rounded{font-size:15px}
+.convoy-status{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:7px 12px;border-radius:999px;
+  font-size:11px;font-weight:800;letter-spacing:.02em;
+  color:#a4ffb0;text-shadow:0 2px 8px #000;
+  background:rgba(9,13,17,.30);
+  border:1px solid rgba(120,255,140,.32);
+  backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);
+  white-space:nowrap;
+}
+.convoy-dot{
+  width:7px;height:7px;border-radius:50%;
+  background:#57e879;box-shadow:0 0 10px #57e879;
+  animation:convoyPulse 1.6s ease-in-out infinite;
+}
+@keyframes convoyPulse{50%{opacity:.3;transform:scale(.85)}}
 .spotify-link{
   display:inline-flex;align-items:center;gap:8px;
   padding:9px 14px;border:1px solid var(--line);border-radius:999px;
@@ -563,6 +579,36 @@ a{color:inherit}
   border-color:rgba(255,195,0,.4);
 }
 
+.convoy-cta{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  margin:0 14px 8px;padding:12px 16px;border-radius:14px;
+  font-size:13px;font-weight:800;letter-spacing:.01em;color:#0f1712;
+  background:linear-gradient(135deg,#6bf07f,#2fbf71);
+  border:1px solid rgba(255,255,255,.28);
+  box-shadow:0 8px 22px rgba(47,191,113,.3),inset 0 1px rgba(255,255,255,.35);
+  transition:transform .16s,box-shadow .16s;
+}
+.convoy-cta:hover{transform:translateY(-1px)}
+.convoy-cta:active{transform:translateY(0)}
+.convoy-cta .material-symbols-rounded{font-size:18px}
+.convoy-cta.live{
+  color:#181818;
+  background:linear-gradient(135deg,#ffd75b,#ff9f1c);
+  box-shadow:0 8px 22px rgba(255,159,28,.32),inset 0 1px rgba(255,255,255,.35);
+}
+.convoy-cta.connecting{opacity:.75;pointer-events:none}
+.convoy-cta.connecting .material-symbols-rounded{animation:spin .9s linear infinite}
+.convoy-riders{
+  margin:-2px 14px 10px;text-align:center;
+  font-size:10.5px;font-weight:700;color:rgba(255,247,231,.55);
+}
+.convoy-leave{
+  display:block;margin:-6px auto 10px;
+  font-size:10px;font-weight:700;color:rgba(255,120,120,.75);
+  text-decoration:underline;text-underline-offset:2px;
+}
+.convoy-leave:hover{color:#ff7878}
+
 .add-link-wrap{
   display:flex;gap:8px;padding:0 14px 10px;
 }
@@ -704,6 +750,7 @@ a{color:inherit}
 @media(max-width:430px){
   .spotify-link{padding:7px 10px;font-size:11px}
   .odometer{padding:6px 9px;font-size:10.5px;gap:5px}
+  .convoy-status{padding:6px 9px;font-size:9.5px;gap:5px}
   .odometer .material-symbols-rounded{font-size:13px}
   .hero{padding-top:7vh}
   .hero h1{font-size:clamp(33px,11vw,50px)}
@@ -731,6 +778,8 @@ a{color:inherit}
   .live-clock{font-size:12px}
   .odometer span:last-child{display:none} /* keep just the truck icon on very narrow phones */
   .odometer{padding:6px 8px}
+  .convoy-status span:last-child{display:none}
+  .convoy-status{padding:6px 8px}
   .spotify-link{padding:6px 9px;font-size:10px;gap:5px}
   .hero{padding:6vh 12px 150px}
   .hero h1{font-size:clamp(30px,13vw,44px)}
@@ -773,6 +822,9 @@ a{color:inherit}
   *,*::before,*::after{scroll-behavior:auto!important;animation:none!important;transition:none!important}
 }
 </style>
+<!-- PeerJS powers the Live Convoy feature: direct browser-to-browser
+     sync (WebRTC) via PeerJS's free public broker, no backend needed. -->
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
 </head>
 
 
@@ -783,6 +835,10 @@ a{color:inherit}
     <div class="odometer" id="odometer" title="आज तक का सफर — हर मिनट गाना बजने पर 1 km जुड़ता है">
       <span class="material-symbols-rounded" aria-hidden="true">local_shipping</span>
       <span id="odometerValue">0.0 km</span>
+    </div>
+    <div class="convoy-status" id="convoyStatus" hidden title="लाइव कॉन्वॉय — सब एक साथ, एक ही समय पे">
+      <span class="convoy-dot"></span>
+      <span id="convoyStatusText">Live</span>
     </div>
   </div>
   <a class="spotify-link" href="https://www.youtube.com/playlist?list=PLgObA3pAqvOh87Z03QG8Z4xE-uqlAWSBy" target="_blank" rel="noopener noreferrer">
@@ -929,6 +985,13 @@ a{color:inherit}
     <button type="button" class="drawer-tab" id="tabHistory" role="tab" aria-selected="false">History</button>
   </div>
 
+  <button type="button" class="convoy-cta" id="convoyBtn">
+    <span class="material-symbols-rounded" aria-hidden="true" id="convoyBtnIcon">group</span>
+    <span id="convoyBtnLabel">Start Live Convoy</span>
+  </button>
+  <div class="convoy-riders" id="convoyRiders" hidden></div>
+  <button type="button" class="convoy-leave" id="convoyLeaveBtn" hidden>Leave convoy</button>
+
   <div class="add-link-wrap" id="addLinkWrap">
     <input class="add-link-input" id="addLinkInput" type="text" inputmode="url" autocomplete="off"
            placeholder="Paste a YouTube song or playlist link…" aria-label="Paste a YouTube song or playlist link">
@@ -950,7 +1013,6 @@ a{color:inherit}
   <div class="drawer-foot">
     <span id="drawerFootLabel">YouTube playlist</span>
     <button type="button" class="text-btn" id="clearHistoryBtn" hidden>Clear history</button>
-    <button type="button" class="text-btn" id="convoyShareBtn" title="अपनी क्यू का लिंक शेयर करो">Share convoy</button>
     <a class="open-spotify" id="openPlaylistLink" href="https://www.youtube.com/playlist?list=PLgObA3pAqvOh87Z03QG8Z4xE-uqlAWSBy" target="_blank" rel="noopener noreferrer">
       Open Playlist
       <span class="material-symbols-rounded link-icon" aria-hidden="true">north_east</span>
@@ -986,6 +1048,7 @@ const KM_PER_SECOND = 1 / 60; // 1 "km" per minute of music — a highway-cruise
 const CONVOY_PARAM = "convoy";
 const CONVOY_VIDEO_PARAM = "v";
 const CONVOY_TIME_PARAM = "t";
+const CONVOY_LIVE_PARAM = "live";
 const CONVOY_MAX_SONGS = 40;
 
 const $ = id => document.getElementById(id);
@@ -1031,6 +1094,18 @@ let odometerSaveTick = 0;
 // (parseConvoyParams is defined later in this file but hoisted, so it's
 // safe to call here.)
 let pendingConvoy = parseConvoyParams();
+
+// Live Convoy — real-time playback sync over WebRTC (via PeerJS), with
+// the host as the relay hub so every rider's actions reach everyone else.
+let convoyPeer = null;
+let convoyIsHost = false;
+let convoyCode = null;
+let convoyConnections = [];     // host only: DataConnections to each rider
+let convoyHostConnection = null; // rider only: DataConnection to the host
+let convoyRiderCount = 1;
+let convoyApplyingRemote = false;
+let convoyApplyingRemoteTimer = null;
+let convoySyncTimer = null;
 
 const fallbackCover = "https://i.ibb.co/S7t9NmW0/truck.webp";
 
@@ -1214,7 +1289,8 @@ function setDrawerTab(tab){
   $("openPlaylistLink").hidden = tab !== "queue";
   $("drawerFootLabel").hidden = tab !== "queue";
   $("clearHistoryBtn").hidden = tab !== "history" || !history.length;
-  $("convoyShareBtn").hidden = tab !== "queue";
+  $("convoyBtn").hidden = tab !== "queue";
+  convoyUpdateRidersUI();
 
   if(tab === "history") renderHistory();
 }
@@ -1308,22 +1384,29 @@ function removeQueueItem(id){
 }
 
 /* ---------------------------------------------------------
-   Convoy link — share the current queue (and where you are
-   in it) as a URL a friend can open to join the same ride.
+   Convoy link — encodes the current queue (and where you are
+   in it) into a URL. Works two ways:
+   - Static: opening it just imports the queue and jumps to
+     the same song/time (a one-time snapshot).
+   - Live: if a live convoy is running, opening it connects
+     everyone's players in real time — any rider's song change,
+     play/pause, or seek reaches every other rider.
    --------------------------------------------------------- */
 
 function parseConvoyParams(){
   const params = new URLSearchParams(window.location.search);
   const raw = params.get(CONVOY_PARAM);
-  if(!raw) return null;
+  const liveCode = params.get(CONVOY_LIVE_PARAM);
 
-  const ids = raw.split(",").map(s => s.trim()).filter(Boolean).slice(0, CONVOY_MAX_SONGS);
-  if(!ids.length) return null;
+  if(!raw && !liveCode) return null;
+
+  const ids = raw ? raw.split(",").map(s => s.trim()).filter(Boolean).slice(0, CONVOY_MAX_SONGS) : [];
 
   return {
     ids,
     videoId: params.get(CONVOY_VIDEO_PARAM) || null,
-    time: Math.max(0, Number(params.get(CONVOY_TIME_PARAM)) || 0)
+    time: Math.max(0, Number(params.get(CONVOY_TIME_PARAM)) || 0),
+    liveCode
   };
 }
 
@@ -1340,25 +1423,22 @@ function buildConvoyLink(){
     : 0;
   if(current > 0) url.searchParams.set(CONVOY_TIME_PARAM, String(current));
 
+  if(convoyCode) url.searchParams.set(CONVOY_LIVE_PARAM, convoyCode);
+
   return url.toString();
 }
 
-async function shareConvoyLink(){
-  if(!playOrder.length){
-    toast("Playlist is still loading…", "hourglass_top");
-    return;
-  }
-
+async function convoyShareLink(){
   const link = buildConvoyLink();
 
   try{
     if(navigator.share){
-      await navigator.share({ title:"हॉर्न ओके प्लीज़ — मेरे कॉन्वॉय में शामिल हो", url: link });
+      await navigator.share({ title:"हॉर्न ओके प्लीज़ — मेरे लाइव कॉन्वॉय में शामिल हो", url: link });
       return;
     }
 
     await navigator.clipboard.writeText(link);
-    toast("कॉन्वॉय लिंक कॉपी हो गया! दोस्त को भेजो 🚛", "link");
+    toast(convoyCode ? "लाइव कॉन्वॉय लिंक कॉपी हो गया! दोस्त को भेजो 🚛" : "कॉन्वॉय लिंक कॉपी हो गया! दोस्त को भेजो 🚛", "link");
   }catch(error){
     if(error?.name === "AbortError") return;
     console.error("Convoy share failed:", error);
@@ -1366,7 +1446,7 @@ async function shareConvoyLink(){
   }
 }
 
-function applyConvoyJoin(convoy){
+function applyConvoyStaticImport(convoy){
   if(!convoy || !convoy.ids.length) return;
 
   const added = addVideosToQueue(convoy.ids);
@@ -1392,13 +1472,322 @@ function applyConvoyJoin(convoy){
 
   toast(added ? `कॉन्वॉय जॉइन किया! ${added} गाने जुड़े 🚛` : "कॉन्वॉय जॉइन किया 🚛", "group");
 
-  // Drop the query params so a refresh doesn't re-import the same queue.
   const cleanUrl = new URL(window.location.href);
   cleanUrl.search = "";
   window.history.replaceState({}, "", cleanUrl.toString());
 }
 
-$("convoyShareBtn").onclick = shareConvoyLink;
+/* ---------- Live Convoy: real-time sync over PeerJS/WebRTC ---------- */
+
+function convoyBeginRemoteApply(){
+  convoyApplyingRemote = true;
+  clearTimeout(convoyApplyingRemoteTimer);
+  convoyApplyingRemoteTimer = setTimeout(() => { convoyApplyingRemote = false; }, 1500);
+}
+
+function convoySeekTo(time){
+  if(!playerReady || !player || typeof time !== "number") return;
+  try{
+    player.seekTo(time, true);
+    const duration = player.getDuration() || 0;
+    if(duration > 0) setVisualProgress(time / duration);
+    $("currentTime").textContent = fmt(time);
+  }catch(error){
+    console.error("Convoy seek failed:", error);
+  }
+}
+
+function convoyApplyState(payload){
+  if(!payload || !playerReady || !player) return;
+
+  convoyBeginRemoteApply();
+
+  if(Array.isArray(payload.queueIds) && payload.queueIds.length){
+    addVideosToQueue(payload.queueIds);
+  }
+
+  if(payload.videoId && payload.videoId !== currentVideoId && itemById(payload.videoId)){
+    loadTrackById(payload.videoId, { autoplay: payload.isPlaying !== false });
+    if(typeof payload.time === "number") setTimeout(() => convoySeekTo(payload.time), 900);
+  }else{
+    if(typeof payload.time === "number") convoySeekTo(payload.time);
+    if(payload.isPlaying && !isPlaying) player.playVideo?.();
+    if(payload.isPlaying === false && isPlaying) player.pauseVideo?.();
+  }
+}
+
+function convoyReconcileTime(payload){
+  if(!playerReady || !player || convoyIsHost || !payload) return;
+
+  const elapsed = payload.isPlaying ? Math.max(0, (Date.now() - payload.ts) / 1000) : 0;
+  const expected = (payload.time || 0) + elapsed;
+  const current = player.getCurrentTime() || 0;
+
+  if(Math.abs(current - expected) > 2.5){
+    convoyBeginRemoteApply();
+    convoySeekTo(expected);
+  }
+}
+
+function convoyCurrentSnapshot(){
+  return {
+    videoId: currentVideoId,
+    time: (playerReady && player && typeof player.getCurrentTime === "function") ? (player.getCurrentTime() || 0) : 0,
+    isPlaying,
+    queueIds: playOrder.slice(0, CONVOY_MAX_SONGS),
+    playPos,
+    ts: Date.now()
+  };
+}
+
+function convoyBroadcastState(){
+  if(convoyApplyingRemote) return;
+  if(!convoyIsHost && !convoyHostConnection) return;
+  if(!playerReady || !player) return;
+
+  const payload = convoyCurrentSnapshot();
+
+  if(convoyIsHost){
+    convoyConnections.forEach(conn => {
+      if(conn.open){ try{ conn.send({ type:"stateUpdate", payload }); }catch{} }
+    });
+  }else if(convoyHostConnection && convoyHostConnection.open){
+    try{ convoyHostConnection.send({ type:"stateUpdate", payload }); }catch{}
+  }
+}
+
+function convoyBroadcastPresence(){
+  convoyRiderCount = convoyConnections.length + 1;
+  convoyConnections.forEach(conn => {
+    if(conn.open){ try{ conn.send({ type:"presence", payload:{ count: convoyRiderCount } }); }catch{} }
+  });
+  convoyUpdateRidersUI();
+}
+
+function convoyHandleHostIncoming(conn, msg){
+  if(!msg || msg.type !== "stateUpdate") return;
+
+  convoyApplyState(msg.payload);
+
+  convoyConnections.forEach(c => {
+    if(c !== conn && c.open){ try{ c.send({ type:"stateUpdate", payload: msg.payload }); }catch{} }
+  });
+}
+
+function convoyHandleRiderIncoming(msg){
+  if(!msg || !msg.type) return;
+
+  if(msg.type === "stateUpdate") convoyApplyState(msg.payload);
+  else if(msg.type === "timeSync") convoyReconcileTime(msg.payload);
+  else if(msg.type === "presence"){
+    convoyRiderCount = msg.payload?.count || 1;
+    convoyUpdateRidersUI();
+  }
+}
+
+function convoyStartHostHeartbeat(){
+  clearInterval(convoySyncTimer);
+  convoySyncTimer = setInterval(() => {
+    if(!convoyIsHost || !playerReady || !player) return;
+    const payload = { videoId: currentVideoId, time: player.getCurrentTime() || 0, isPlaying, ts: Date.now() };
+    convoyConnections.forEach(c => { if(c.open){ try{ c.send({ type:"timeSync", payload }); }catch{} } });
+  }, 5000);
+}
+
+function convoyUpdateRidersUI(){
+  const active = convoyIsHost || !!convoyHostConnection;
+
+  $("convoyStatus").hidden = !active;
+  if(active){
+    $("convoyStatusText").textContent = convoyRiderCount > 1 ? `Live • ${convoyRiderCount}` : "Live";
+  }
+
+  $("convoyBtn").classList.toggle("live", active);
+  $("convoyBtnIcon").textContent = active ? "ios_share" : "group";
+  $("convoyBtnLabel").textContent = active ? "Copy Convoy Link" : "Start Live Convoy";
+
+  const showRiders = active && activeDrawerTab === "queue";
+  $("convoyRiders").hidden = !showRiders;
+  $("convoyLeaveBtn").hidden = !showRiders;
+
+  if(showRiders){
+    $("convoyRiders").textContent = convoyIsHost
+      ? (convoyRiderCount > 1 ? `🟢 ${convoyRiderCount - 1} साथी सुन रहे हैं` : "अकेले हो — लिंक भेजो, दोस्त जुड़ेंगे 🚛")
+      : `🟢 कॉन्वॉय से जुड़े • ${convoyRiderCount} लोग सुन रहे`;
+  }
+}
+
+function convoyCreateHost(code){
+  return new Promise((resolve, reject) => {
+    let peer;
+    try{
+      peer = new Peer("convoy-" + code, { debug:0 });
+    }catch(error){
+      reject(error);
+      return;
+    }
+
+    peer.on("open", () => {
+      convoyPeer = peer;
+
+      peer.on("connection", conn => {
+        convoyConnections.push(conn);
+
+        conn.on("open", () => {
+          try{ conn.send({ type:"stateUpdate", payload: convoyCurrentSnapshot() }); }catch{}
+          convoyBroadcastPresence();
+        });
+
+        conn.on("data", msg => convoyHandleHostIncoming(conn, msg));
+
+        conn.on("close", () => {
+          convoyConnections = convoyConnections.filter(c => c !== conn);
+          convoyBroadcastPresence();
+        });
+      });
+
+      resolve();
+    });
+
+    peer.on("error", error => reject(error));
+  });
+}
+
+async function startOrShareLiveConvoy(){
+  if(convoyIsHost || convoyHostConnection){
+    await convoyShareLink();
+    return;
+  }
+
+  if(!playOrder.length){
+    toast("Playlist is still loading…", "hourglass_top");
+    return;
+  }
+
+  if(typeof Peer === "undefined"){
+    toast("लाइव कॉन्वॉय लोड नहीं हो पाया — इंटरनेट चेक करो।", "error");
+    return;
+  }
+
+  const btn = $("convoyBtn");
+  btn.classList.add("connecting");
+  $("convoyBtnLabel").textContent = "Starting…";
+
+  const code = Math.random().toString(36).slice(2, 8);
+
+  try{
+    await convoyCreateHost(code);
+    convoyIsHost = true;
+    convoyCode = code;
+    convoyStartHostHeartbeat();
+    convoyUpdateRidersUI();
+    await convoyShareLink();
+    toast("लाइव कॉन्वॉय शुरू हो गया! 🟢", "group");
+  }catch(error){
+    console.error("Failed to start live convoy:", error);
+    toast("लाइव कॉन्वॉय शुरू नहीं हो पाया — दोबारा कोशिश करो।", "error");
+  }finally{
+    btn.classList.remove("connecting");
+    convoyUpdateRidersUI();
+  }
+}
+
+function convoyJoinLive(code, fallback){
+  const btn = $("convoyBtn");
+
+  if(typeof Peer === "undefined"){
+    if(fallback) applyConvoyStaticImport(fallback);
+    return;
+  }
+
+  btn.classList.add("connecting");
+  $("convoyBtnLabel").textContent = "Joining…";
+
+  let settled = false;
+  let peer;
+
+  try{
+    peer = new Peer(undefined, { debug:0 });
+  }catch(error){
+    console.error("Live convoy peer failed:", error);
+    btn.classList.remove("connecting");
+    convoyUpdateRidersUI();
+    if(fallback) applyConvoyStaticImport(fallback);
+    return;
+  }
+
+  const giveUp = () => {
+    if(settled) return;
+    settled = true;
+    clearTimeout(fallbackTimer);
+    try{ peer.destroy(); }catch{}
+    btn.classList.remove("connecting");
+    convoyUpdateRidersUI();
+    if(fallback) applyConvoyStaticImport(fallback);
+  };
+
+  const fallbackTimer = setTimeout(giveUp, 7000);
+
+  peer.on("open", () => {
+    const conn = peer.connect("convoy-" + code, { reliable:true });
+
+    conn.on("open", () => {
+      if(settled) return;
+      settled = true;
+      clearTimeout(fallbackTimer);
+
+      convoyPeer = peer;
+      convoyHostConnection = conn;
+      convoyIsHost = false;
+      convoyCode = code;
+
+      conn.on("data", msg => convoyHandleRiderIncoming(msg));
+      conn.on("close", () => {
+        toast("कॉन्वॉय से कनेक्शन टूट गया", "error");
+        convoyHostConnection = null;
+        convoyUpdateRidersUI();
+      });
+
+      btn.classList.remove("connecting");
+      convoyUpdateRidersUI();
+      toast("लाइव कॉन्वॉय से जुड़ गए! 🟢", "group");
+
+      const cleanUrl = new URL(window.location.href);
+      cleanUrl.search = "";
+      window.history.replaceState({}, "", cleanUrl.toString());
+    });
+
+    conn.on("error", giveUp);
+  });
+
+  peer.on("error", giveUp);
+}
+
+function leaveLiveConvoy(){
+  if(convoyIsHost){
+    convoyConnections.forEach(c => { try{ c.close(); }catch{} });
+    convoyConnections = [];
+  }
+  if(convoyHostConnection){
+    try{ convoyHostConnection.close(); }catch{}
+    convoyHostConnection = null;
+  }
+  if(convoyPeer){
+    try{ convoyPeer.destroy(); }catch{}
+    convoyPeer = null;
+  }
+
+  clearInterval(convoySyncTimer);
+  convoySyncTimer = null;
+  convoyIsHost = false;
+  convoyCode = null;
+  convoyRiderCount = 1;
+  convoyUpdateRidersUI();
+  toast("कॉन्वॉय छोड़ दिया", "logout");
+}
+
+$("convoyBtn").onclick = startOrShareLiveConvoy;
+$("convoyLeaveBtn").onclick = leaveLiveConvoy;
 
 /* ---------------------------------------------------------
    Rendering
@@ -1636,6 +2025,8 @@ function loadTrackById(id, { autoplay = true } = {}){
   $("artist").textContent = cleanArtistName(item.artist);
 
   renderPlaylist($("trackSearch").value);
+
+  if(!convoyApplyingRemote) convoyBroadcastState();
 }
 
 function playTrackById(id){
@@ -1781,7 +2172,11 @@ async function bootstrapOriginalPlaylist(){
     startMetadataScanner();
 
     if(pendingConvoy){
-      applyConvoyJoin(pendingConvoy);
+      if(pendingConvoy.liveCode){
+        convoyJoinLive(pendingConvoy.liveCode, pendingConvoy.ids.length ? pendingConvoy : null);
+      }else if(pendingConvoy.ids.length){
+        applyConvoyStaticImport(pendingConvoy);
+      }
       pendingConvoy = null;
     }
   }catch(error){
@@ -1803,11 +2198,13 @@ function onYouTubeStateChange(event){
       updateCurrentTrack();
       logHistoryFromPlayer();
       startProgressLoop();
+      if(!convoyApplyingRemote) convoyBroadcastState();
       break;
 
     case YT.PlayerState.PAUSED:
       setPlaying(false);
       stopProgressLoop();
+      if(!convoyApplyingRemote) convoyBroadcastState();
       break;
 
     case YT.PlayerState.ENDED:
@@ -2332,6 +2729,7 @@ roadProgress.addEventListener("pointermove", event => {
 roadProgress.addEventListener("pointerup", event => {
   roadProgress.classList.remove("seeking");
   try{ roadProgress.releasePointerCapture?.(event.pointerId); }catch{}
+  if(!convoyApplyingRemote) convoyBroadcastState();
 });
 
 roadProgress.addEventListener("pointercancel", () => {
@@ -2358,6 +2756,7 @@ roadProgress.addEventListener("keydown", event => {
   player.seekTo(nextTime, true);
   setVisualProgress(nextTime / duration);
   $("currentTime").textContent = fmt(nextTime);
+  if(!convoyApplyingRemote) convoyBroadcastState();
 });
 
 /* ---------------------------------------------------------
