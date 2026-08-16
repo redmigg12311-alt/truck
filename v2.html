@@ -624,10 +624,40 @@ a{color:inherit}
   box-shadow:0 8px 22px rgba(230,57,70,.32),inset 0 1px rgba(255,255,255,.25);
 }
 .convoy-cta.connecting{opacity:.7;pointer-events:none}
-.convoy-riders{
-  margin:-2px 14px 10px;text-align:center;
-  font-size:10.5px;font-weight:700;color:rgba(255,247,231,.55);
+
+.convoy-members{
+  margin:-2px 14px 12px;padding:10px 12px;border-radius:14px;
+  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);
 }
+.convoy-members-head{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  font-size:11px;font-weight:800;color:rgba(255,247,231,.7);
+  margin-bottom:8px;
+}
+.convoy-rename-btn{
+  width:22px;height:22px;flex:0 0 auto;border-radius:50%;
+  display:grid;place-items:center;
+  color:rgba(255,247,231,.6);background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.14);transition:.16s;
+}
+.convoy-rename-btn:hover{background:rgba(255,255,255,.16);color:var(--gold)}
+.convoy-rename-btn .material-symbols-rounded{font-size:13px}
+.convoy-members-list{
+  display:flex;flex-direction:column;gap:7px;
+  max-height:150px;overflow-y:auto;
+}
+.convoy-member{display:flex;align-items:center;gap:8px}
+.convoy-avatar{
+  width:24px;height:24px;flex:0 0 24px;border-radius:50%;
+  display:grid;place-items:center;
+  color:#0f1712;font-size:11px;font-weight:800;
+  box-shadow:0 2px 6px rgba(0,0,0,.3);
+}
+.convoy-member-name{
+  font-size:12px;font-weight:700;color:rgba(255,247,231,.85);
+  min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.convoy-member.self .convoy-member-name{color:var(--gold)}
 
 .add-link-wrap{
   display:flex;gap:8px;padding:0 14px 10px;
@@ -992,10 +1022,13 @@ a{color:inherit}
 
 
 
-<!-- Hidden YouTube player. Audio is controlled by the custom UI above. -->
+<!-- Hidden YouTube player. Audio is controlled by the custom UI above.
+     Kept technically on-screen (not off-canvas, not opacity:0) since
+     some browsers are more aggressive about suspending background-tab
+     media on elements that look fully invisible/off-canvas. -->
 <div id="youtubePlayer"
      aria-hidden="true"
-     style="position:fixed;left:-9999px;top:-9999px;width:1px;height:1px;opacity:0;pointer-events:none;"></div>
+     style="position:fixed;left:0;bottom:0;width:2px;height:2px;overflow:hidden;pointer-events:none;"></div>
 
 <!-- Metadata-only YouTube player: fetches track titles/artists one video at a time. -->
 <div id="youtubeMetadataPlayer"
@@ -1030,7 +1063,15 @@ a{color:inherit}
     <span class="material-symbols-rounded" aria-hidden="true" id="convoyBtnIcon">group</span>
     <span id="convoyBtnLabel">Start Live Convoy</span>
   </button>
-  <div class="convoy-riders" id="convoyRiders" hidden></div>
+  <div class="convoy-members" id="convoyMembers" hidden>
+    <div class="convoy-members-head">
+      <span id="convoyMembersTitle">Live Convoy — 1 person</span>
+      <button type="button" class="convoy-rename-btn" id="convoyRenameBtn" title="Rename yourself" aria-label="Rename yourself">
+        <span class="material-symbols-rounded" aria-hidden="true">edit</span>
+      </button>
+    </div>
+    <div class="convoy-members-list" id="convoyMembersList"></div>
+  </div>
 
   <div class="add-link-wrap" id="addLinkWrap">
     <input class="add-link-input" id="addLinkInput" type="text" inputmode="url" autocomplete="off"
@@ -1142,10 +1183,19 @@ let convoyIsHost = false;
 let convoyCode = null;
 let convoyConnections = [];     // host only: DataConnections to each rider
 let convoyHostConnection = null; // rider only: DataConnection to the host
-let convoyRiderCount = 1;
 let convoyApplyingRemote = false;
 let convoyApplyingRemoteTimer = null;
 let convoySyncTimer = null;
+
+// Convoy identity & roster — a lightweight display name + colour avatar
+// for "who's riding with me right now", persisted so it's remembered
+// next time. The host keeps the master roster and relays it to everyone.
+const CONVOY_IDENTITY_KEY = "hop_convoy_identity_v1";
+const CONVOY_AVATAR_COLORS = ["#ff6b6b","#ffb703","#2fbf71","#4cc9f0","#a78bfa","#f472b6","#fb923c","#38bdf8"];
+const CONVOY_NAME_POOL = ["हाईवे किंग","बड़े मियां","रोड मास्टर","हॉर्न हीरो","ढाबा राजा","दिलदार ड्राइवर","सिंह साहब","लंबी रेस वाला","चलता ट्रक","राजू ड्राइवर"];
+let convoyIdentity = loadConvoyIdentity();
+let convoySelfId = null;
+let convoyMembers = [];
 
 const fallbackCover = "https://i.ibb.co/S7t9NmW0/truck.webp";
 
@@ -1519,6 +1569,106 @@ function applyConvoyStaticImport(convoy){
 
 /* ---------- Live Convoy: real-time sync over PeerJS/WebRTC ---------- */
 
+function escapeHtml(str){
+  return String(str).replace(/[&<>"']/g, ch => ({
+    "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
+  }[ch]));
+}
+
+function generateRandomIdentity(){
+  const name = `${CONVOY_NAME_POOL[Math.floor(Math.random() * CONVOY_NAME_POOL.length)]} ${100 + Math.floor(Math.random() * 900)}`;
+  const color = CONVOY_AVATAR_COLORS[Math.floor(Math.random() * CONVOY_AVATAR_COLORS.length)];
+  return { name, color, initial: name.trim().charAt(0).toUpperCase() };
+}
+
+function loadConvoyIdentity(){
+  try{
+    const raw = localStorage.getItem(CONVOY_IDENTITY_KEY);
+    if(raw){
+      const parsed = JSON.parse(raw);
+      if(parsed && parsed.name && parsed.color) return parsed;
+    }
+  }catch{}
+
+  const identity = generateRandomIdentity();
+  try{ localStorage.setItem(CONVOY_IDENTITY_KEY, JSON.stringify(identity)); }catch{}
+  return identity;
+}
+
+function saveConvoyIdentity(){
+  try{ localStorage.setItem(CONVOY_IDENTITY_KEY, JSON.stringify(convoyIdentity)); }catch{}
+}
+
+function promptRenameSelf(){
+  const next = window.prompt("आपका नाम क्या रखें? (Set your display name)", convoyIdentity.name);
+  if(!next) return;
+
+  const trimmed = next.trim().slice(0, 24);
+  if(!trimmed) return;
+
+  convoyIdentity.name = trimmed;
+  convoyIdentity.initial = trimmed.charAt(0).toUpperCase();
+  saveConvoyIdentity();
+
+  if(convoyIsHost){
+    convoyUpsertMember("host", convoyIdentity, true);
+  }else if(convoyHostConnection && convoyHostConnection.open){
+    try{ convoyHostConnection.send({ type:"hello", payload: convoyIdentity }); }catch{}
+    const self = convoyMembers.find(m => m.id === convoySelfId);
+    if(self) Object.assign(self, convoyIdentity);
+    renderConvoyMembers();
+  }
+}
+
+function convoyUpsertMember(id, identity, isHost){
+  const entry = {
+    id,
+    name: identity?.name || "Rider",
+    color: identity?.color || "#4cc9f0",
+    initial: identity?.initial || (identity?.name || "R").charAt(0).toUpperCase(),
+    isHost: !!isHost
+  };
+
+  const index = convoyMembers.findIndex(m => m.id === id);
+  if(index >= 0) convoyMembers[index] = entry;
+  else convoyMembers.push(entry);
+
+  if(convoyIsHost) convoyBroadcastRoster();
+  renderConvoyMembers();
+}
+
+function convoyRemoveMember(id){
+  convoyMembers = convoyMembers.filter(m => m.id !== id);
+  if(convoyIsHost) convoyBroadcastRoster();
+  renderConvoyMembers();
+}
+
+function convoyBroadcastRoster(){
+  if(!convoyIsHost) return;
+  convoyConnections.forEach(conn => {
+    if(conn.open){ try{ conn.send({ type:"roster", payload:{ members: convoyMembers } }); }catch{} }
+  });
+}
+
+function renderConvoyMembers(){
+  const listEl = $("convoyMembersList");
+  const titleEl = $("convoyMembersTitle");
+  if(!listEl || !titleEl) return;
+
+  const count = convoyMembers.length;
+  titleEl.textContent = `Live Convoy — ${count} ${count === 1 ? "person" : "people"}`;
+
+  listEl.innerHTML = convoyMembers.map(m => `
+    <div class="convoy-member${m.id === convoySelfId ? " self" : ""}">
+      <span class="convoy-avatar" style="background:${escapeHtml(m.color)}">${escapeHtml(m.initial)}</span>
+      <span class="convoy-member-name">${escapeHtml(m.name)}${m.isHost ? " 👑" : ""}${m.id === convoySelfId ? " (you)" : ""}</span>
+    </div>
+  `).join("");
+
+  $("convoyFabBadge").textContent = String(count || 1);
+  $("convoyStatusText").textContent = count > 1 ? `Live • ${count}` : "Live";
+}
+
 function convoyBeginRemoteApply(){
   convoyApplyingRemote = true;
   clearTimeout(convoyApplyingRemoteTimer);
@@ -1596,22 +1746,17 @@ function convoyBroadcastState(){
   }
 }
 
-function convoyBroadcastPresence(){
-  convoyRiderCount = convoyConnections.length + 1;
-  convoyConnections.forEach(conn => {
-    if(conn.open){ try{ conn.send({ type:"presence", payload:{ count: convoyRiderCount } }); }catch{} }
-  });
-  convoyUpdateRidersUI();
-}
-
 function convoyHandleHostIncoming(conn, msg){
-  if(!msg || msg.type !== "stateUpdate") return;
+  if(!msg || !msg.type) return;
 
-  convoyApplyState(msg.payload);
-
-  convoyConnections.forEach(c => {
-    if(c !== conn && c.open){ try{ c.send({ type:"stateUpdate", payload: msg.payload }); }catch{} }
-  });
+  if(msg.type === "stateUpdate"){
+    convoyApplyState(msg.payload);
+    convoyConnections.forEach(c => {
+      if(c !== conn && c.open){ try{ c.send({ type:"stateUpdate", payload: msg.payload }); }catch{} }
+    });
+  }else if(msg.type === "hello"){
+    convoyUpsertMember(conn.peer, msg.payload, false);
+  }
 }
 
 function convoyHandleRiderIncoming(msg){
@@ -1619,9 +1764,9 @@ function convoyHandleRiderIncoming(msg){
 
   if(msg.type === "stateUpdate") convoyApplyState(msg.payload);
   else if(msg.type === "timeSync") convoyReconcileTime(msg.payload);
-  else if(msg.type === "presence"){
-    convoyRiderCount = msg.payload?.count || 1;
-    convoyUpdateRidersUI();
+  else if(msg.type === "roster"){
+    convoyMembers = Array.isArray(msg.payload?.members) ? msg.payload.members : convoyMembers;
+    renderConvoyMembers();
   }
 }
 
@@ -1636,28 +1781,22 @@ function convoyStartHostHeartbeat(){
 
 function convoyUpdateRidersUI(){
   const active = convoyIsHost || !!convoyHostConnection;
+  const count = convoyMembers.length || 1;
 
   $("convoyStatus").hidden = !active;
-  if(active){
-    $("convoyStatusText").textContent = convoyRiderCount > 1 ? `Live • ${convoyRiderCount}` : "Live";
-  }
+  if(active) $("convoyStatusText").textContent = count > 1 ? `Live • ${count}` : "Live";
 
   $("convoyBtn").classList.toggle("live", active);
   $("convoyBtnIcon").textContent = active ? "logout" : "group";
   $("convoyBtnLabel").textContent = active ? "Leave Convoy" : "Start Live Convoy";
 
   $("convoyFab").classList.toggle("live", active);
-  $("convoyFabBadge").textContent = String(convoyRiderCount);
+  $("convoyFabBadge").textContent = String(count);
   $("convoyFab").title = active ? "Copy live convoy link" : "Share convoy";
 
-  const showRiders = active && activeDrawerTab === "queue";
-  $("convoyRiders").hidden = !showRiders;
-
-  if(showRiders){
-    $("convoyRiders").textContent = convoyIsHost
-      ? (convoyRiderCount > 1 ? `🟢 ${convoyRiderCount - 1} साथी सुन रहे हैं` : "अकेले हो — लिंक भेजो, दोस्त जुड़ेंगे 🚛")
-      : `🟢 कॉन्वॉय से जुड़े • ${convoyRiderCount} लोग सुन रहे`;
-  }
+  const showMembers = active && activeDrawerTab === "queue";
+  $("convoyMembers").hidden = !showMembers;
+  if(showMembers) renderConvoyMembers();
 }
 
 function convoyCreateHost(code){
@@ -1678,14 +1817,14 @@ function convoyCreateHost(code){
 
         conn.on("open", () => {
           try{ conn.send({ type:"stateUpdate", payload: convoyCurrentSnapshot() }); }catch{}
-          convoyBroadcastPresence();
+          try{ conn.send({ type:"roster", payload:{ members: convoyMembers } }); }catch{}
         });
 
         conn.on("data", msg => convoyHandleHostIncoming(conn, msg));
 
         conn.on("close", () => {
           convoyConnections = convoyConnections.filter(c => c !== conn);
-          convoyBroadcastPresence();
+          convoyRemoveMember(conn.peer);
         });
       });
 
@@ -1722,7 +1861,10 @@ async function startOrShareLiveConvoy(){
     await convoyCreateHost(code);
     convoyIsHost = true;
     convoyCode = code;
+    convoySelfId = "host";
+    convoyMembers = [{ id:"host", ...convoyIdentity, isHost:true }];
     convoyStartHostHeartbeat();
+    renderConvoyMembers();
     convoyUpdateRidersUI();
     await convoyShareLink();
     toast("लाइव कॉन्वॉय शुरू हो गया! 🟢", "group");
@@ -1771,7 +1913,8 @@ function convoyJoinLive(code, fallback){
 
   const fallbackTimer = setTimeout(giveUp, 7000);
 
-  peer.on("open", () => {
+  peer.on("open", id => {
+    convoySelfId = id;
     const conn = peer.connect("convoy-" + code, { reliable:true });
 
     conn.on("open", () => {
@@ -1783,15 +1926,20 @@ function convoyJoinLive(code, fallback){
       convoyHostConnection = conn;
       convoyIsHost = false;
       convoyCode = code;
+      convoyMembers = [{ id: convoySelfId, ...convoyIdentity, isHost:false }];
+
+      try{ conn.send({ type:"hello", payload: convoyIdentity }); }catch{}
 
       conn.on("data", msg => convoyHandleRiderIncoming(msg));
       conn.on("close", () => {
         toast("कॉन्वॉय से कनेक्शन टूट गया", "error");
         convoyHostConnection = null;
+        convoyMembers = [];
         convoyUpdateRidersUI();
       });
 
       btn.classList.remove("connecting");
+      renderConvoyMembers();
       convoyUpdateRidersUI();
       toast("लाइव कॉन्वॉय से जुड़ गए! 🟢", "group");
 
@@ -1824,7 +1972,8 @@ function leaveLiveConvoy(){
   convoySyncTimer = null;
   convoyIsHost = false;
   convoyCode = null;
-  convoyRiderCount = 1;
+  convoySelfId = null;
+  convoyMembers = [];
   convoyUpdateRidersUI();
   toast("कॉन्वॉय छोड़ दिया", "logout");
 }
@@ -1839,6 +1988,7 @@ function convoyBtnClick(){
 
 $("convoyBtn").onclick = convoyBtnClick;
 $("convoyFab").onclick = startOrShareLiveConvoy;
+$("convoyRenameBtn").onclick = promptRenameSelf;
 
 /* ---------------------------------------------------------
    Rendering
@@ -2946,6 +3096,29 @@ window.addEventListener("resize", () => {
 
 window.addEventListener("pagehide", saveOdometer);
 window.addEventListener("beforeunload", saveOdometer);
+
+/* ---------------------------------------------------------
+   Background playback resilience — some browsers/OSes suspend
+   embedded video while a tab is hidden or the phone is locked.
+   We can't force audio to keep running everywhere (that's a
+   platform policy, strongest on iOS Safari), but the moment the
+   page becomes visible again we immediately resume if the app's
+   own state still says "should be playing" but the player has
+   actually stopped — so it feels like it never really paused.
+   --------------------------------------------------------- */
+
+document.addEventListener("visibilitychange", () => {
+  if(document.hidden || !isPlaying || !playerReady || !player) return;
+
+  try{
+    const state = player.getPlayerState?.();
+    if(state !== 1 /* YT.PlayerState.PLAYING */){
+      player.playVideo();
+    }
+  }catch(error){
+    console.error("Resume-on-return failed:", error);
+  }
+});
 
 /* ---------------------------------------------------------
    Clock + decorative animation
