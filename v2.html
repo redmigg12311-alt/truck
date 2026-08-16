@@ -1258,6 +1258,8 @@ let convoyHostConnection = null; // rider only: DataConnection to the host
 let convoyApplyingRemote = false;
 let convoyApplyingRemoteTimer = null;
 let convoySyncTimer = null;
+let convoyLocalIntent = false;      // true only right after a genuine local
+let convoyLocalIntentTimer = null;  // user action — see markConvoyIntent()
 
 // Convoy identity & roster — a lightweight display name + colour avatar
 // for "who's riding with me right now", persisted so it's remembered
@@ -1564,6 +1566,7 @@ function removeQueueItem(id){
 
   if(wasCurrent && playOrder.length){
     const pos = Math.min(playPos, playOrder.length - 1);
+    markConvoyIntent();
     loadTrackById(playOrder[pos], { autoplay:true });
   }else{
     syncPlayPos();
@@ -1827,6 +1830,18 @@ function convoyBeginRemoteApply(){
   convoyApplyingRemote = true;
   clearTimeout(convoyApplyingRemoteTimer);
   convoyApplyingRemoteTimer = setTimeout(() => { convoyApplyingRemote = false; }, 1500);
+}
+
+// Marks that the very next play/pause state change came from something
+// the LOCAL user actually did (tapped play, hit next, dragged the seek
+// bar, used a lock-screen control...). Without this, a browser silently
+// auto-pausing our video while the tab is backgrounded would look
+// identical to a real pause — and get broadcast to the whole convoy,
+// pausing everyone else too. Only flagged actions get broadcast.
+function markConvoyIntent(){
+  convoyLocalIntent = true;
+  clearTimeout(convoyLocalIntentTimer);
+  convoyLocalIntentTimer = setTimeout(() => { convoyLocalIntent = false; }, 2500);
 }
 
 function convoySeekTo(time){
@@ -2340,6 +2355,7 @@ function playFromHistory(entry){
   }
 
   if(item){
+    markConvoyIntent();
     loadTrackById(item.id, { autoplay:true });
     closePlaylist();
   }
@@ -2392,6 +2408,7 @@ function setupMediaSession(){
     navigator.mediaSession.setActionHandler("nexttrack", nextTrack);
     navigator.mediaSession.setActionHandler("seekto", details => {
       if(!playerReady || !player || typeof details.seekTime !== "number") return;
+      markConvoyIntent();
       convoySeekTo(details.seekTime);
       if(!convoyApplyingRemote) convoyBroadcastState();
     });
@@ -2435,18 +2452,21 @@ function playTrackById(id){
     return;
   }
 
+  markConvoyIntent();
   loadTrackById(id, { autoplay:true });
   closePlaylist();
 }
 
 function nextTrack(){
   if(!playOrder.length) return;
+  markConvoyIntent();
   const pos = (playPos + 1) % playOrder.length;
   loadTrackById(playOrder[pos], { autoplay:true });
 }
 
 function previousTrack(){
   if(!playerReady || !player) return;
+  markConvoyIntent();
 
   const current = player.getCurrentTime() || 0;
 
@@ -2595,14 +2615,21 @@ function onYouTubeStateChange(event){
       logHistoryFromPlayer();
       startProgressLoop();
       if("mediaSession" in navigator) navigator.mediaSession.playbackState = "playing";
-      if(!convoyApplyingRemote) convoyBroadcastState();
+      // Gated on convoyLocalIntent so a browser auto-resuming this tab's
+      // video (or an ad/buffer transition) never gets relayed to the
+      // convoy as if the user had done something — only real taps do.
+      if(!convoyApplyingRemote && convoyLocalIntent) convoyBroadcastState();
       break;
 
     case YT.PlayerState.PAUSED:
       setPlaying(false);
       stopProgressLoop();
       if("mediaSession" in navigator) navigator.mediaSession.playbackState = "paused";
-      if(!convoyApplyingRemote) convoyBroadcastState();
+      // Same gate — this is the fix for "one member's background tab
+      // getting auto-paused pauses the whole convoy": without checking
+      // convoyLocalIntent here, that silent auto-pause looked exactly
+      // like a real pause and broadcast to everyone.
+      if(!convoyApplyingRemote && convoyLocalIntent) convoyBroadcastState();
       break;
 
     case YT.PlayerState.ENDED:
@@ -2674,6 +2701,8 @@ function playPause(){
     toast("YouTube playlist is still loading…", "hourglass_top");
     return;
   }
+
+  markConvoyIntent();
 
   if(isPlaying){
     player.pauseVideo();
@@ -3201,6 +3230,7 @@ roadProgress.addEventListener("pointermove", event => {
 roadProgress.addEventListener("pointerup", event => {
   roadProgress.classList.remove("seeking");
   try{ roadProgress.releasePointerCapture?.(event.pointerId); }catch{}
+  markConvoyIntent();
   if(!convoyApplyingRemote) convoyBroadcastState();
 });
 
@@ -3228,6 +3258,7 @@ roadProgress.addEventListener("keydown", event => {
   player.seekTo(nextTime, true);
   setVisualProgress(nextTime / duration);
   $("currentTime").textContent = fmt(nextTime);
+  markConvoyIntent();
   if(!convoyApplyingRemote) convoyBroadcastState();
 });
 
@@ -3249,25 +3280,70 @@ window.addEventListener("beforeunload", saveOdometer);
 
 /* ---------------------------------------------------------
    Background playback resilience — some browsers/OSes suspend
-   embedded video while a tab is hidden or the phone is locked.
-   We can't force audio to keep running everywhere (that's a
-   platform policy, strongest on iOS Safari), but the moment the
-   page becomes visible again we immediately resume if the app's
-   own state still says "should be playing" but the player has
-   actually stopped — so it feels like it never really paused.
+   embedded video while a tab is hidden, the app is backgrounded,
+   or the phone is locked. We can't force audio to keep running
+   everywhere (background media policy for third-party embedded
+   video is strictest on iOS Safari, and is ultimately decided by
+   the browser/OS, not by this page) — but we do everything we
+   can control:
+   - proper Media Session metadata + lock-screen controls (set up
+     elsewhere) so the OS treats this as real media in the first place
+   - the instant the page becomes visible again, resume immediately
+     if the app's own state says "should be playing" but the player
+     actually stopped, so it feels like it never really paused
+   - a low-frequency best-effort nudge while still hidden, for
+     browsers that do allow a background play() call to go through
+   - if we're hosting a Live Convoy, re-broadcast the true state the
+     moment we're back, so nobody drifts from anything that happened
+     while this tab was away
    --------------------------------------------------------- */
 
-document.addEventListener("visibilitychange", () => {
-  if(document.hidden || !isPlaying || !playerReady || !player) return;
+let backgroundNudgeTimer = null;
 
+function resumeIfNeeded(){
+  if(!isPlaying || !playerReady || !player) return;
   try{
     const state = player.getPlayerState?.();
-    if(state !== 1 /* YT.PlayerState.PLAYING */){
-      player.playVideo();
-    }
+    if(state !== 1 /* YT.PlayerState.PLAYING */) player.playVideo();
   }catch(error){
-    console.error("Resume-on-return failed:", error);
+    console.error("Resume attempt failed:", error);
   }
+}
+
+function convoyResyncAfterReturn(){
+  if(!convoyIsHost) return;
+  // Small delay lets a just-issued playVideo() actually take effect
+  // first, so the snapshot we send reflects real, current state.
+  setTimeout(() => {
+    convoyConnections.forEach(c => {
+      if(c.open){ try{ c.send({ type:"stateUpdate", payload: convoyCurrentSnapshot() }); }catch{} }
+    });
+  }, 700);
+}
+
+document.addEventListener("visibilitychange", () => {
+  if(document.hidden){
+    // Best-effort: keep nudging playback while backgrounded. Browsers
+    // throttle timers heavily once hidden, so this may fire rarely (or
+    // not at all) — it costs nothing when it doesn't, and helps on the
+    // platforms that do allow it.
+    clearInterval(backgroundNudgeTimer);
+    backgroundNudgeTimer = setInterval(resumeIfNeeded, 20000);
+    return;
+  }
+
+  clearInterval(backgroundNudgeTimer);
+  backgroundNudgeTimer = null;
+  resumeIfNeeded();
+  convoyResyncAfterReturn();
+});
+
+// Page Lifecycle API — some Chromium versions fire these around tab
+// freezing/discarding, which visibilitychange alone doesn't always
+// catch. Feature-detected; harmless where unsupported.
+document.addEventListener("resume", () => {
+  resumeIfNeeded();
+  convoyResyncAfterReturn();
 });
 
 /* ---------------------------------------------------------
