@@ -745,18 +745,78 @@ a{color:inherit}
 }
 
 .toast{
-  position:fixed;z-index:120;left:50%;bottom:120px;
-  transform:translate(-50%,10px);opacity:0;pointer-events:none;
-  max-width:min(520px,calc(100vw - 28px));
-  padding:10px 14px;border-radius:12px;
-  display:inline-flex;align-items:center;gap:7px;
-  background:rgba(12,16,20,.9);border:1px solid rgba(255,255,255,.15);
-  color:var(--cream);font-size:11px;text-align:center;
-  box-shadow:0 15px 40px rgba(0,0,0,.35);
-  transition:.22s;
+  position:fixed;z-index:130;left:50%;bottom:126px;
+  transform:translate(-50%,12px);opacity:0;pointer-events:none;
+  width:min(400px,calc(100vw - 28px));
+  padding:13px 16px;border-radius:14px;
+  display:flex;align-items:flex-start;gap:11px;
+  background:#14181d;border:1px solid rgba(255,255,255,.14);
+  border-left:4px solid var(--gold);
+  color:#fff9ee;font-size:13px;font-weight:600;line-height:1.42;
+  text-align:left;
+  box-shadow:0 20px 50px rgba(0,0,0,.5),inset 0 1px rgba(255,255,255,.06);
+  transition:opacity .22s,transform .22s;
 }
-.toast.show{opacity:1;transform:translate(-50%,0)}
-.toast-icon{font-size:16px;color:var(--gold);flex:0 0 auto}
+.toast.show{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+.toast-icon{font-size:19px;color:var(--gold);flex:0 0 auto;margin-top:1px}
+.toast-text{flex:1;min-width:0}
+
+.toast.success{border-left-color:#3ddc84}
+.toast.success .toast-icon{color:#3ddc84}
+.toast.error{border-left-color:#ff5c5c}
+.toast.error .toast-icon{color:#ff5c5c}
+.toast.warning{border-left-color:#ffb703}
+.toast.warning .toast-icon{color:#ffb703}
+.toast.info{border-left-color:#4cc9f0}
+.toast.info .toast-icon{color:#4cc9f0}
+
+/* Convoy Join popup — asks before importing/connecting to a shared link */
+.convoy-invite-backdrop{
+  position:fixed;inset:0;z-index:150;
+  background:rgba(0,0,0,.6);
+  backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+  opacity:0;pointer-events:none;transition:.22s;
+}
+.convoy-invite-backdrop.show{opacity:1;pointer-events:auto}
+
+.convoy-invite-modal{
+  position:fixed;z-index:151;left:50%;top:50%;
+  transform:translate(-50%,-46%) scale(.96);
+  width:min(360px,calc(100vw - 32px));
+  padding:26px 22px 22px;border-radius:22px;
+  background:linear-gradient(160deg,rgba(34,22,18,.98),rgba(15,11,9,.98));
+  border:1px solid rgba(255,255,255,.14);
+  box-shadow:0 30px 70px rgba(0,0,0,.55),inset 0 1px rgba(255,255,255,.08);
+  text-align:center;
+  opacity:0;pointer-events:none;transition:opacity .22s,transform .22s;
+}
+.convoy-invite-modal.show{opacity:1;transform:translate(-50%,-50%) scale(1);pointer-events:auto}
+.convoy-invite-icon{
+  width:56px;height:56px;margin:0 auto 14px;border-radius:50%;
+  display:grid;place-items:center;
+  background:linear-gradient(135deg,#6bf07f,#2fbf71);
+  color:#0f1712;box-shadow:0 10px 24px rgba(47,191,113,.35);
+}
+.convoy-invite-icon .material-symbols-rounded{font-size:26px}
+.convoy-invite-modal h2{font-size:18px;font-weight:800;color:#fff9ee;margin-bottom:8px}
+.convoy-invite-modal p{font-size:12.5px;line-height:1.55;color:rgba(255,247,231,.68);margin-bottom:20px}
+.convoy-invite-actions{display:flex;gap:10px}
+.convoy-invite-decline,
+.convoy-invite-join{
+  flex:1;padding:12px 10px;border-radius:13px;
+  font-size:13px;font-weight:800;transition:.16s;
+}
+.convoy-invite-decline{
+  background:rgba(255,255,255,.06);color:rgba(255,247,231,.75);
+  border:1px solid rgba(255,255,255,.16);
+}
+.convoy-invite-decline:hover{background:rgba(255,255,255,.13)}
+.convoy-invite-join{
+  background:linear-gradient(135deg,#6bf07f,#2fbf71);color:#0f1712;
+  border:1px solid rgba(255,255,255,.25);
+  box-shadow:0 8px 20px rgba(47,191,113,.3);
+}
+.convoy-invite-join:hover{transform:translateY(-1px)}
 
 /* ---------- large / ultra-wide desktop ---------- */
 @media(min-width:1440px){
@@ -1101,9 +1161,21 @@ a{color:inherit}
   </div>
 </aside>
 
-<div class="toast" id="toast">
+<div class="toast" id="toast" role="status" aria-live="polite">
   <span class="material-symbols-rounded toast-icon" id="toastIcon" aria-hidden="true"></span>
-  <span id="toastText"></span>
+  <span class="toast-text" id="toastText"></span>
+</div>
+
+<!-- Convoy Join popup — shown when opening a shared convoy link -->
+<div class="convoy-invite-backdrop" id="convoyInviteBackdrop" hidden></div>
+<div class="convoy-invite-modal" id="convoyInviteModal" role="dialog" aria-modal="true" aria-labelledby="convoyInviteTitle" hidden>
+  <div class="convoy-invite-icon"><span class="material-symbols-rounded" aria-hidden="true">group</span></div>
+  <h2 id="convoyInviteTitle">Convoy Invitation</h2>
+  <p id="convoyInviteBody">Someone wants you to join their Live Convoy — everyone's music, perfectly in sync.</p>
+  <div class="convoy-invite-actions">
+    <button type="button" class="convoy-invite-decline" id="convoyInviteDecline">Decline</button>
+    <button type="button" class="convoy-invite-join" id="convoyInviteJoin">Join Convoy</button>
+  </div>
 </div>
 
 <script>
@@ -1242,12 +1314,41 @@ function fmt(seconds){
   return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2,"0")}`;
 }
 
-function toast(message, icon = "info"){
+// Icon → alert type, so every existing toast() call automatically gets
+// clear, contrast-coded styling (success/error/warning/info) without
+// needing to touch every call site. Pass an explicit 3rd argument to
+// override it for a specific message.
+const TOAST_TYPE_BY_ICON = {
+  error: "error",
+  link_off: "warning",
+  hourglass_top: "warning",
+  warning: "warning",
+  group: "success",
+  link: "success",
+  playlist_add: "success",
+  check_circle: "success",
+  cancel: "info",
+  logout: "info",
+  campaign: "info",
+  shuffle: "info",
+  delete_sweep: "info",
+  playlist_remove: "info",
+  info: "info"
+};
+
+function toast(message, icon = "info", type){
+  const resolvedType = type || TOAST_TYPE_BY_ICON[icon] || "info";
+  const el = $("toast");
+
+  el.className = `toast show ${resolvedType}`;
   $("toastIcon").textContent = icon;
   $("toastText").textContent = message;
-  $("toast").classList.add("show");
+
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => $("toast").classList.remove("show"), 3000);
+  // Give errors/warnings extra reading time — they matter more and
+  // are often longer or more urgent than a routine confirmation.
+  const duration = (resolvedType === "error" || resolvedType === "warning") ? 5200 : 3800;
+  toastTimer = setTimeout(() => el.classList.remove("show"), duration);
 }
 
 function updateClock(){
@@ -1536,6 +1637,59 @@ async function convoyShareLink(){
   }
 }
 
+/* ---------- Convoy Join popup — shown for any incoming convoy link ---------- */
+
+function showConvoyInvite(convoy){
+  const backdrop = $("convoyInviteBackdrop");
+  const modal = $("convoyInviteModal");
+  const joinBtn = $("convoyInviteJoin");
+  const declineBtn = $("convoyInviteDecline");
+
+  $("convoyInviteBody").textContent = convoy.liveCode
+    ? "Someone wants you to join their Live Convoy — everyone's music, perfectly in sync."
+    : "Someone shared their song queue with you. Import it and jump to where they are?";
+
+  backdrop.hidden = false;
+  modal.hidden = false;
+  requestAnimationFrame(() => {
+    backdrop.classList.add("show");
+    modal.classList.add("show");
+  });
+
+  const cleanup = () => {
+    backdrop.classList.remove("show");
+    modal.classList.remove("show");
+    document.removeEventListener("keydown", onKeydown);
+    setTimeout(() => { backdrop.hidden = true; modal.hidden = true; }, 220);
+  };
+
+  function onJoin(){
+    cleanup();
+    if(convoy.liveCode){
+      convoyJoinLive(convoy.liveCode, convoy.ids.length ? convoy : null);
+    }else if(convoy.ids.length){
+      applyConvoyStaticImport(convoy);
+    }
+  }
+
+  function onDecline(){
+    cleanup();
+    const cleanUrl = new URL(window.location.href);
+    cleanUrl.search = "";
+    window.history.replaceState({}, "", cleanUrl.toString());
+    toast("You declined the Convoy invitation.", "cancel", "info");
+  }
+
+  function onKeydown(event){
+    if(event.key === "Escape") onDecline();
+  }
+
+  joinBtn.onclick = onJoin;
+  declineBtn.onclick = onDecline;
+  backdrop.onclick = onDecline;
+  document.addEventListener("keydown", onKeydown);
+}
+
 function applyConvoyStaticImport(convoy){
   if(!convoy || !convoy.ids.length) return;
 
@@ -1560,7 +1714,7 @@ function applyConvoyStaticImport(convoy){
     }
   }
 
-  toast(added ? `कॉन्वॉय जॉइन किया! ${added} गाने जुड़े 🚛` : "कॉन्वॉय जॉइन किया 🚛", "group");
+  toast(added ? `You joined the Convoy — ${added} songs added 🚛` : "You joined the Convoy 🚛", "check_circle", "success");
 
   const cleanUrl = new URL(window.location.href);
   cleanUrl.search = "";
@@ -1941,7 +2095,7 @@ function convoyJoinLive(code, fallback){
       btn.classList.remove("connecting");
       renderConvoyMembers();
       convoyUpdateRidersUI();
-      toast("लाइव कॉन्वॉय से जुड़ गए! 🟢", "group");
+      toast("You joined the Convoy 🟢", "check_circle", "success");
 
       const cleanUrl = new URL(window.location.href);
       cleanUrl.search = "";
@@ -2418,11 +2572,7 @@ async function bootstrapOriginalPlaylist(){
     startMetadataScanner();
 
     if(pendingConvoy){
-      if(pendingConvoy.liveCode){
-        convoyJoinLive(pendingConvoy.liveCode, pendingConvoy.ids.length ? pendingConvoy : null);
-      }else if(pendingConvoy.ids.length){
-        applyConvoyStaticImport(pendingConvoy);
-      }
+      showConvoyInvite(pendingConvoy);
       pendingConvoy = null;
     }
   }catch(error){
