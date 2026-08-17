@@ -745,16 +745,22 @@ a{color:inherit}
 }
 
 .toast{
-  position:fixed;z-index:130;left:50%;bottom:126px;
-  transform:translate(-50%,12px);opacity:0;pointer-events:none;
+  position:fixed;z-index:140;left:50%;
+  top:calc(env(safe-area-inset-top) + 76px);
+  transform:translate(-50%,-14px);opacity:0;pointer-events:none;
   width:min(400px,calc(100vw - 28px));
   padding:13px 16px;border-radius:14px;
   display:flex;align-items:flex-start;gap:11px;
-  background:#14181d;border:1px solid rgba(255,255,255,.14);
+  background:
+    linear-gradient(135deg,rgba(255,255,255,.12),rgba(255,255,255,.02)),
+    rgba(20,24,28,.55);
+  border:1px solid rgba(255,255,255,.28);
   border-left:4px solid var(--gold);
   color:#fff9ee;font-size:13px;font-weight:600;line-height:1.42;
-  text-align:left;
-  box-shadow:0 20px 50px rgba(0,0,0,.5),inset 0 1px rgba(255,255,255,.06);
+  text-align:left;text-shadow:0 2px 6px rgba(0,0,0,.6);
+  box-shadow:0 20px 50px rgba(0,0,0,.45),inset 0 1px rgba(255,255,255,.14);
+  backdrop-filter:blur(3px) saturate(160%);
+  -webkit-backdrop-filter:blur(3px) saturate(160%);
   transition:opacity .22s,transform .22s;
 }
 .toast.show{opacity:1;transform:translate(-50%,0);pointer-events:auto}
@@ -784,9 +790,13 @@ a{color:inherit}
   transform:translate(-50%,-46%) scale(.96);
   width:min(360px,calc(100vw - 32px));
   padding:26px 22px 22px;border-radius:22px;
-  background:linear-gradient(160deg,rgba(34,22,18,.98),rgba(15,11,9,.98));
-  border:1px solid rgba(255,255,255,.14);
-  box-shadow:0 30px 70px rgba(0,0,0,.55),inset 0 1px rgba(255,255,255,.08);
+  background:
+    linear-gradient(160deg,rgba(255,255,255,.12),rgba(255,255,255,.02)),
+    rgba(20,24,28,.55);
+  border:1px solid rgba(255,255,255,.28);
+  box-shadow:0 30px 70px rgba(0,0,0,.5),inset 0 1px rgba(255,255,255,.14);
+  backdrop-filter:blur(3px) saturate(160%);
+  -webkit-backdrop-filter:blur(3px) saturate(160%);
   text-align:center;
   opacity:0;pointer-events:none;transition:opacity .22s,transform .22s;
 }
@@ -798,8 +808,15 @@ a{color:inherit}
   color:#0f1712;box-shadow:0 10px 24px rgba(47,191,113,.35);
 }
 .convoy-invite-icon .material-symbols-rounded{font-size:26px}
-.convoy-invite-modal h2{font-size:18px;font-weight:800;color:#fff9ee;margin-bottom:8px}
-.convoy-invite-modal p{font-size:12.5px;line-height:1.55;color:rgba(255,247,231,.68);margin-bottom:20px}
+.convoy-invite-modal h2{font-size:18px;font-weight:800;color:#fff9ee;text-shadow:0 2px 6px rgba(0,0,0,.5);margin-bottom:8px}
+.convoy-invite-modal p{font-size:12.5px;line-height:1.55;color:rgba(255,247,231,.75);margin-bottom:14px}
+.convoy-invite-note{
+  display:flex;align-items:flex-start;gap:7px;
+  margin:0 0 18px;padding:9px 11px;border-radius:11px;
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
+  font-size:11px;line-height:1.45;color:rgba(255,247,231,.62);text-align:left;
+}
+.convoy-invite-note .material-symbols-rounded{font-size:14px;color:#4cc9f0;flex:0 0 auto;margin-top:1px}
 .convoy-invite-actions{display:flex;gap:10px}
 .convoy-invite-decline,
 .convoy-invite-join{
@@ -884,7 +901,7 @@ a{color:inherit}
   .vol-slider,
   .volume-wrap:hover .vol-slider,
   .volume-wrap:focus-within .vol-slider{width:0;opacity:0;margin-left:0}
-  .toast{bottom:100px}
+  .toast{top:calc(env(safe-area-inset-top) + 64px);padding:11px 14px;font-size:12px}
   .drawer-tab{font-size:10.5px;padding:7px 8px}
   .horn-fab{width:36px;height:36px}
   .horn-hang{bottom:104px}
@@ -958,11 +975,11 @@ a{color:inherit}
 <header class="topbar">
   <div class="topbar-left">
     <div class="live-clock"><span class="live-dot"></span><span id="clock">--:--</span></div>
-    <div class="odometer" id="odometer" title="आज तक का सफर — हर मिनट गाना बजने पर 1 km जुड़ता है">
+    <div class="odometer" id="odometer" title="Your trip so far — 1 km added per minute of music played">
       <span class="material-symbols-rounded" aria-hidden="true">local_shipping</span>
       <span id="odometerValue">0.0 km</span>
     </div>
-    <div class="convoy-status" id="convoyStatus" hidden title="लाइव कॉन्वॉय — सब एक साथ, एक ही समय पे">
+    <div class="convoy-status" id="convoyStatus" hidden title="Live Convoy — everyone riding in sync">
       <span class="convoy-dot"></span>
       <span id="convoyStatusText">Live</span>
     </div>
@@ -1169,9 +1186,13 @@ a{color:inherit}
 <!-- Convoy Join popup — shown when opening a shared convoy link -->
 <div class="convoy-invite-backdrop" id="convoyInviteBackdrop" hidden></div>
 <div class="convoy-invite-modal" id="convoyInviteModal" role="dialog" aria-modal="true" aria-labelledby="convoyInviteTitle" hidden>
-  <div class="convoy-invite-icon"><span class="material-symbols-rounded" aria-hidden="true">group</span></div>
+  <div class="convoy-invite-icon"><span class="material-symbols-rounded" aria-hidden="true" id="convoyInviteIcon">group</span></div>
   <h2 id="convoyInviteTitle">Convoy Invitation</h2>
   <p id="convoyInviteBody">Someone wants you to join their Live Convoy — everyone's music, perfectly in sync.</p>
+  <div class="convoy-invite-note" id="convoyInviteNote">
+    <span class="material-symbols-rounded" aria-hidden="true">info</span>
+    <span id="convoyInviteNoteText">Joining connects your player to theirs — song changes, pausing, and seeking stay in sync for everyone.</span>
+  </div>
   <div class="convoy-invite-actions">
     <button type="button" class="convoy-invite-decline" id="convoyInviteDecline">Decline</button>
     <button type="button" class="convoy-invite-join" id="convoyInviteJoin">Join Convoy</button>
@@ -1266,7 +1287,7 @@ let convoyLocalIntentTimer = null;  // user action — see markConvoyIntent()
 // next time. The host keeps the master roster and relays it to everyone.
 const CONVOY_IDENTITY_KEY = "hop_convoy_identity_v1";
 const CONVOY_AVATAR_COLORS = ["#ff6b6b","#ffb703","#2fbf71","#4cc9f0","#a78bfa","#f472b6","#fb923c","#38bdf8"];
-const CONVOY_NAME_POOL = ["हाईवे किंग","बड़े मियां","रोड मास्टर","हॉर्न हीरो","ढाबा राजा","दिलदार ड्राइवर","सिंह साहब","लंबी रेस वाला","चलता ट्रक","राजू ड्राइवर"];
+const CONVOY_NAME_POOL = ["Highway King","Big Rig Boss","Road Master","Horn Hero","Diner Don","Long Haul Larry","Trucker Singh","Mile Muncher","Rolling Thunder","Route Runner"];
 let convoyIdentity = loadConvoyIdentity();
 let convoySelfId = null;
 let convoyMembers = [];
@@ -1283,10 +1304,10 @@ const HORN_SOURCES = [
 
 const hornToasts = [
   "HORN OK PLEASE",
-  "पों पों!",
+  "HONK HONK!",
   "SAFE DRIVE SAVE LIFE",
-  "Highway की जान",
-  "माँ का आशीर्वाद, हॉर्न ज़रूर",
+  "Life of the Highway",
+  "Drive safe, honk always",
   "BLOW HORN, KEEP MOVING"
 ];
 
@@ -1396,14 +1417,14 @@ function tickOdometer(seconds){
    whenever the state changes, so the status pill talks like a CB radio
    instead of a plain "Loading…" label. */
 const cbStatusPhrases = {
-  "NOW PLAYING":     ["ON AIR 🎙️", "10-4, बज रहा है", "गाना चालू है", "फुल वॉल्यूम पे", "रोजर दैट"],
-  "PAUSED":          ["स्टैंडबाय", "ब्रेक पे हैं", "होल्ड कर भाई", "10-10, रुका हुआ"],
-  "LOADING PLAYLIST":["चैनल स्कैन हो रहा है…", "कनेक्ट हो रहे हैं…", "बेस टू ट्रक, कनेक्ट कर रहे…"],
-  "PLAYLIST READY":  ["चैनल क्लियर, चलते हैं", "10-4, तैयार है", "रोड क्लियर है"],
-  "PLAYLIST ERROR":  ["ब्रेक ब्रेक, सिग्नल गुम", "10-33, गड़बड़ हो गई"],
-  "READY":           ["स्टैंडिंग बाय", "तैयार है भाई"],
-  "BUFFERING":       ["सिग्नल कमज़ोर…", "लाइन पे रुको…", "थोड़ा होल्ड करो…"],
-  "YOUTUBE ERROR":   ["ब्रेक ब्रेक, चैनल कट गया", "10-33, प्रॉब्लम है"]
+  "NOW PLAYING":     ["ON AIR 🎙️", "10-4, ROLLING", "TRACK'S UP", "FULL VOLUME", "ROGER THAT"],
+  "PAUSED":          ["STANDBY", "ON A BREAK", "HOLD UP", "10-10, PARKED"],
+  "LOADING PLAYLIST":["SCANNING CHANNELS…", "CONNECTING…", "BASE TO TRUCK, LINKING UP…"],
+  "PLAYLIST READY":  ["CHANNEL CLEAR", "10-4, READY", "ROAD'S CLEAR"],
+  "PLAYLIST ERROR":  ["BREAKER BREAKER, SIGNAL LOST", "10-33, TROUBLE"],
+  "READY":           ["STANDING BY", "READY TO ROLL"],
+  "BUFFERING":       ["WEAK SIGNAL…", "HOLD THE LINE…", "HANG ON…"],
+  "YOUTUBE ERROR":   ["BREAKER BREAKER, CHANNEL DOWN", "10-33, PROBLEM"]
 };
 
 function setStatus(label, error = false){
@@ -1627,16 +1648,16 @@ async function convoyShareLink(){
 
   try{
     if(navigator.share){
-      await navigator.share({ title:"हॉर्न ओके प्लीज़ — मेरे लाइव कॉन्वॉय में शामिल हो", url: link });
+      await navigator.share({ title:"हॉर्न ओके प्लीज़ — join my Live Convoy", url: link });
       return;
     }
 
     await navigator.clipboard.writeText(link);
-    toast(convoyCode ? "लाइव कॉन्वॉय लिंक कॉपी हो गया! दोस्त को भेजो 🚛" : "कॉन्वॉय लिंक कॉपी हो गया! दोस्त को भेजो 🚛", "link");
+    toast(convoyCode ? "Live Convoy link copied! Send it to a friend 🚛" : "Convoy link copied! Send it to a friend 🚛", "link");
   }catch(error){
     if(error?.name === "AbortError") return;
     console.error("Convoy share failed:", error);
-    toast("लिंक कॉपी नहीं हो पाया — इसे एड्रेस बार से कॉपी करो।", "error");
+    toast("Couldn't copy the link — copy it from the address bar instead.", "error");
   }
 }
 
@@ -1647,10 +1668,21 @@ function showConvoyInvite(convoy){
   const modal = $("convoyInviteModal");
   const joinBtn = $("convoyInviteJoin");
   const declineBtn = $("convoyInviteDecline");
+  const isLive = !!convoy.liveCode;
 
-  $("convoyInviteBody").textContent = convoy.liveCode
+  $("convoyInviteTitle").textContent = isLive ? "Live Convoy Invitation" : "Shared Queue";
+  $("convoyInviteIcon").textContent = isLive ? "podcasts" : "queue_music";
+  $("convoyInviteBody").textContent = isLive
     ? "Someone wants you to join their Live Convoy — everyone's music, perfectly in sync."
     : "Someone shared their song queue with you. Import it and jump to where they are?";
+
+  const alreadyInConvoy = convoyIsHost || !!convoyHostConnection;
+  $("convoyInviteNoteText").textContent = alreadyInConvoy
+    ? "You're already in a convoy — joining this one will leave it and connect to this one instead."
+    : isLive
+      ? "Joining connects your player to theirs — song changes, pausing, and seeking stay in sync for everyone."
+      : "This just imports their queue and current song — it won't stay live-synced.";
+  joinBtn.textContent = isLive ? "Join Live Convoy" : "Import Queue";
 
   backdrop.hidden = false;
   modal.hidden = false;
@@ -1669,6 +1701,7 @@ function showConvoyInvite(convoy){
   function onJoin(){
     cleanup();
     if(convoy.liveCode){
+      if(convoyIsHost || convoyHostConnection) leaveLiveConvoy();
       convoyJoinLive(convoy.liveCode, convoy.ids.length ? convoy : null);
     }else if(convoy.ids.length){
       applyConvoyStaticImport(convoy);
@@ -1757,7 +1790,7 @@ function saveConvoyIdentity(){
 }
 
 function promptRenameSelf(){
-  const next = window.prompt("आपका नाम क्या रखें? (Set your display name)", convoyIdentity.name);
+  const next = window.prompt("Set your display name:", convoyIdentity.name);
   if(!next) return;
 
   const trimmed = next.trim().slice(0, 24);
@@ -2016,7 +2049,7 @@ async function startOrShareLiveConvoy(){
   }
 
   if(typeof Peer === "undefined"){
-    toast("लाइव कॉन्वॉय लोड नहीं हो पाया — इंटरनेट चेक करो।", "error");
+    toast("Live Convoy couldn't load — check your internet connection.", "error");
     return;
   }
 
@@ -2036,10 +2069,10 @@ async function startOrShareLiveConvoy(){
     renderConvoyMembers();
     convoyUpdateRidersUI();
     await convoyShareLink();
-    toast("लाइव कॉन्वॉय शुरू हो गया! 🟢", "group");
+    toast("Live Convoy started! 🟢", "group");
   }catch(error){
     console.error("Failed to start live convoy:", error);
-    toast("लाइव कॉन्वॉय शुरू नहीं हो पाया — दोबारा कोशिश करो।", "error");
+    toast("Couldn't start Live Convoy — please try again.", "error");
   }finally{
     btn.classList.remove("connecting");
     convoyUpdateRidersUI();
@@ -2101,7 +2134,7 @@ function convoyJoinLive(code, fallback){
 
       conn.on("data", msg => convoyHandleRiderIncoming(msg));
       conn.on("close", () => {
-        toast("कॉन्वॉय से कनेक्शन टूट गया", "error");
+        toast("Lost connection to the convoy", "error");
         convoyHostConnection = null;
         convoyMembers = [];
         convoyUpdateRidersUI();
@@ -2144,7 +2177,7 @@ function leaveLiveConvoy(){
   convoySelfId = null;
   convoyMembers = [];
   convoyUpdateRidersUI();
-  toast("कॉन्वॉय छोड़ दिया", "logout");
+  toast("Left the Convoy", "logout");
 }
 
 function convoyBtnClick(){
