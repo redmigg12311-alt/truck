@@ -61,7 +61,7 @@ body::before{
     linear-gradient(90deg,rgba(0,0,0,.14),transparent 28%,transparent 72%,rgba(0,0,0,.14));
 }
 button,input{font:inherit}
-button{cursor:pointer}
+button{cursor:pointer;border:0;background:none;color:inherit}
 button:focus-visible,input:focus-visible,a:focus-visible{
   outline:2px solid var(--gold);outline-offset:3px
 }
@@ -850,7 +850,7 @@ a{color:inherit}
 .convoy-invite-decline,
 .convoy-invite-join,
 .convoy-invite-leave{
-  flex:1;padding:13px 10px;border-radius:14px;
+  flex:1;padding:13px 10px;border-radius:14px;border:0;
   font-size:14px;font-weight:700;transition:transform .12s,background .12s;
 }
 .convoy-invite-decline{
@@ -869,6 +869,39 @@ a{color:inherit}
 .convoy-invite-decline:active,
 .convoy-invite-join:active,
 .convoy-invite-leave:active{transform:scale(.97)}
+
+/* Convoy quick menu — anchored near the floating Share Convoy button */
+.convoy-menu-backdrop{
+  position:fixed;inset:0;z-index:150;
+  opacity:0;pointer-events:none;transition:opacity .2s;
+}
+.convoy-menu-backdrop.show{opacity:1;pointer-events:auto}
+
+.convoy-menu{
+  position:fixed;z-index:151;
+  right:max(14px,env(safe-area-inset-right));
+  bottom:200px;
+  width:196px;border-radius:16px;overflow:hidden;
+  background:rgba(28,28,30,.72);
+  box-shadow:0 16px 40px rgba(0,0,0,.4),inset 0 1px rgba(255,255,255,.08);
+  backdrop-filter:blur(26px) saturate(180%);
+  -webkit-backdrop-filter:blur(26px) saturate(180%);
+  transform-origin:bottom right;
+  transform:scale(.85) translateY(6px);
+  opacity:0;pointer-events:none;
+  transition:opacity .2s cubic-bezier(.32,.72,0,1),transform .2s cubic-bezier(.32,.72,0,1);
+}
+.convoy-menu.show{opacity:1;transform:scale(1) translateY(0);pointer-events:auto}
+.convoy-menu-item{
+  display:flex;align-items:center;gap:10px;width:100%;
+  padding:12px 14px;font-size:13.5px;font-weight:600;color:#fff;
+  border-bottom:1px solid rgba(255,255,255,.1);transition:background .12s;
+}
+.convoy-menu-item:last-child{border-bottom:0}
+.convoy-menu-item:active{background:rgba(255,255,255,.1)}
+.convoy-menu-item .material-symbols-rounded{font-size:17px;color:rgba(255,255,255,.65)}
+.convoy-menu-item.destructive{color:#ff453a}
+.convoy-menu-item.destructive .material-symbols-rounded{color:#ff453a}
 
 
 /* ---------- large / ultra-wide desktop ---------- */
@@ -914,6 +947,7 @@ a{color:inherit}
   .horn-hint{font-size:8.5px;padding:2px 7px;margin-top:5px}
   .convoy-fab{width:40px;height:40px;bottom:112px}
   .convoy-fab .material-symbols-rounded{font-size:17px}
+  .convoy-menu{bottom:164px}
 }
 
 /* ---------- small phones ---------- */
@@ -946,6 +980,7 @@ a{color:inherit}
   .horn-hint{font-size:8px;padding:2px 6px;margin-top:5px}
   .convoy-fab{width:36px;height:36px;bottom:104px}
   .convoy-fab .material-symbols-rounded{font-size:15px}
+  .convoy-menu{bottom:154px;width:180px}
 }
 
 /* ---------- very small / narrow phones ---------- */
@@ -987,6 +1022,7 @@ a{color:inherit}
   .horn-hint{display:none} /* too tight on very narrow phones — the icon alone stays */
   .convoy-fab{width:32px;height:32px;bottom:96px;right:max(10px,env(safe-area-inset-right))}
   .convoy-fab .material-symbols-rounded{font-size:14px}
+  .convoy-menu{bottom:144px;width:168px;right:max(10px,env(safe-area-inset-right))}
 }
 
 /* ---------- short viewport heights (landscape phones) ---------- */
@@ -1248,6 +1284,24 @@ a{color:inherit}
   </div>
 </div>
 
+<!-- Convoy quick menu — opened from the floating Share Convoy button once
+     already in a live convoy: Share / People / Leave -->
+<div class="convoy-menu-backdrop" id="convoyMenuBackdrop" hidden></div>
+<div class="convoy-menu" id="convoyMenu" role="menu" hidden>
+  <button type="button" class="convoy-menu-item" id="convoyMenuShare" role="menuitem">
+    <span class="material-symbols-rounded" aria-hidden="true">ios_share</span>
+    <span>Share Convoy</span>
+  </button>
+  <button type="button" class="convoy-menu-item" id="convoyMenuPeople" role="menuitem">
+    <span class="material-symbols-rounded" aria-hidden="true">group</span>
+    <span>People in Convoy</span>
+  </button>
+  <button type="button" class="convoy-menu-item destructive" id="convoyMenuLeave" role="menuitem">
+    <span class="material-symbols-rounded" aria-hidden="true">logout</span>
+    <span>Leave Convoy</span>
+  </button>
+</div>
+
 <script>
 /* =========================================================
    HORN OK PLEASE — FULL YOUTUBE QUEUE-BASED PLAYER
@@ -1340,6 +1394,7 @@ const CONVOY_NAME_POOL = ["Highway King","Big Rig Boss","Road Master","Horn Hero
 let convoyIdentity = loadConvoyIdentity();
 let convoySelfId = null;
 let convoyMembers = [];
+let convoyRosterInitialized = false; // rider-side: skip the join/leave diff on the first roster snapshot
 
 const fallbackCover = "https://i.ibb.co/S7t9NmW0/truck.webp";
 
@@ -1839,6 +1894,44 @@ function showConvoyManage(){
   document.addEventListener("keydown", onKeydown);
 }
 
+// Quick menu — opened by tapping the floating Share Convoy button while
+// already in a live convoy: Share / People / Leave, in one small glass menu.
+function showConvoyMenu(){
+  const backdrop = $("convoyMenuBackdrop");
+  const menu = $("convoyMenu");
+
+  backdrop.hidden = false;
+  menu.hidden = false;
+  requestAnimationFrame(() => {
+    backdrop.classList.add("show");
+    menu.classList.add("show");
+  });
+
+  const cleanup = () => {
+    backdrop.classList.remove("show");
+    menu.classList.remove("show");
+    document.removeEventListener("keydown", onKeydown);
+    setTimeout(() => { backdrop.hidden = true; menu.hidden = true; }, 200);
+  };
+
+  function onShare(){ cleanup(); startOrShareLiveConvoy(); }
+  function onPeople(){ cleanup(); showConvoyManage(); }
+  function onLeave(){ cleanup(); leaveLiveConvoy(); }
+  function onKeydown(event){ if(event.key === "Escape") cleanup(); }
+
+  $("convoyMenuShare").onclick = onShare;
+  $("convoyMenuPeople").onclick = onPeople;
+  $("convoyMenuLeave").onclick = onLeave;
+  backdrop.onclick = cleanup;
+  document.addEventListener("keydown", onKeydown);
+}
+
+function convoyFabClick(){
+  const active = convoyIsHost || !!convoyHostConnection;
+  if(active) showConvoyMenu();
+  else startOrShareLiveConvoy();
+}
+
 function applyConvoyStaticImport(convoy){
   if(!convoy || !convoy.ids.length) return;
 
@@ -1933,15 +2026,26 @@ function convoyUpsertMember(id, identity, isHost){
   };
 
   const index = convoyMembers.findIndex(m => m.id === id);
+  const isNewMember = index < 0;
   if(index >= 0) convoyMembers[index] = entry;
   else convoyMembers.push(entry);
+
+  if(isNewMember && id !== convoySelfId){
+    toast(`${entry.name} joined the Convoy`);
+  }
 
   if(convoyIsHost) convoyBroadcastRoster();
   renderConvoyMembers();
 }
 
 function convoyRemoveMember(id){
+  const removed = convoyMembers.find(m => m.id === id);
   convoyMembers = convoyMembers.filter(m => m.id !== id);
+
+  if(removed && id !== convoySelfId){
+    toast(`${removed.name} left the Convoy`);
+  }
+
   if(convoyIsHost) convoyBroadcastRoster();
   renderConvoyMembers();
 }
@@ -2086,13 +2190,31 @@ function convoyHandleHostIncoming(conn, msg){
   }
 }
 
+function announceRosterDiff(oldList, newList){
+  const oldIds = new Set(oldList.map(m => m.id));
+  const newIds = new Set(newList.map(m => m.id));
+
+  newList.forEach(m => {
+    if(!oldIds.has(m.id) && m.id !== convoySelfId) toast(`${m.name} joined the Convoy`);
+  });
+  oldList.forEach(m => {
+    if(!newIds.has(m.id) && m.id !== convoySelfId) toast(`${m.name} left the Convoy`);
+  });
+}
+
 function convoyHandleRiderIncoming(msg){
   if(!msg || !msg.type) return;
 
   if(msg.type === "stateUpdate") convoyApplyState(msg.payload);
   else if(msg.type === "timeSync") convoyReconcileTime(msg.payload);
   else if(msg.type === "roster"){
-    convoyMembers = Array.isArray(msg.payload?.members) ? msg.payload.members : convoyMembers;
+    const newMembers = Array.isArray(msg.payload?.members) ? msg.payload.members : convoyMembers;
+    // Skip the diff on the very first roster snapshot after connecting —
+    // otherwise every pre-existing member would get announced as if they
+    // "just joined" the moment you connect.
+    if(convoyRosterInitialized) announceRosterDiff(convoyMembers, newMembers);
+    convoyRosterInitialized = true;
+    convoyMembers = newMembers;
     renderConvoyMembers();
   }
 }
@@ -2254,6 +2376,7 @@ function convoyJoinLive(code, fallback){
       convoyIsHost = false;
       convoyCode = code;
       convoyMembers = [{ id: convoySelfId, ...convoyIdentity, isHost:false }];
+      convoyRosterInitialized = false;
 
       try{ conn.send({ type:"hello", payload: convoyIdentity }); }catch{}
 
@@ -2301,6 +2424,7 @@ function leaveLiveConvoy(){
   convoyCode = null;
   convoySelfId = null;
   convoyMembers = [];
+  convoyRosterInitialized = false;
   convoyUpdateRidersUI();
   toast("Left the Convoy", "logout");
 }
@@ -2314,7 +2438,7 @@ function convoyBtnClick(){
 }
 
 $("convoyBtn").onclick = convoyBtnClick;
-$("convoyFab").onclick = startOrShareLiveConvoy;
+$("convoyFab").onclick = convoyFabClick;
 $("convoyRenameBtn").onclick = promptRenameSelf;
 $("convoyStatus").onclick = showConvoyManage;
 
