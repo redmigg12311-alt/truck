@@ -247,37 +247,6 @@ a{color:inherit}
 .round-btn:hover{background:rgba(255,255,255,.15)}
 .round-btn.active{color:var(--gold);border-color:rgba(255,195,0,.55);background:rgba(255,195,0,.08)}
 .round-btn.playlist-btn{border-color:rgba(255,255,255,.35);border-width:2px}
-.round-btn#pipToggleBtn.active{color:var(--gold);border-color:rgba(255,195,0,.55);background:rgba(255,195,0,.1)}
-
-/* Picture-in-Picture mini player — styles injected into the floating
-   PiP window (Chrome/Edge desktop) so it matches the app's look. */
-.pip-mini{
-  display:flex;align-items:center;gap:10px;
-  width:100%;height:100%;padding:10px 12px;box-sizing:border-box;
-  background:#11151a;font-family:"Inter","Mukta",sans-serif;
-}
-.pip-mini img{
-  width:52px;height:52px;flex:0 0 52px;border-radius:10px;object-fit:cover;
-}
-.pip-info{min-width:0;flex:1}
-.pip-song{
-  color:#fff9ee;font-size:13px;font-weight:800;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-}
-.pip-artist{
-  color:rgba(255,247,231,.6);font-size:11px;margin-top:2px;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-}
-.pip-controls{display:flex;align-items:center;gap:6px;flex:0 0 auto}
-.pip-controls button{
-  width:30px;height:30px;border-radius:50%;
-  display:grid;place-items:center;color:#fff9ee;
-  background:rgba(255,255,255,.08);
-}
-.pip-controls button:hover{background:rgba(255,255,255,.16)}
-.pip-controls button .material-symbols-rounded{font-size:17px}
-#pipPlay{background:#ffc300;color:#171717}
-#pipPlay:hover{background:#ffcf33}
 
 .horn-hang{
   position:fixed;z-index:31;
@@ -1175,10 +1144,6 @@ a{color:inherit}
       <button class="round-btn playlist-btn" id="openPlaylistTop" aria-label="Open song list" title="Song list">
         <span class="material-symbols-rounded">queue_music</span>
       </button>
-
-      <button class="round-btn" id="pipToggleBtn" aria-label="Picture in picture" title="Keep playing in a floating window" hidden>
-        <span class="material-symbols-rounded">picture_in_picture_alt</span>
-      </button>
     </div>
   </div>
 </section>
@@ -1579,7 +1544,6 @@ function setPlaying(playing){
   $("player").classList.toggle("playing", playing);
   $("playIcon").textContent = playing ? "pause" : "play_arrow";
   setStatus(playing ? "NOW PLAYING" : "PAUSED");
-  updatePipMirror();
 }
 
 function updateVolumeIcon(){
@@ -2736,119 +2700,6 @@ function setupMediaSession(){
   }
 }
 
-/* ---------------------------------------------------------
-   Picture-in-Picture — Chrome/Edge desktop (116+) support the
-   Document Picture-in-Picture API, which opens a small always-on-top
-   window we control. We move the LIVE YouTube player element into it
-   (not a copy — moving is what keeps it playing without restarting),
-   so audio keeps going even while the main tab is fully hidden or the
-   window is minimized. Unsupported browsers never see the button at
-   all, so this only ever adds capability, never breaks anything.
-   --------------------------------------------------------- */
-
-const pipSupported = typeof window !== "undefined" && "documentPictureInPicture" in window;
-let pipWindow = null;
-
-function updatePipMirror(){
-  if(!pipWindow) return;
-  try{
-    const song = pipWindow.document.getElementById("pipSong");
-    const artist = pipWindow.document.getElementById("pipArtist");
-    const cover = pipWindow.document.getElementById("pipCover");
-    const playIcon = pipWindow.document.getElementById("pipPlayIcon");
-    if(song) song.textContent = $("song").textContent;
-    if(artist) artist.textContent = $("artist").textContent;
-    if(cover) cover.src = $("cover").src;
-    if(playIcon) playIcon.textContent = isPlaying ? "pause" : "play_arrow";
-  }catch{}
-}
-
-async function enterPiP(){
-  if(!pipSupported || pipWindow) return;
-
-  let win;
-  try{
-    win = await documentPictureInPicture.requestWindow({ width: 300, height: 96 });
-  }catch(error){
-    console.error("Picture-in-Picture request failed:", error);
-    return;
-  }
-
-  pipWindow = win;
-
-  // Bring the app's fonts/icons along so the mini player matches.
-  [...document.styleSheets].forEach(sheet => {
-    try{
-      const cssText = [...sheet.cssRules].map(rule => rule.cssText).join("\n");
-      const style = win.document.createElement("style");
-      style.textContent = cssText;
-      win.document.head.appendChild(style);
-    }catch{
-      if(sheet.href){
-        const link = win.document.createElement("link");
-        link.rel = "stylesheet";
-        link.href = sheet.href;
-        win.document.head.appendChild(link);
-      }
-    }
-  });
-
-  win.document.body.style.margin = "0";
-  win.document.body.style.background = "#11151a";
-
-  const mini = win.document.createElement("div");
-  mini.className = "pip-mini";
-  mini.innerHTML = `
-    <img id="pipCover" src="${$("cover").src}" alt="">
-    <div class="pip-info">
-      <div class="pip-song" id="pipSong"></div>
-      <div class="pip-artist" id="pipArtist"></div>
-    </div>
-    <div class="pip-controls">
-      <button type="button" id="pipPrev" aria-label="Previous song"><span class="material-symbols-rounded">skip_previous</span></button>
-      <button type="button" id="pipPlay" aria-label="Play or pause"><span class="material-symbols-rounded" id="pipPlayIcon">play_arrow</span></button>
-      <button type="button" id="pipNext" aria-label="Next song"><span class="material-symbols-rounded">skip_next</span></button>
-    </div>
-  `;
-  win.document.body.appendChild(mini);
-
-  // Move (not clone) the live player so playback carries over untouched.
-  const playerEl = $("youtubePlayer");
-  if(playerEl) win.document.body.appendChild(playerEl);
-
-  updatePipMirror();
-
-  win.document.getElementById("pipPlay").onclick = () => { markConvoyIntent(); playPause(); };
-  win.document.getElementById("pipNext").onclick = () => nextTrack();
-  win.document.getElementById("pipPrev").onclick = () => previousTrack();
-
-  win.addEventListener("pagehide", () => restorePipPlayer());
-
-  $("pipToggleBtn").classList.add("active");
-}
-
-function restorePipPlayer(){
-  if(pipWindow){
-    try{
-      const movedPlayer = pipWindow.document.getElementById("youtubePlayer");
-      if(movedPlayer) document.body.appendChild(movedPlayer);
-    }catch{}
-  }
-  pipWindow = null;
-  $("pipToggleBtn").classList.remove("active");
-}
-
-function exitPiP(){
-  if(!pipWindow) return;
-  try{ pipWindow.close(); }catch{}
-  restorePipPlayer();
-}
-
-function togglePiP(){
-  if(pipWindow) exitPiP();
-  else enterPiP();
-}
-
 function loadTrackById(id, { autoplay = true } = {}){
   if(!playerReady || !player) return;
 
@@ -2874,7 +2725,6 @@ function loadTrackById(id, { autoplay = true } = {}){
 
   renderPlaylist($("trackSearch").value);
   updateMediaSessionMetadata(item);
-  updatePipMirror();
 
   if(!convoyApplyingRemote) convoyBroadcastState();
 }
@@ -3756,12 +3606,6 @@ function convoyResyncAfterReturn(){
 
 document.addEventListener("visibilitychange", () => {
   if(document.hidden){
-    // On Chrome/Edge desktop, hop into Picture-in-Picture the moment the
-    // tab is hidden — this is the real fix for "music stops when I
-    // switch tabs" there, since a PiP window is never treated as
-    // backgrounded the way a hidden tab is. No-ops everywhere else.
-    if(pipSupported && isPlaying) enterPiP();
-
     // Best-effort: keep nudging playback while backgrounded. Browsers
     // throttle timers heavily once hidden, so this may fire rarely (or
     // not at all) — it costs nothing when it doesn't, and helps on the
@@ -3775,10 +3619,6 @@ document.addEventListener("visibilitychange", () => {
   backgroundNudgeTimer = null;
   resumeIfNeeded();
   convoyResyncAfterReturn();
-
-  // Back in the tab — fold the PiP window back into the page instead of
-  // leaving it floating over the now-visible app.
-  if(pipWindow) exitPiP();
 });
 
 // Page Lifecycle API — some Chromium versions fire these around tab
@@ -3828,11 +3668,6 @@ loadHistory();
 loadOdometer();
 setDrawerTab("queue");
 setupMediaSession();
-
-if(pipSupported){
-  $("pipToggleBtn").hidden = false;
-  $("pipToggleBtn").onclick = togglePiP;
-}
 
 /* ---------------------------------------------------------
    YouTube IFrame API
