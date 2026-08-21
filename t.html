@@ -1985,10 +1985,10 @@ function applyConvoyStaticImport(convoy){
 
     if(convoy.time > 0){
       setTimeout(() => {
-        if(!playerReady || !player) return;
+        if(!engineReady()) return;
         try{
-          player.seekTo(convoy.time, true);
-          const duration = player.getDuration() || 0;
+          engineSeekTo(convoy.time);
+          const duration = engineDuration();
           if(duration > 0) setVisualProgress(convoy.time / duration);
           $("currentTime").textContent = fmt(convoy.time);
         }catch(error){
@@ -2264,8 +2264,8 @@ function convoyHandleRiderIncoming(msg){
 function convoyStartHostHeartbeat(){
   clearInterval(convoySyncTimer);
   convoySyncTimer = setInterval(() => {
-    if(!convoyIsHost || !playerReady || !player) return;
-    const payload = { videoId: currentVideoId, time: player.getCurrentTime() || 0, isPlaying, ts: Date.now() };
+    if(!convoyIsHost || !engineReady()) return;
+    const payload = { videoId: currentVideoId, time: engineCurrentTime(), isPlaying, ts: Date.now() };
     convoyConnections.forEach(c => { if(c.open){ try{ c.send({ type:"timeSync", payload }); }catch{} } });
   }, 5000);
 }
@@ -2644,17 +2644,27 @@ function saveHistory(){
 }
 
 function logHistoryFromPlayer(){
-  if(!playerReady || !player) return;
+  let videoId, title, artist;
 
-  const data = player.getVideoData ? player.getVideoData() : {};
-  const videoId = data.video_id;
+  if(usingNativeAudio){
+    // Native audio has no YouTube metadata to ask for — use what we
+    // already know about the current track instead.
+    videoId = currentVideoId;
+    const item = itemById(videoId);
+    title = item?.title || "Unknown track";
+    artist = cleanArtistName(item?.artist);
+  }else{
+    if(!playerReady || !player) return;
+    const data = player.getVideoData ? player.getVideoData() : {};
+    videoId = data.video_id;
+    const item = itemById(videoId);
+    title = cleanSongTitle(data.title) || item?.title || "Unknown track";
+    artist = cleanArtistName(data.author || item?.artist);
+  }
+
   if(!videoId || videoId === lastLoggedVideoId) return;
 
   lastLoggedVideoId = videoId;
-
-  const item = itemById(videoId);
-  const title = cleanSongTitle(data.title) || item?.title || "Unknown track";
-  const artist = cleanArtistName(data.author || item?.artist);
 
   history = history.filter(entry => entry.id !== videoId);
   history.unshift({ id: videoId, title, artist, playedAt: Date.now() });
@@ -2774,83 +2784,12 @@ async function enterPiP(){
   // window's document risks detaching it from its iframe's message
   // channel (breaking playback) in ways that can't be verified without
   // a real browser to test against. Pulled back until it can be done
-  // more safely — see the note above pipSupported.
+  // more safely.
   return;
 }
 
-async function enterPiP_disabled(){
-  if(!pipSupported || pipWindow) return;
-
-  let win;
-  try{
-    win = await documentPictureInPicture.requestWindow({ width: 300, height: 96 });
-  }catch(error){
-    console.error("Picture-in-Picture request failed:", error);
-    return;
-  }
-
-  pipWindow = win;
-
-  // Bring the app's fonts/icons along so the mini player matches.
-  [...document.styleSheets].forEach(sheet => {
-    try{
-      const cssText = [...sheet.cssRules].map(rule => rule.cssText).join("\n");
-      const style = win.document.createElement("style");
-      style.textContent = cssText;
-      win.document.head.appendChild(style);
-    }catch{
-      if(sheet.href){
-        const link = win.document.createElement("link");
-        link.rel = "stylesheet";
-        link.href = sheet.href;
-        win.document.head.appendChild(link);
-      }
-    }
-  });
-
-  win.document.body.style.margin = "0";
-  win.document.body.style.background = "#11151a";
-
-  const mini = win.document.createElement("div");
-  mini.className = "pip-mini";
-  mini.innerHTML = `
-    <img id="pipCover" src="${$("cover").src}" alt="">
-    <div class="pip-info">
-      <div class="pip-song" id="pipSong"></div>
-      <div class="pip-artist" id="pipArtist"></div>
-    </div>
-    <div class="pip-controls">
-      <button type="button" id="pipPrev" aria-label="Previous song"><span class="material-symbols-rounded">skip_previous</span></button>
-      <button type="button" id="pipPlay" aria-label="Play or pause"><span class="material-symbols-rounded" id="pipPlayIcon">play_arrow</span></button>
-      <button type="button" id="pipNext" aria-label="Next song"><span class="material-symbols-rounded">skip_next</span></button>
-    </div>
-  `;
-  win.document.body.appendChild(mini);
-
-  // Move (not clone) the live player so playback carries over untouched.
-  const playerEl = $("youtubePlayer");
-  if(playerEl) win.document.body.appendChild(playerEl);
-
-  updatePipMirror();
-
-  win.document.getElementById("pipPlay").onclick = () => { markConvoyIntent(); playPause(); };
-  win.document.getElementById("pipNext").onclick = () => nextTrack();
-  win.document.getElementById("pipPrev").onclick = () => previousTrack();
-
-  win.addEventListener("pagehide", () => restorePipPlayer());
-
-  $("pipToggleBtn").classList.add("active");
-}
-
 function restorePipPlayer(){
-  if(pipWindow){
-    try{
-      const movedPlayer = pipWindow.document.getElementById("youtubePlayer");
-      if(movedPlayer) document.body.appendChild(movedPlayer);
-    }catch{}
-  }
   pipWindow = null;
-  $("pipToggleBtn").classList.remove("active");
 }
 
 function exitPiP(){
@@ -2860,6 +2799,8 @@ function exitPiP(){
 }
 
 function togglePiP(){
+  // No-op while enterPiP() is disabled — kept so any future call site
+  // (or a later, safer PiP implementation) doesn't need rewiring.
   if(pipWindow) exitPiP();
   else enterPiP();
 }
@@ -2906,8 +2847,12 @@ function engineReady(){
 }
 
 function enginePlay(){
-  if(usingNativeAudio) nativeAudio.play().catch(() => {});
-  else player?.playVideo?.();
+  if(usingNativeAudio){
+    const result = nativeAudio.play();
+    if(result && typeof result.catch === "function") result.catch(() => {});
+  }else{
+    player?.playVideo?.();
+  }
 }
 
 function enginePause(){
@@ -2988,13 +2933,18 @@ function tryNativeAudio(id, autoplay, onResolved){
   nativeAudio.src = url;
   nativeAudio.load();
 
-  if(autoplay) nativeAudio.play().catch(() => {}); // will still fire loadedmetadata/error either way
+  if(autoplay){
+    const result = nativeAudio.play(); // will still fire loadedmetadata/error either way
+    if(result && typeof result.catch === "function") result.catch(() => {});
+  }
 }
 
 function setupNativeAudioEvents(){
-  nativeAudio.addEventListener("play", () => { if(usingNativeAudio) handleEnginePlaying(); });
-  nativeAudio.addEventListener("pause", () => { if(usingNativeAudio && !nativeAudio.ended) handleEnginePaused(); });
-  nativeAudio.addEventListener("ended", () => { if(usingNativeAudio) nextTrack(); });
+  let lastTickTime = null;
+
+  nativeAudio.addEventListener("play", () => { lastTickTime = null; if(usingNativeAudio) handleEnginePlaying(); });
+  nativeAudio.addEventListener("pause", () => { lastTickTime = null; if(usingNativeAudio && !nativeAudio.ended) handleEnginePaused(); });
+  nativeAudio.addEventListener("ended", () => { lastTickTime = null; if(usingNativeAudio) nextTrack(); });
   nativeAudio.addEventListener("timeupdate", () => {
     if(!usingNativeAudio) return;
     const duration = nativeAudio.duration || 0;
@@ -3003,6 +2953,12 @@ function setupNativeAudioEvents(){
       $("currentTime").textContent = fmt(nativeAudio.currentTime);
       $("duration").textContent = fmt(duration);
     }
+
+    const now = performance.now();
+    if(lastTickTime !== null && !nativeAudio.paused){
+      tickOdometer(Math.min(2, (now - lastTickTime) / 1000));
+    }
+    lastTickTime = now;
   });
 }
 
@@ -3274,7 +3230,11 @@ function startProgressLoop(){
   stopProgressLoop();
 
   progressTimer = setInterval(() => {
-    if(!playerReady || !player || !isPlaying) return;
+    // This loop is YouTube-only — native audio drives the same UI
+    // updates from its own 'timeupdate' listener instead (see
+    // setupNativeAudioEvents), and handleEnginePlaying() only starts
+    // this loop for the YouTube engine in the first place.
+    if(usingNativeAudio || !playerReady || !player || !isPlaying) return;
 
     const current = player.getCurrentTime() || 0;
     const duration = player.getDuration() || 0;
@@ -3894,10 +3854,9 @@ window.addEventListener("beforeunload", saveOdometer);
 let backgroundNudgeTimer = null;
 
 function resumeIfNeeded(){
-  if(!isPlaying || !playerReady || !player) return;
+  if(!isPlaying || !engineReady()) return;
   try{
-    const state = player.getPlayerState?.();
-    if(state !== 1 /* YT.PlayerState.PLAYING */) player.playVideo();
+    if(!engineIsActuallyPlaying()) enginePlay();
   }catch(error){
     console.error("Resume attempt failed:", error);
   }
